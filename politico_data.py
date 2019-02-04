@@ -6,7 +6,7 @@ political_parties = [
         "id": 2, "name": "Party 2", "hqAddress": "Mombasa", "logoUrl": "https://www.michels.ca/ckfinder/userfiles/images/number2tm.png", "motto": "we are two", "members": 2500,
     },
     {
-        "id": 3, "name": "Party 3", "hqAddress": "Kisumu", "logoUrl", "https://vignette.wikia.nocookie.net/opartshunter/images/7/79/3.jpg/revision/latest?cb=20130603053056", "motto", "we are three", "members": 3000,
+        "id": 3, "name": "Party 3", "hqAddress": "Kisumu", "logoUrl": "https://vignette.wikia.nocookie.net/opartshunter/images/7/79/3.jpg/revision/latest?cb=20130603053056", "motto": "we are three", "members": 3000,
     }
 ]
 
@@ -18,7 +18,7 @@ users = [
         "id": 2, "firstName": "Gideon", "lastName": "Smith", "otherName": "Salah", "email": "gidi@gidi.com", "isAdmin": False, "phoneNumber": "0710270374", "passportUrl": "",
     },
     {
-        "id": 3, "firstName", "Peter", "lastName": "Kenyatta", "otherName": "lil", "email": "peter@peter.com", "isAdmin": True, "phoneNumber": "07374757282", "passportUrl": "",
+        "id": 3, "firstName": "Peter", "lastName": "Kenyatta", "otherName": "lil", "email": "peter@peter.com", "isAdmin": True, "phoneNumber": "07374757282", "passportUrl": "",
     },
     {
         "id": 4, "firstName": "Brian", "lastName": "Kiasi", "otherName": "Ule msee", "email": "brian@brian.com", "isAdmin": True, "phoneNumber": "0712873873", "passportUrl": "",
