@@ -1,6 +1,7 @@
 from flask import Flask 
-from views.party.party_blueprint import party_blueprint
-from views.office.office_blueprint import office_blueprint
+from politico_app.views.office.office_blueprint import office_blueprint
+from politico_app.views.party.party_blueprint import party_blueprint
+from politico_app.politico_data import offices, political_parties
 
 app = Flask(__name__)
 

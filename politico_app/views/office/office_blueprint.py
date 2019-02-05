@@ -1,14 +1,14 @@
 
 from flask import Blueprint, jsonify, request, make_response
-from politico_data import political_parties, users, offices, candidates, votes
 from random import randint
+from politico_app.models.office import Office
 
 office_blueprint = Blueprint('office_blueprint', __name__)
 
-@office_blueprint.route("/offices", methods=['POST'])
+@office_blueprint.route("/offices/", methods=['POST'])
 def createOffice():
     json_data = request.get_json(force=True)
-
+    
     required_fields = ["office_type", "office_name"]
     for field in required_fields:
         if field not in json_data:
@@ -19,37 +19,41 @@ def createOffice():
 
     office_type = json_data["office_type"]
     office_name = json_data["office_name"]
-    office_id = randint(1, 100)
-    new_office = {
-        "id": office_id, "name": office_name, "type": office_type
-    }
-    offices.append(new_office)
-
+    
+    new_office = Office(office_name, office_type)
+    office_info = new_office.createOffice()
     return make_response(jsonify({
         "status": 200,
         "data": [
-            new_office
+            office_info
         ]
     }), 200)
     
-@office_blueprint.route("/offices")
+@office_blueprint.route("/offices/")
 def getAllOffices():
-    return make_response(jsonify(offices), 200)
+    office = Office.getAllOffices()
+    return make_response(jsonify({
+        "status": 200,
+        "data": [
+            office
+        ]
+    }), 200)
 
 @office_blueprint.route("/offices/<officeID>")
 def getSingleOffice(officeID):
+
+    office = Office.getOffice(int(officeID))
+
+    if office == None:
+        return make_response(jsonify({
+            "status": 404,
+            "error": "Could not find the "
+        }))
     
-    for office in offices:
-        if int(officeID) == office["id"]:
-            return make_response(jsonify({
-                "status": 200,
-                "data": [
-                    office
-                ]
-            }), 200)
+    else:
+        return make_response(jsonify({
+            "status": 200,
+            "data": [office]
+        }))
     
-    return make_response(jsonify({
-        "status": 404, 
-        "error": "cannot find political office with ID {}".format(officeID)
-    }))
 
