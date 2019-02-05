@@ -1,3 +1,4 @@
+
 from flask import Flask 
 from views.party.party_blueprint import party_blueprint
 from views.office.office_blueprint import office_blueprint
