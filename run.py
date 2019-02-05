@@ -1,4 +1,4 @@
-from flask import Flask 
+from flask import Flask
 from views.party.party_blueprint import party_blueprint
 
 app = Flask(__name__)
