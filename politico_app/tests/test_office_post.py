@@ -1,6 +1,6 @@
 # allow for import from the politico_app folder 
 import sys
-sys.path.insert(0,'../..')
+sys.path.insert(0,'../../..')
 
 import json
 from politico_app.config import app 
@@ -13,30 +13,11 @@ THE FOLLOWING ARE TESTS FOR THE OFFICE BLUEPRINT FUNCTIONS
 THE FUNCTIONS WILL BE NAMED USING THE CONVENTION: 
     "test_[method_used]_[blueprint_tested]_[functionality_being_tested]"
     e.g 
-    test_get_offices_officeID_is_negative
-    has method_used                 - get
+    test_post_offices_officeID_is_negative
+    has method_used                 - post
     blueprint_tested                - office
     functionality_being_tested      - when the officeID is negative
 """
-
-
-# test for if the officeID in the GET request for '/offices/<officeID>' is negative
-# should return a 404 error whenever the officeID is negative. 
-def test_get_offices_officeID_is_negative():
-    response = client.get("/offices/-1")
-    assert(response.status_code == 404)
-    response = client.get("/offices/0")
-    assert(response.status_code == 404)
-
-
-# test for if the officeID in GET request for  '/office/officeID' is a real number
-# should return a 404 error whenever the officeID is not a real number
-def test_get_offices_officeID_is_real():
-    response = client.get("/offices/-j")
-    assert(response.status_code == 404)
-    data = json.loads(response.data.decode())
-    assert(data["error"] == "you must enter a real number at officeID in '/offices/<officeID>'")
-    
 
 # testing for when in the POST method of '/offices' route, the office_type in the JSON is not a string
 # this should return a 404 error

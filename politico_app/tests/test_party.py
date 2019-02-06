@@ -1,6 +1,6 @@
 # allow for import from the politico_app folder 
 import sys
-sys.path.insert(0,'../..')
+sys.path.insert(0,'../../..')
 
 import json
 from politico_app.config import app 
@@ -58,6 +58,5 @@ def test_patch_party_partyid_does_not_exist():
     response = client.patch("/parties/40000/newPartyName")
     assert(response.status_code == 404)
     assert(b"cannot find party with ID 4000" in response.data)
-
 
 
