@@ -10,3 +10,4 @@ install:
 
 script: 
   - bash build.sh
+  
