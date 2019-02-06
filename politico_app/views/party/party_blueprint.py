@@ -1,11 +1,10 @@
 from flask import Blueprint, jsonify, make_response, request
 from random import randint
-from politico_app.politico_data import political_parties
 from politico_app.models.party import Party
 
 party_blueprint = Blueprint('party_blueprint', __name__)
 
-@party_blueprint.route("/parties/")
+@party_blueprint.route("/parties/", strict_slashes=False)
 def getAllParties():
     parties = Party.getAllParties()
     
@@ -21,23 +20,50 @@ def getAllParties():
     }), 200)
 
 
-@party_blueprint.route("/parties/<partyID>/<partyName>", methods=['PATCH'])
+@party_blueprint.route("/parties/<partyID>/<partyName>", methods=['PATCH'], strict_slashes=False)
 def editParty(partyID, partyName):
 
-    editPartyOutput = Party.editParty(int(partyID), partyName)
+    # make sure the partyID is a number(int)
+    try:
+        partyID = int(partyID)
+    except ValueError:
+        return make_response(jsonify({
+            "status": 404,
+            "error": "partyID has to be a number"
+        }), 404)
     
-    if editPartyOutput == None:
+    # partyID cannot be 0 or a negative number
+    if partyID < 1:
+        return make_response(jsonify({
+            "status": 404,
+            "error": "partyID has to be more than 0"
+        }), 404)
+
+    # making sure that the partyName does not contain any special characters
+    special_characters = ["!", "@", "#", "$", "%", "^", "&", "*", "(", ")"]
+    for character in special_characters:
+        if character in partyName:
+            return make_response(jsonify({
+                "status": 404,
+                "error": "partyName cannot contain special characters like @ or $"
+            }), 404)
+
+    
+    # make sure the party exists before it is edited
+    editPartyOutput = Party.editParty(partyID, partyName)
+    if editPartyOutput == False:
         return make_response(jsonify({
             "status": 404,
             "error": "cannot find party with ID {}".format(partyID)
         }), 404)
     
+    # returns the new values of the party that has been edited as a response
     return make_response(jsonify({
         "status": 200,
         "data": editPartyOutput
     }))
 
-@party_blueprint.route("/parties/<partyID>", methods=['DELETE'])
+@party_blueprint.route("/parties/<partyID>", methods=['DELETE'], strict_slashes=False)
 def deleteParty(partyID):
 
     deletePartyOutput = Party.deleteParty(int(partyID))
@@ -53,7 +79,7 @@ def deleteParty(partyID):
         "data": "successfully deleted"
     }), 200)
 
-@party_blueprint.route("/parties/<partyID>")
+@party_blueprint.route("/parties/<partyID>", strict_slashes=False)
 def getSingleParty(partyID):
     getPartyOutput = Party.getSingleParty(int(partyID))
 
@@ -68,7 +94,7 @@ def getSingleParty(partyID):
         "data": [ getPartyOutput ]
     }), 200)
 
-@party_blueprint.route("/parties", methods=['POST'])
+@party_blueprint.route("/parties", methods=['POST'], strict_slashes=False)
 def create_party():
     json_data = request.get_json(force=True)
     required_fields = {

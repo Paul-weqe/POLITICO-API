@@ -29,8 +29,19 @@ class Office:
             if office["id"] == officeID:
                 return office
         return None 
-
     
-    
-
-
+# default fields when the app starts
+offices += [
+    {
+        "id": 1, "type": "local_government", "name": "chief",
+    },
+    {
+        "id": 2, "type": "legislative", "name": "MP"
+    },
+    {
+        "id": 3, "type": "state", "name": "president"
+    },
+    {
+        "id": 4, "type": "federal", "name": "magistrate"
+    }
+]
