@@ -10,4 +10,6 @@ install:
 
 script: 
   - bash build.sh
-  
+
+after_success:
+  - coveralls
