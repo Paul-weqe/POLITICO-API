@@ -47,12 +47,16 @@ class ApiFunctions:
     def check_error_if_item_is_true(item_to_compare, expected_output, error, message):
         if item_to_compare == expected_output and error == None:
             return message
-        return None 
+        return None
     
+
     # this method will be used when it is needed for us to check if a number is negative
     @staticmethod
-    def cehck_if_number_is_zero_or_negative(number):
+    def check_if_number_is_zero_or_negative(number):
         if number < 1:
             return True
         return False
+    
+    # 
+    
 

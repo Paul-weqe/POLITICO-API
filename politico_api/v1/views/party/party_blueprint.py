@@ -8,11 +8,10 @@ party_blueprint_v1 = Blueprint('party_blueprint', __name__, url_prefix="/api/v1"
 
 @party_blueprint_v1.route("/parties/", strict_slashes=False)
 def get_all_parties():
-    parties = PartyModel.get_all_parties()
-    
+
     return make_response(jsonify({
         "status": 200,
-        "data": parties
+        "data": PartyModel.get_all_parties()
     }), 200)
 
 
@@ -68,7 +67,7 @@ def delete_party(partyID):
     if ApiFunctions.check_is_integer(partyID) == False:
         error = delete_party_error_statements["ID_HAS_TO_BE_NUMBER"]
     
-    elif ApiFunctions.cehck_if_number_is_zero_or_negative(int(partyID)):
+    elif ApiFunctions.check_if_number_is_zero_or_negative(int(partyID)):
         error = delete_party_error_statements["ID_HAS_TO_BE_POSITIVE"]
 
     # deletePartyOutput = PartyModel.delete_party(int(partyID))

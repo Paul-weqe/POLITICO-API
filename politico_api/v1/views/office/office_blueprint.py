@@ -55,10 +55,10 @@ def create_office():
 
 @office_blueprint_v1.route("/offices", strict_slashes=False)
 def get_all_offices():
-    office = OfficeModel.get_all_offices()
+    
     return make_response(jsonify({
         "status": 200,
-        "data": office
+        "data": OfficeModel.get_all_offices()
     }), 200)
 
 
@@ -88,8 +88,8 @@ def get_single_office(officeID):
         }), 200)
         print("STEP3")
     
-    if error == None : error =  ApiFunctions.check_error_if_item_is_true(office, None, error, errors["COULD_NOT_FIND_OFFICE"].format(officeID)) 
-
+    if error == None : error =  ApiFunctions.check_error_if_item_is_true(office, None, error, errors["COULD_NOT_FIND_OFFICE"].format(officeID))
+    
     print(error)
     return make_response(jsonify({
         "status": 406,
