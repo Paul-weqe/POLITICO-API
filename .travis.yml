@@ -2,29 +2,18 @@ language: python
 
 dist: xenial
 
-env:
-  global:
-    - CC_TEST_REPORTER_ID=ABC123
-
 python:
   - "3.6"
 
-before_script:
-  - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
-  - chmod +x ./cc-test-reporter
-  - ./cc-test-reporter before-build
-
 install:
   - pip install -r requirements.txt
-  - pip install code-coverage-test-reporter
+  - pip install python-coveralls
+  - pip install pytest
 
 script: 
   - bash build.sh
-  - bundle exec rspec
 
-after_success:
-  - codeclimate-test-reporter
+after-success:
+  - coveralls
 
-after_script:
-  - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
 
