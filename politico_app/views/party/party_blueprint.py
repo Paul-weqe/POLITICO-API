@@ -2,6 +2,8 @@ from flask import Blueprint, jsonify, make_response, request
 from random import randint
 from politico_app.models.party import PartyModel
 from politico_app.views.required_fields import error_dictionary, mandatory_fields
+# from politico_app.views.party.party_blueprint_special_methods import Check
+from politico_app.views.api_functions import ApiFunctions
 
 party_blueprint = Blueprint('party_blueprint', __name__, url_prefix="/api/v1")
 
@@ -18,36 +20,33 @@ def get_all_parties():
 @party_blueprint.route("/parties/<partyID>/<partyName>", methods=['PATCH'], strict_slashes=False)
 def edit_party(partyID, partyName):
 
-    error_statements = error_dictionary["edit_party"]
+    edit_party_error_statements = error_dictionary["edit_party"]
+    edit_party_output = PartyModel.edit_party(int(partyID), partyName)
     error = None
 
     # make sure the partyID is a number(int)
-    try:
-        partyID = int(partyID)
-    except ValueError:
-        error = error_statements["ID_HAS_TO_BE_NUMBER"]
+    if ApiFunctions.check_is_integer(partyID) == False:
+        error = edit_party_error_statements["ID_HAS_TO_BE_A_NUMBER"]
     
     # partyID cannot be 0 or a negative number
-    if partyID < 1 and error == None:
-        error = error_statements["ID_HAS_TO_BE_MORE_THAN_ZERO"]
+    elif int(partyID) < 1 and error == None:
+        error = edit_party_error_statements["ID_HAS_TO_BE_MORE_THAN_ZERO"]
 
     # making sure that the partyName does not contain any special characters
-    special_characters = ["!", "@", "#", "$", "%", "^", "&", "*", "(", ")"]
-    for character in special_characters:
-        if (character in partyName) and (error == None):
-            error = error_statements["NAME_CANNOT_CONTAIN_SPECIAL_CHARACTERS"]
+    elif ApiFunctions.check_for_special_characters(partyName):
+        error = edit_party_error_statements["NAME_CANNOT_CONTAIN_SPECIAL_CHARACTERS"]
     
     # make sure the party exists before it is edited
-    edit_party_output = PartyModel.edit_party(partyID, partyName)
-    if edit_party_output == False and error==None:
-        error = error_statements["CANNOT_FIND_PARTY"].format(partyID)
+    # edit_party_output will return False if the party does not exist but will return the party details after editing if the party exists
+    elif edit_party_output == False and error==None:
+        error = edit_party_error_statements["CANNOT_FIND_PARTY"].format(partyID)
 
     if error != None:
         return make_response(jsonify({
             "status": 404,
             "error": error
         }), 404)
-
+    
     return make_response(jsonify({
         "status": 200,
         "data": edit_party_output

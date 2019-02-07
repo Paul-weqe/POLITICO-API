@@ -19,3 +19,25 @@ class ApiFunctions:
                 return [input_data, required_input[input_data]]
         
         return True
+    
+    # checks for the presence of special characters in any string
+    # this may be useful when trying to generate or filter words and do not need special characters
+    @staticmethod
+    def check_for_special_characters(string_input):
+        special_characters = ["!", "@", "#", "$", "%", "^", "&", "*", "(", ")"]
+        
+        for character in special_characters:
+            if character in string_input:
+                return True
+        return False
+    
+    # checks for an item to be an integer
+    # useful when checking for values that have been entered as the ID of an item and one may have input a string
+    @staticmethod
+    def check_is_integer(string_input):
+        try:
+            int(string_input)
+            return True
+        except ValueError:
+            return False
+    
