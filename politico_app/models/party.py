@@ -1,50 +1,49 @@
 from random import randint
+import sys
+sys.path.insert(0,'../../')
+
+from politico_app.models.model_functions import GeneralModelMethods
 
 parties = [
 
 ]
 
-class Party:
+# finds out if a particular ID already exists in a list of items deeming it unusable. Searches the 'list_to_search' for the 'id_number'
+# returns True if the ID number does not exist and False if the ID number exists
 
-    def __init__(self, party_name, hq_address, logo_url):
-        self.id = randint(1, 100)
+class PartyModel:
+
+    def __init__(self, party_name, hq_address, logo_url, members, motto):
         self.party_name = party_name
         self.hq_address = hq_address
         self.logo_url = logo_url
+        self.members = members
+        self.motto = motto
 
     def createParty(self):
-        dict_info = {
-            "id": self.id, "name": self.party_name, "hqAddress": self.hq_address, "logoUrl": self.logo_url
+        new_party_info = {
+            "name": self.party_name, "hqAddress": self.hq_address, "logoUrl": self.logo_url, "motto": self.motto, "members": self.members
         }
-        parties.append(dict_info)
-        return dict_info
+        created_party = GeneralModelMethods.create_item(parties, new_party_info)
+        if created_party != None:
+            return { "id": created_party["id"], "name": created_party["name"]}
+        return None 
 
     @staticmethod
-    def getAllParties():
+    def get_all_parties():
         return parties
     
     @staticmethod
-    def getSingleParty(partyID):
-        for party in parties:
-            if party["id"] == partyID:
-                return party
-        return False
+    def get_single_party(party_id):
+        return GeneralModelMethods.get_single_item(parties, party_id)
 
     @staticmethod
-    def editParty(partyID, partyName):
-        for party in parties:
-            if party["id"] == int(partyID):
-                party["name"] = partyName
-                return party
-        return False
+    def edit_party(party_id, party_name):
+        return GeneralModelMethods.edit_single_item(parties, party_id, "name", party_name)
     
     @staticmethod
-    def deleteParty(partyID):
-        for party in parties:
-            if party["id"] == partyID:
-                parties.remove(party)
-                return True
-        return False
+    def delete_party(party_id):
+        return GeneralModelMethods.delete_item(parties, party_id)
 
 parties += [
     {

@@ -25,7 +25,7 @@ class TestOfficeID(unittest.TestCase):
     # test for if the officeID in the GET request for '/offices/<officeID>' is negative
     # should return a 404 error whenever the officeID is negative. 
     def test_offices_when_officeID_is_negative(self):
-        response = self.client.get("/offices/-1")
+        response = self.client.get("/api/v1/offices/-1")
         response_data = bytes_to_dict(response.data)
         expected_data = { "status": 404, "error": "officeID cannot be zero or a negative number" }
 
@@ -35,7 +35,7 @@ class TestOfficeID(unittest.TestCase):
     # test for if the officeID in the GET request for '/offices/<officeID>' is zero
     # should return a 404 error whenever the officeID is negative
     def test_offices_when_officeID_is_zero(self):
-        response = self.client.get("/offices/0")
+        response = self.client.get("/api/v1/offices/0")
         response_data = bytes_to_dict(response.data)
         expected_data = { "status": 404, "error": "officeID cannot be zero or a negative number" }
 
@@ -45,7 +45,7 @@ class TestOfficeID(unittest.TestCase):
     # test for officeID with a number that is not an id of an office
     # this should return a 404 error since an office with the ID does not exist
     def test_offices_when_officeID_is_4000000(self):
-        response = self.client.get("/offices/4000000")
+        response = self.client.get("/api/v1/offices/4000000")
         response_data = bytes_to_dict(response.data)
         expected_data = { "status": 404, "error": "Could not find office with id 4000000" }
 
@@ -55,7 +55,7 @@ class TestOfficeID(unittest.TestCase):
     # test for officeID with a number that is not real
     # these include -j and -i 
     def test_offices_when_officeID_not_real_numbers(self):
-        response = self.client.get("/offices/-j")
+        response = self.client.get("/api/v1/offices/-j")
         response_data = bytes_to_dict(response.data)
         expected_data = { "status": 404, "error": "you must enter a real number at officeID in '/offices/<officeID>'" }
 
@@ -65,7 +65,7 @@ class TestOfficeID(unittest.TestCase):
     # test for officeID with a string instad of an integer. The string 'thisID' will be used
     # this should return a 404 error 
     def test_offices_when_officeID_is_string(self):
-        response = self.client.get("/offices/thisID")
+        response = self.client.get("/api/v1/offices/thisID")
         response_data = bytes_to_dict(response.data)
         expected_data = { "status": 404, "error": "you must enter a real number at officeID in '/offices/<officeID>'" }
 
@@ -82,7 +82,7 @@ class TestEmptyRequest(unittest.TestCase):
         self.client = app.test_client()
     
     def test_response(self):
-        response = self.client.get("/offices")
+        response = self.client.get("/api/v1/offices")
         response_data = bytes_to_dict(response.data)
 
         self.assertEqual(response.status_code, 200)

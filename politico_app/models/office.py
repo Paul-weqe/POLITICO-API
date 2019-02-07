@@ -1,4 +1,8 @@
 from random import randint
+import sys
+sys.path.insert(0,'../../')
+
+from politico_app.models.model_functions import GeneralModelMethods
 
 offices = [
 
@@ -7,28 +11,26 @@ offices = [
 class Office:
 
     def __init__(self, office_name, office_type):
-        self.id = randint(1, 100)
         self.type = office_type
         self.name = office_name
 
-    def createOffice(self):
+    def create_office(self):
         try:
-            dict_info = { "id": self.id, "type": self.type, "name": self.name }
-            offices.append(dict_info)
+            dict_info = { "type": self.type, "name": self.name }
+            GeneralModelMethods.create_item(offices, dict_info)
             return dict_info
         except Exception:
-            return None
+            return False
     
     @staticmethod
-    def getAllOffices():
+    def get_all_offices():
         return offices
 
+    # gets single items from the list of offices with ID office_id
+    # queries the GeneralModelMethods to find the item
     @staticmethod
-    def getOffice(officeID):
-        for office in offices:
-            if office["id"] == officeID:
-                return office
-        return None 
+    def get_single_office(office_id):
+        return GeneralModelMethods.get_single_item(offices, office_id)
     
 # default fields when the app starts
 offices += [

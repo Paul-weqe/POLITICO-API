@@ -28,12 +28,12 @@ class TestMandatoryFields(unittest.TestCase):
     # this will test for the response when there is no party name in the POSTed JSON to '/parties'
     # should return a 404 error
     def test_party_name_not_present(self):
-        response = self.client.post("/parties", data=json.dumps(dict(
+        response = self.client.post("/api/v1/parties", data=json.dumps(dict(
             party_hq_address="Kenya", party_logo_url="thelogo",
             party_motto="this is us", party_members=4000 # notice to party_name
-        )))
+        )), content_type="application/json")
 
-        response_data =bytes_to_dict(response.data)
+        response_data = bytes_to_dict(response.data)
         expected_response_data = { "error": "'party_name' is a mandatory field", "status": 404 }
         self.assertEqual(response.status_code, 404)
         self.assertDictEqual(response_data, expected_response_data)
@@ -41,9 +41,9 @@ class TestMandatoryFields(unittest.TestCase):
     # test for response when there is no party_hq_address in the POSTed JSON to '/parties'
     # should return a 404 error
     def test_party_hq_address_not_present(self):
-        response = self.client.post("/parties", data=json.dumps(dict(
+        response = self.client.post("/api/v1/parties", data=json.dumps(dict(
             party_name="another party", party_logo_url="thelogo", party_motto="this is us", party_members=4000 
-        )))
+        )), content_type="application/json")
 
         response_data = bytes_to_dict(response.data)
         expected_response_data = { "error": "'party_hq_address' is a mandatory field", "status": 404 }
@@ -53,7 +53,7 @@ class TestMandatoryFields(unittest.TestCase):
     # test for response when there is no party_logo_url in the POSTed JSON to '/parties'
     # should return a 404 error 
     def test_party_logo_url_not_present(self):
-        response = self.client.post("/parties", data = json.dumps(dict(
+        response = self.client.post("/api/v1/parties", data = json.dumps(dict(
             party_name="another party", party_hq_address = "Kenya", party_motto="this is us", party_members=3000,
         )))
         
@@ -65,7 +65,7 @@ class TestMandatoryFields(unittest.TestCase):
     # test for response when there is no party_members in the POSTed JSON to '/parties'
     # should return a 404 error
     def test_party_members_not_present(self):
-        response = self.client.post("/parties", data=json.dumps(dict(
+        response = self.client.post("/api/v1/parties", data=json.dumps(dict(
             party_name="another party", party_logo_url="thelogo", party_hq_address="Kenya", party_motto="this is us"
         )))
 
@@ -78,7 +78,7 @@ class TestMandatoryFields(unittest.TestCase):
     # test for response when there is no party_motto in the POSTed JSON to '/parties'
     # should return a 404 error
     def test_party_motto_not_present(self):
-        response = self.client.post("/parties", data=json.dumps(dict(
+        response = self.client.post("/api/v1/parties", data=json.dumps(dict(
             party_name="another party", party_logo_url="thelogo", party_hq_address="Kenya", party_members=3000
         )))
 
@@ -91,7 +91,7 @@ class TestMandatoryFields(unittest.TestCase):
     # test for response when all the fields are present
     # should return a 200 status 
     def test_all_party_fields_present(self):
-        response = self.client.post("/parties", data=json.dumps(dict(
+        response = self.client.post("/api/v1/parties", data=json.dumps(dict(
             party_name="another party", party_logo_url="thelogo", party_hq_address="Kenya", party_motto="this is us", party_members=200
         )))
 
@@ -113,7 +113,7 @@ class TestFieldsDataTypes(unittest.TestCase):
     # test if party_name only accepts strings. party_name will be an integer
     # should return 404
     def test_when_party_name_is_integer(self):
-        response = self.client.post("/parties", data=json.dumps(dict(
+        response = self.client.post("/api/v1/parties", data=json.dumps(dict(
             party_name=3, party_logo_url="thelogo", party_hq_address="Kenya", party_motto="this is us", party_members=200
         )))
 
@@ -126,7 +126,7 @@ class TestFieldsDataTypes(unittest.TestCase):
     # test if party_logo_url only accepts strings. party_name will be a list
     # should return 404
     def test_when_party_logo_url_is_list(self):
-        response = self.client.post("/parties", data=json.dumps(dict(
+        response = self.client.post("/api/v1/parties", data=json.dumps(dict(
             party_name="another party", party_logo_url=[1, 2, 3], party_hq_address="Kenya", party_motto="this is us", party_members=200
         )))
 
@@ -139,7 +139,7 @@ class TestFieldsDataTypes(unittest.TestCase):
     # test if party_hq_address only accepts strings. party_hq_address will be a float
     # should return 404
     def test_when_party_hq_address_is_float(self):
-        response = self.client.post("/parties", data=json.dumps(dict(
+        response = self.client.post("/api/v1/parties", data=json.dumps(dict(
             party_name="another party", party_logo_url="thelogo", party_hq_address=21.1, party_motto="this is us", party_members=200
         )))
 
@@ -151,7 +151,7 @@ class TestFieldsDataTypes(unittest.TestCase):
     # test if party_motto only accepts strings. party_name will be an integer
     # should return 404
     def test_when_party_motto_is_integer(self):
-        response = self.client.post("/parties", data=json.dumps(dict(
+        response = self.client.post("/api/v1/parties", data=json.dumps(dict(
             party_name="another party", party_logo_url="thelogo", party_hq_address="Kenya", party_motto=1, party_members=200
         )))
 
@@ -163,7 +163,7 @@ class TestFieldsDataTypes(unittest.TestCase):
     # test if party_members only accepts integer. party_members will be a String
     # should return 404
     def test_when_party_members_is_integer(self):
-        response = self.client.post("/parties", data=json.dumps(dict(
+        response = self.client.post("/api/v1/parties", data=json.dumps(dict(
             party_name="another party", party_logo_url="thelogo", party_hq_address="Kenya", party_motto="this is us", party_members="two hundred"
         )))
 
@@ -175,7 +175,7 @@ class TestFieldsDataTypes(unittest.TestCase):
     # test when all the fields have the correct values
     # should return 404
     def test_with_all_valid_fields(self):
-        response = self.client.post("/parties", data=json.dumps(dict(
+        response = self.client.post("/api/v1/parties", data=json.dumps(dict(
             party_name="another party", party_logo_url="thelogo", party_hq_address="Kenya", party_motto="this is us", party_members=200
         )))
 
