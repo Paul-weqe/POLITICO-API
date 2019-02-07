@@ -39,6 +39,7 @@ error_dictionary = {
     "delete_party": {
         "ID_HAS_TO_BE_NUMBER": "partyID has to be a number",
         "UNABLE_TO_FIND_PARTY": "unable to delete party with ID {}",
+        "ID_HAS_TO_BE_POSITIVE": "partyID cannot be 0 or a negative number"
     }
     
 }

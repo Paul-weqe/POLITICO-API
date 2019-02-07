@@ -31,9 +31,9 @@ def create_office():
 
     if error != None:
         return make_response(jsonify({
-            "status": 404,
+            "status": 406,
             "error": error
-        }), 404)
+        }), 406)
         
     new_office = OfficeModel(json_data)
     office_info = new_office.create_office()
@@ -49,12 +49,12 @@ def create_office():
     
     error = create_office_errors["UNABLE_TO_ADD_OFFICE"]
     return make_response(jsonify({
-        "status": 404,
+        "status": 406,
         "error": error
-    }))
+    }), 406)
 
 @office_blueprint_v1.route("/offices", strict_slashes=False)
-def getAllOffices():
+def get_all_offices():
     office = OfficeModel.get_all_offices()
     return make_response(jsonify({
         "status": 200,
@@ -63,7 +63,7 @@ def getAllOffices():
 
 
 @office_blueprint_v1.route("/offices/<officeID>", strict_slashes=False)
-def getSingleOffice(officeID):
+def get_single_office(officeID):
     
     # gets all the errors for the get_single_office function
     # this is from the error_dictionary in the required_fields.py
@@ -73,10 +73,12 @@ def getSingleOffice(officeID):
 
     if ApiFunctions.check_is_integer(officeID) == False:
         error = errors["OFFICEID_MUST_BE_REAL_NUMBER"]
+        print("STEP1")
     
     # makes sure the officeID is not less than 1
     elif int(officeID) < 1:
         error = errors["OFFICEID_CANNOT_BE_ZERO_OR_NEGATIVE"]
+        print("STEP2")
     
     # office = Office.get_single_office(officeID)
     elif office != None:
@@ -84,12 +86,13 @@ def getSingleOffice(officeID):
             "status": 200,
             "data": office
         }), 200)
+        print("STEP3")
     
-    
-    error =  ApiFunctions.check_error_if_item_is_true(office, None, error, errors["COULD_NOT_FIND_OFFICE"].format(officeID))
+    if error == None : error =  ApiFunctions.check_error_if_item_is_true(office, None, error, errors["COULD_NOT_FIND_OFFICE"].format(officeID)) 
 
+    print(error)
     return make_response(jsonify({
-        "status": 404,
+        "status": 406,
         "error": error
-    }), 404)
+    }), 406)
     

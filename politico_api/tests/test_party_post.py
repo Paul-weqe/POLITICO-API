@@ -1,18 +1,12 @@
 # allow for import from the politico_app folder 
 import sys
+import json
+import unittest
 sys.path.insert(0,'../..')
 
-import json
 from politico_api.config import app 
-import unittest
+from politico_api.tests.functions_for_tests import bytes_to_dict
 
-client = app.test_client()
-import json
-
-# converts bytes responses to dictionaries. Meant for when the JSON response is received in bytes, it can be transformed to a dictionary
-def bytes_to_dict(byte_input):
-    dict_output = json.loads(byte_input.decode())
-    return dict_output
 
 class TestMandatoryFields(unittest.TestCase):
     """
@@ -34,8 +28,8 @@ class TestMandatoryFields(unittest.TestCase):
         )), content_type="application/json")
 
         response_data = bytes_to_dict(response.data)
-        expected_response_data = { "error": "'party_name' is a mandatory field", "status": 404 }
-        self.assertEqual(response.status_code, 404)
+        expected_response_data = { "error": "'party_name' is a mandatory field", "status": 406 }
+        self.assertEqual(response.status_code, 406)
         self.assertDictEqual(response_data, expected_response_data)
     
     # test for response when there is no party_hq_address in the POSTed JSON to '/parties'
@@ -46,8 +40,8 @@ class TestMandatoryFields(unittest.TestCase):
         )), content_type="application/json")
 
         response_data = bytes_to_dict(response.data)
-        expected_response_data = { "error": "'party_hq_address' is a mandatory field", "status": 404 }
-        self.assertEqual(response.status_code, 404)
+        expected_response_data = { "error": "'party_hq_address' is a mandatory field", "status": 406 }
+        self.assertEqual(response.status_code, 406)
         self.assertDictEqual(response_data, expected_response_data)
     
     # test for response when there is no party_logo_url in the POSTed JSON to '/parties'
@@ -58,8 +52,8 @@ class TestMandatoryFields(unittest.TestCase):
         )))
         
         response_data = bytes_to_dict(response.data)
-        expected_response = { "error": "'party_logo_url' is a mandatory field", "status": 404 }
-        self.assertEqual(response.status_code, 404)
+        expected_response = { "error": "'party_logo_url' is a mandatory field", "status": 406 }
+        self.assertEqual(response.status_code, 406)
         self.assertDictEqual(response_data, expected_response)
     
     # test for response when there is no party_members in the POSTed JSON to '/parties'
@@ -71,8 +65,8 @@ class TestMandatoryFields(unittest.TestCase):
 
         
         response_data = bytes_to_dict(response.data)
-        expected_response = { "error": "'party_members' is a mandatory field", "status": 404 }
-        self.assertEqual(response.status_code, 404)
+        expected_response = { "error": "'party_members' is a mandatory field", "status": 406 }
+        self.assertEqual(response.status_code, 406)
         self.assertDictEqual(response_data, expected_response)
 
     # test for response when there is no party_motto in the POSTed JSON to '/parties'
@@ -84,8 +78,8 @@ class TestMandatoryFields(unittest.TestCase):
 
         
         response_data = bytes_to_dict(response.data)
-        expected_response = { "error": "'party_motto' is a mandatory field", "status": 404 }
-        self.assertEqual(response.status_code, 404)
+        expected_response = { "error": "'party_motto' is a mandatory field", "status": 406 }
+        self.assertEqual(response.status_code, 406)
         self.assertDictEqual(response_data, expected_response)
     
     # test for response when all the fields are present
@@ -118,8 +112,8 @@ class TestFieldsDataTypes(unittest.TestCase):
         )))
 
         response_data = bytes_to_dict(response.data)
-        expected_response = { "status": 404, "error": "'party_name' field must be a '<class 'str'>'" }
-        self.assertEqual(response.status_code, 404)
+        expected_response = { "status": 406, "error": "'party_name' field must be a '<class 'str'>'" }
+        self.assertEqual(response.status_code, 406)
         self.assertDictEqual(response_data, expected_response)
     
 
@@ -131,8 +125,8 @@ class TestFieldsDataTypes(unittest.TestCase):
         )))
 
         response_data = bytes_to_dict(response.data)
-        expected_response = { "status": 404, "error": "'party_logo_url' field must be a '<class 'str'>'" }
-        self.assertEqual(response.status_code, 404)
+        expected_response = { "status": 406, "error": "'party_logo_url' field must be a '<class 'str'>'" }
+        self.assertEqual(response.status_code, 406)
         self.assertDictEqual(response_data, expected_response)
 
 
@@ -144,8 +138,8 @@ class TestFieldsDataTypes(unittest.TestCase):
         )))
 
         response_data = bytes_to_dict(response.data)
-        expected_response = { "status": 404, "error": "'party_hq_address' field must be a '<class 'str'>'" }
-        self.assertEqual(response.status_code, 404)
+        expected_response = { "status": 406, "error": "'party_hq_address' field must be a '<class 'str'>'" }
+        self.assertEqual(response.status_code, 406)
         self.assertDictEqual(response_data, expected_response)
     
     # test if party_motto only accepts strings. party_name will be an integer
@@ -156,8 +150,8 @@ class TestFieldsDataTypes(unittest.TestCase):
         )))
 
         response_data = bytes_to_dict(response.data)
-        expected_response = { "status": 404, "error": "'party_motto' field must be a '<class 'str'>'" }
-        self.assertEqual(response.status_code, 404)
+        expected_response = { "status": 406, "error": "'party_motto' field must be a '<class 'str'>'" }
+        self.assertEqual(response.status_code, 406)
         self.assertDictEqual(response_data, expected_response)
 
     # test if party_members only accepts integer. party_members will be a String
@@ -168,8 +162,8 @@ class TestFieldsDataTypes(unittest.TestCase):
         )))
 
         response_data = bytes_to_dict(response.data)
-        expected_response = { "status": 404, "error": "'party_members' field must be a '<class 'int'>'" }
-        self.assertEqual(response.status_code, 404)
+        expected_response = { "status": 406, "error": "'party_members' field must be a '<class 'int'>'" }
+        self.assertEqual(response.status_code, 406)
         self.assertDictEqual(response_data, expected_response)    
     
     # test when all the fields have the correct values
@@ -180,10 +174,8 @@ class TestFieldsDataTypes(unittest.TestCase):
         )))
 
         response_data = bytes_to_dict(response.data)
-        expected_response = { "status": 404, "error": "'party_logo_url' field must be a '<class 'str'>'" }
         self.assertEqual(response.status_code, 200)
-
-
+        
 
 if __name__ == "__main__":
     unittest.main()

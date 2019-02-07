@@ -4,6 +4,7 @@ import sys
 import json
 sys.path.insert(0,'../..')
 
+from politico_api.tests.functions_for_tests import bytes_to_dict
 from politico_api.config import app 
 
 class TestJsonDataTypes(unittest.TestCase):
@@ -16,15 +17,19 @@ class TestJsonDataTypes(unittest.TestCase):
     def test_party_when_partyID_is_string(self):
         response = self.client.patch("/api/v1/parties/notinteger/ODM")
 
-        self.assertEqual(response.status_code, 404)
+        response_data = bytes_to_dict(response.data)
+        expected_response = { "status": 406, "error": "partyID has to be a number" }
+
+        self.assertDictEqual(response_data, expected_response)
+        self.assertEqual(response.status_code, 406)
 
     # in /api/v1/parties/<partyID>/<partyName>-PATCH, the partyName should be a string
     # it should not contain special characters such as () 
     # we will use [notstring] in place of partyName and expect a 404 error
     def test_party_when_partyName_is_list(self):
         response = self.client.patch("/api/v1/parties/1/[notstring]")
-        
-        self.assertEqual(response.status_code, 404)
+
+        self.assertEqual(response.status_code, 406)
 
 class TestMandatoryFields(unittest.TestCase):
 
@@ -36,4 +41,5 @@ class TestMandatoryFields(unittest.TestCase):
     def test_response_without_a_single_field(self):
         response = self.client.patch("/api/v1/parties/only_field")
 
+        # self.assertDictEqual()
         self.assertEqual(response.status_code, 405)
