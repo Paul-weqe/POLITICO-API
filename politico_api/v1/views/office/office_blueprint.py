@@ -30,36 +30,22 @@ def create_office():
             error = create_office_errors["MANDATORY_FIELD"].format(required_fields_present)
 
     if error != None:
-        return make_response(jsonify({
-            "status": 406,
-            "error": error
-        }), 406)
+        return ApiFunctions.return_406_response(error)
         
     new_office = OfficeModel(json_data)
     office_info = new_office.create_office()
 
     # makes sure that the office information has been found and there are no errors so far
     if office_info != None and error == None:
-        return make_response(jsonify({
-            "status": 200,
-            "data": [
-                office_info
-                ]
-            }), 200)
+        return ApiFunctions.return_200_response([office_info])
     
     error = create_office_errors["UNABLE_TO_ADD_OFFICE"]
-    return make_response(jsonify({
-        "status": 406,
-        "error": error
-    }), 406)
+    return ApiFunctions.return_406_response(error)
+
 
 @office_blueprint_v1.route("/offices", strict_slashes=False)
 def get_all_offices():
-    
-    return make_response(jsonify({
-        "status": 200,
-        "data": OfficeModel.get_all_offices()
-    }), 200)
+    return ApiFunctions.return_200_response(OfficeModel.get_all_offices())
 
 
 @office_blueprint_v1.route("/offices/<officeID>", strict_slashes=False)
@@ -73,26 +59,16 @@ def get_single_office(officeID):
 
     if ApiFunctions.check_is_integer(officeID) == False:
         error = errors["OFFICEID_MUST_BE_REAL_NUMBER"]
-        print("STEP1")
     
     # makes sure the officeID is not less than 1
     elif int(officeID) < 1:
         error = errors["OFFICEID_CANNOT_BE_ZERO_OR_NEGATIVE"]
-        print("STEP2")
     
     # office = Office.get_single_office(officeID)
     elif office != None:
-        return make_response(jsonify({
-            "status": 200,
-            "data": office
-        }), 200)
-        print("STEP3")
+        return ApiFunctions.return_200_response(office)
     
     if error == None : error =  ApiFunctions.check_error_if_item_is_true(office, None, error, errors["COULD_NOT_FIND_OFFICE"].format(officeID))
     
-    print(error)
-    return make_response(jsonify({
-        "status": 406,
-        "error": error
-    }), 406)
+    return ApiFunctions.return_406_response(error)
     

@@ -1,5 +1,24 @@
+from flask import make_response, jsonify
 
 class ApiFunctions:
+
+    
+    # returns a success 200 status_code with data 
+    @staticmethod
+    def return_200_response(data):
+        return make_response(jsonify({
+            "status": 200,
+            "data": data
+        }), 200)
+
+    # structures response for a 406 response
+    # the error will be the error_message input
+    @staticmethod
+    def return_406_response(error_message):
+        return make_response(jsonify({
+            "status": 406,
+            "error": error_message
+        }), 406)
 
     # this method checks for the presence of the mandatory fields in specific input data
     # both the required_input and received_input will be dictionaries
@@ -57,6 +76,4 @@ class ApiFunctions:
             return True
         return False
     
-    # 
     
-

@@ -8,12 +8,7 @@ party_blueprint_v1 = Blueprint('party_blueprint', __name__, url_prefix="/api/v1"
 
 @party_blueprint_v1.route("/parties/", strict_slashes=False)
 def get_all_parties():
-
-    return make_response(jsonify({
-        "status": 200,
-        "data": PartyModel.get_all_parties()
-    }), 200)
-
+    ApiFunctions.return_200_response(PartyModel.get_all_parties())
 
 @party_blueprint_v1.route("/parties/<partyID>/<partyName>", methods=['PATCH'], strict_slashes=False)
 def edit_party(partyID, partyName):
@@ -41,20 +36,12 @@ def edit_party(partyID, partyName):
     else:
         edit_party_output = PartyModel.edit_party(int(partyID), partyName)
     
-    # if edit_party_output == False and error==None:
-    #     error = edit_party_error_statements["CANNOT_FIND_PARTY"].format(partyID)
     if error == None: error = ApiFunctions.check_error_if_item_is_true(edit_party_output, False, error, edit_party_error_statements["CANNOT_FIND_PARTY"].format(partyID))
 
     if error != None:
-        return make_response(jsonify({
-            "status": 406,
-            "error": error
-        }), 406)
+        return ApiFunctions.return_406_response(error)
     
-    return make_response(jsonify({
-        "status": 200,
-        "data": edit_party_output
-    }), 200)
+    return ApiFunctions.return_200_response(edit_party_output)
 
 @party_blueprint_v1.route("/parties/<partyID>", methods=['DELETE'], strict_slashes=False)
 def delete_party(partyID):
@@ -75,31 +62,19 @@ def delete_party(partyID):
         error = delete_party_error_statements["UNABLE_TO_FIND_PARTY"].format(partyID)
     
     if error != None:
-        return make_response(jsonify({
-            "status": 406,
-            "error": error
-        }), 406)
-    
-    return make_response(jsonify({
-        "status": 200,
-        "data": "successfully deleted"
-    }), 200)
+        return ApiFunctions.return_406_response(error)
 
+    return ApiFunctions.return_200_response("successfully deleted")
+    
 
 @party_blueprint_v1.route("/parties/<partyID>", strict_slashes=False)
 def get_single_party(partyID):
-    getPartyOutput = PartyModel.get_single_party(int(partyID))
+    get_party_output = PartyModel.get_single_party(int(partyID))
 
-    if getPartyOutput == False:
-        return make_response(jsonify({
-            "status": 406,
-            "erorr": "unable to find party with ID {}".format(partyID)
-        }), 406)
-    
-    return make_response(jsonify({
-        "status": 200,
-        "data": [ getPartyOutput ]
-    }), 200)
+    if get_party_output == False:
+        return ApiFunctions.return_406_response("unable to find party with ID {}".format(partyID))
+
+    return ApiFunctions.return_200_response([get_party_output]) 
 
 @party_blueprint_v1.route("/parties", methods=['POST'], strict_slashes=False)
 def create_party():
@@ -112,26 +87,13 @@ def create_party():
 
         # checks if any of the mandatory field is absent in the JSON data which will lead to a 404 error
         if field not in json_data:
-            return make_response(jsonify({
-                "status": 406,
-                "error": "'{}' is a mandatory field".format(field)
-            }), 406)
-        
+            return ApiFunctions.return_406_response("'{}' is a mandatory field".format(field))
 
         # testing for the data type of the fields based on the corresponding value in required_fields dictionary
         elif type(json_data[field]) != create_party_required[field]:
-            return make_response(jsonify({
-                "status": 406,
-                "error": "'{}' field must be a '{}'".format(field, create_party_required[field])
-            }), 406)
+            return ApiFunctions.return_406_response("'{}' field must be a '{}'".format(field, create_party_required[field]))
 
     # initialize a party using the PartyModel
     party = PartyModel(json_data)
     created_party_output = party.createParty()
-
-    return make_response(jsonify({
-        "status": 200,
-        "data": [
-            created_party_output
-        ]
-    }), 200)
+    return ApiFunctions.return_200_response([created_party_output])
