@@ -14,6 +14,7 @@ install:
 
 script: 
   - bash build.sh
+  - py.test --cov=politicoapi politico_api/tests/
 
 after-success:
   - coveralls
