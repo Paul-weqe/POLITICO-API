@@ -3,7 +3,7 @@ import sys
 sys.path.insert(0,'../..')
 
 import json
-from politico_app.config import app 
+from politico_api.config import app 
 import unittest
 
 client = app.test_client()

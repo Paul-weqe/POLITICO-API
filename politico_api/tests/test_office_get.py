@@ -3,7 +3,7 @@ import sys
 sys.path.insert(0,'../../')
 
 import json
-from politico_app.config import app 
+from politico_api.config import app 
 import unittest
 
 # converts bytes responses to dictionaries. Meant for when the JSON response is received in bytes, it can be transformed to a dictionary
@@ -84,7 +84,7 @@ class TestEmptyRequest(unittest.TestCase):
     def test_response(self):
         response = self.client.get("/api/v1/offices")
         response_data = bytes_to_dict(response.data)
-
+        
         self.assertEqual(response.status_code, 200)
 
 if __name__ == "__main__":

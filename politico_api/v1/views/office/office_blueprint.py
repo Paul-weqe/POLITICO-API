@@ -1,13 +1,11 @@
-
 from flask import Blueprint, jsonify, request, make_response
-from random import randint
-from politico_app.models.office import Office
-from politico_app.views.api_functions import ApiFunctions
-from politico_app.views.required_fields import mandatory_fields, error_dictionary
+from politico_api.v1.models.office import OfficeModel
+from politico_api.v1.views.api_functions import ApiFunctions
+from politico_api.v1.views.api_response_data import mandatory_fields, error_dictionary
 
-office_blueprint = Blueprint('office_blueprint', __name__, url_prefix="/api/v1")
+office_blueprint_v1 = Blueprint('office_blueprint', __name__, url_prefix="/api/v1")
 
-@office_blueprint.route("/offices/", strict_slashes=False, methods=['POST'])
+@office_blueprint_v1.route("/offices/", strict_slashes=False, methods=['POST'])
 def create_office():
     json_data = request.get_json(force=True)
 
@@ -37,7 +35,7 @@ def create_office():
             "error": error
         }), 404)
         
-    new_office = Office(json_data)
+    new_office = OfficeModel(json_data)
     office_info = new_office.create_office()
 
     # makes sure that the office information has been found and there are no errors so far
@@ -55,43 +53,40 @@ def create_office():
         "error": error
     }))
 
-@office_blueprint.route("/offices", strict_slashes=False)
+@office_blueprint_v1.route("/offices", strict_slashes=False)
 def getAllOffices():
-    office = Office.get_all_offices()
+    office = OfficeModel.get_all_offices()
     return make_response(jsonify({
         "status": 200,
         "data": office
     }), 200)
 
 
-@office_blueprint.route("/offices/<officeID>", strict_slashes=False)
+@office_blueprint_v1.route("/offices/<officeID>", strict_slashes=False)
 def getSingleOffice(officeID):
     
     # gets all the errors for the get_single_office function
     # this is from the error_dictionary in the required_fields.py
     errors = error_dictionary["get_single_office"]
+    office = OfficeModel.get_single_office(officeID)
     error = None 
 
-    try:
-        officeID = int(officeID)
-
-    except ValueError:
+    if ApiFunctions.check_is_integer(officeID) == False:
         error = errors["OFFICEID_MUST_BE_REAL_NUMBER"]
-
+    
     # makes sure the officeID is not less than 1
-    if error == None and int(officeID) < 1:
+    elif int(officeID) < 1:
         error = errors["OFFICEID_CANNOT_BE_ZERO_OR_NEGATIVE"]
     
-    office = Office.get_single_office(officeID)
-
-    # returns true if the office is found
-    if error == None and office != None:
+    # office = Office.get_single_office(officeID)
+    elif office != None:
         return make_response(jsonify({
             "status": 200,
             "data": office
         }), 200)
     
-    elif error == None:
+    
+    if office == None and error == None:
         error = errors["COULD_NOT_FIND_OFFICE"].format(officeID)
 
     return make_response(jsonify({

@@ -35,6 +35,10 @@ error_dictionary = {
         "ID_HAS_TO_BE_MORE_THAN_ZERO": "partyID has to be more than 0",
         "NAME_CANNOT_CONTAIN_SPECIAL_CHARACTERS": "partyName cannot contain special characters like @ or $",
         "CANNOT_FIND_PARTY": "cannot find party with ID {}"
+    },
+    "delete_party": {
+        "ID_HAS_TO_BE_NUMBER": "partyID has to be a number",
+        "UNABLE_TO_FIND_PARTY": "unable to delete party with ID {}",
     }
-
+    
 }

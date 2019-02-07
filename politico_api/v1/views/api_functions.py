@@ -24,7 +24,7 @@ class ApiFunctions:
     # this may be useful when trying to generate or filter words and do not need special characters
     @staticmethod
     def check_for_special_characters(string_input):
-        special_characters = ["!", "@", "#", "$", "%", "^", "&", "*", "(", ")"]
+        special_characters = ["!", "@", "#", "$", "%", "^", "&", "*", "(", ")", "[", "]"]
         
         for character in special_characters:
             if character in string_input:

@@ -2,7 +2,7 @@ from random import randint
 import sys
 sys.path.insert(0,'../../')
 
-from politico_app.models.model_functions import GeneralModelMethods
+from politico_api.v1.models.model_functions import GeneralModelMethods
 
 parties = [
 

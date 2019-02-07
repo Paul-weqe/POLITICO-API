@@ -4,7 +4,7 @@ import sys
 import json
 sys.path.insert(0,'../..')
 
-from politico_app.config import app 
+from politico_api.config import app 
 
 class TestJsonDataTypes(unittest.TestCase):
     """
@@ -21,7 +21,7 @@ class TestJsonDataTypes(unittest.TestCase):
         response = self.client.post("/api/v1/offices", data = json.dumps(dict(
             office_type=2, office_name="Prime minister"
         )), content_type="application/json")
-
+        
         self.assertEqual(response.status_code, 404)
     
     # tests for when the wrong data type us used for office_name

@@ -1,14 +1,14 @@
 from random import randint
 import sys
-sys.path.insert(0,'../../')
+sys.path.insert(0,'../../..')
 
-from politico_app.models.model_functions import GeneralModelMethods
+from politico_api.v1.models.model_functions import GeneralModelMethods
 
 offices = [
 
 ]
 
-class Office:
+class OfficeModel:
 
     def __init__(self, office_data):
         self.type = office_data["office_type"]
