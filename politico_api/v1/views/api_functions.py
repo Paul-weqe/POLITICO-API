@@ -41,3 +41,11 @@ class ApiFunctions:
         except ValueError:
             return False
     
+    # checks if an item is tru and if there have been any errors before
+    # mostly used in the '/offices' and '/parties' routes when looping through. There are many such instances therefore the creation of this method has been necessary
+    @staticmethod
+    def check_error_if_item_is_true(item_to_compare, expected_output, error, message):
+        if item_to_compare == expected_output and error == None:
+            return message
+        return None 
+    

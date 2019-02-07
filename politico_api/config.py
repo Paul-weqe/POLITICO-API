@@ -13,7 +13,9 @@ def handle_error(error_number, error_message):
         return make_response(jsonify({
             "status": error_number,
             "error": error_message
-        }), erorr_number)
+        }), error_number)
+
 
 handle_error(404, "The page you are looking for could not be found")
 handle_error(405, "That method cannot be used in this route")
+handle_error(500, "The problem is on our side. It will be fixed shortly")

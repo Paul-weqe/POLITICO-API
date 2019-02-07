@@ -42,8 +42,9 @@ def edit_party(partyID, partyName):
     else:
         edit_party_output = PartyModel.edit_party(int(partyID), partyName)
     
-    if edit_party_output == False and error==None:
-        error = edit_party_error_statements["CANNOT_FIND_PARTY"].format(partyID)
+    # if edit_party_output == False and error==None:
+    #     error = edit_party_error_statements["CANNOT_FIND_PARTY"].format(partyID)
+    error = ApiFunctions.check_error_if_item_is_true(edit_party_output, False, error, edit_party_error_statements["CANNOT_FIND_PARTY"].format(partyID))
 
     if error != None:
         return make_response(jsonify({

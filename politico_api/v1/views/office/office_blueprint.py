@@ -86,8 +86,7 @@ def getSingleOffice(officeID):
         }), 200)
     
     
-    if office == None and error == None:
-        error = errors["COULD_NOT_FIND_OFFICE"].format(officeID)
+    error =  ApiFunctions.check_error_if_item_is_true(office, None, error, errors["COULD_NOT_FIND_OFFICE"].format(officeID))
 
     return make_response(jsonify({
         "status": 404,
