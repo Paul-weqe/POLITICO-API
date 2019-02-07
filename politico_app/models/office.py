@@ -10,9 +10,9 @@ offices = [
 
 class Office:
 
-    def __init__(self, office_name, office_type):
-        self.type = office_type
-        self.name = office_name
+    def __init__(self, office_data):
+        self.type = office_data["office_type"]
+        self.name = office_data["office_name"]
 
     def create_office(self):
         try:

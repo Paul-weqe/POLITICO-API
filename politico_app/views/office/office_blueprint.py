@@ -23,16 +23,12 @@ def create_office():
     if required_fields_present == True:
         # checks for the data type of the fields that have been confirmed to be present
         data_types_correct = ApiFunctions.test_data_type(create_office_required_fields, json_data)
-        if data_types_correct != True:
+        if data_types_correct != True and error == None:
             # this is done since the ApiFunctions.test_data_type() returns the field whose data type is not correct, 
             # and this is stored in the data_type_correct variable, this will be used to format the message output
-            if error == None: 
-                error = create_office_errors["WRONG_DATA_TYPE"].format(data_types_correct[0], data_types_correct[1])
-
-    else:
-        # since the test_required fields returns the item that is mandatory and is not present in our data
-        # the error will be the required field is mandatory in the requested body
-        if error == None: 
+            error = create_office_errors["WRONG_DATA_TYPE"].format(data_types_correct[0], data_types_correct[1])
+            
+    elif error == None: 
             error = create_office_errors["MANDATORY_FIELD"].format(required_fields_present)
 
     if error != None:
@@ -40,11 +36,8 @@ def create_office():
             "status": 404,
             "error": error
         }), 404)
-
-    office_type = json_data["office_type"]
-    office_name = json_data["office_name"]
-    
-    new_office = Office(office_name, office_type)
+        
+    new_office = Office(json_data)
     office_info = new_office.create_office()
 
     # makes sure that the office information has been found and there are no errors so far

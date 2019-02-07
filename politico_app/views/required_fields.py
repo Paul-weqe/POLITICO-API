@@ -6,6 +6,14 @@ mandatory_fields = {
         "office_name": str
     },
 
+    "create_party": {
+        "party_name": str, 
+        "party_hq_address": str, 
+        "party_logo_url": str, 
+        "party_motto": str, 
+        "party_members": int
+    }
+
 }
 
 error_dictionary = {

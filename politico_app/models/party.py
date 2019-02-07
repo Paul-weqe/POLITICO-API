@@ -13,12 +13,12 @@ parties = [
 
 class PartyModel:
 
-    def __init__(self, party_name, hq_address, logo_url, members, motto):
-        self.party_name = party_name
-        self.hq_address = hq_address
-        self.logo_url = logo_url
-        self.members = members
-        self.motto = motto
+    def __init__(self, party_data):
+        self.party_name = party_data["party_name"]
+        self.hq_address = party_data["party_hq_address"]
+        self.logo_url = party_data["party_logo_url"]
+        self.members = party_data["party_members"]
+        self.motto = party_data["party_motto"]
 
     def createParty(self):
         new_party_info = {
