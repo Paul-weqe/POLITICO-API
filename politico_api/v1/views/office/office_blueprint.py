@@ -9,6 +9,7 @@ office_blueprint_v1 = Blueprint('office_blueprint', __name__, url_prefix="/api/v
 def create_office():
     json_data = request.get_json(force=True)
 
+    # get all the errors associated with this function and all the required fields for this office
     create_office_required_fields = mandatory_fields["create_office"]
     create_office_errors = error_dictionary["create_office"]
     error = None 
