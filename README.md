@@ -47,8 +47,8 @@ pytest --cov=.
 
 http://paul-politico-api.herokuapp.com
 
-| --- | --- | --- | --- |
 | route | method | function | JSON fields |
+| --- | --- | --- | --- |
 | /api/v1/offices/ | POST | create a new office | "office_name": string, "office_type": string |
 | /api/v1/offices/ | GET | get all offices | No json fields |
 | /api/v1/offices/<officeID> | GET | gets a single office information | no json fields |
