@@ -51,9 +51,9 @@ http://paul-politico-api.herokuapp.com
 | --- | --- | --- | --- |
 | /api/v1/offices/ | POST | create a new office | "office_name": string, "office_type": string |
 | /api/v1/offices/ | GET | get all offices | No json fields |
-| /api/v1/offices/<officeID> | GET | gets a single office information | no json fields |
+| /api/v1/offices/officeID | GET | gets a single office information | no json fields |
 | /api/v1/parties/ | GET | gets all parties | no json field |
-| /api/v1/parties/<partyID>/<partyName> | PATCH | edits a single party with ID partyID and sets its name to partyName | no json field |
-| /parties/<partyID> | DELETE | deletes the party with ID partyID | no json field |
-| /parties/<partyID> | GET | gets a single party with ID partyID | no json field |
+| /api/v1/parties/partyID/partyName | PATCH | edits a single party with ID partyID and sets its name to partyName | no json field |
+| /parties/partyID | DELETE | deletes the party with ID partyID | no json field |
+| /parties/partyID | GET | gets a single party with ID partyID | no json field |
 | /parties/ | POST | creates a party | "party_name": string, "party_name": string, "party_hq_address": string, "party_logo_url": str, "party_motto": str, "party_members": int |
