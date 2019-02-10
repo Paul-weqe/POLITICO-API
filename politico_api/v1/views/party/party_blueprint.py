@@ -4,20 +4,20 @@ from politico_api.v1.models.party import PartyModel
 from politico_api.v1.views.api_response_data import error_dictionary, mandatory_fields
 from politico_api.v1.views.api_functions import ApiFunctions
 
-party_blueprint_v1 = Blueprint('party_blueprint', __name__, url_prefix="/api/v1")
+party_blueprint_v1 = Blueprint('party_blueprint', __name__, url_prefix="/api/v1/parties")
 
-@party_blueprint_v1.route("/parties/", strict_slashes=False)
+@party_blueprint_v1.route("/", strict_slashes=False)
 def get_all_parties():
     ApiFunctions.return_200_response(PartyModel.get_all_parties())
 
-@party_blueprint_v1.route("/parties/<partyID>/<partyName>", methods=['PATCH'], strict_slashes=False)
+@party_blueprint_v1.route("/<partyID>/<partyName>", methods=['PATCH'], strict_slashes=False)
 def edit_party(partyID, partyName):
 
     edit_party_error_statements = error_dictionary["edit_party"]
     edit_party_output = None 
     
     error = None
-
+    
     # make sure the partyID is a number(int)
     if ApiFunctions.check_is_integer(partyID) == False:
         error = edit_party_error_statements["ID_HAS_TO_BE_NUMBER"]
@@ -43,7 +43,7 @@ def edit_party(partyID, partyName):
     
     return ApiFunctions.return_200_response(edit_party_output)
 
-@party_blueprint_v1.route("/parties/<partyID>", methods=['DELETE'], strict_slashes=False)
+@party_blueprint_v1.route("/<partyID>", methods=['DELETE'], strict_slashes=False)
 def delete_party(partyID):
 
     delete_party_error_statements = error_dictionary["delete_party"]
@@ -67,7 +67,7 @@ def delete_party(partyID):
     return ApiFunctions.return_200_response("successfully deleted")
     
 
-@party_blueprint_v1.route("/parties/<partyID>", strict_slashes=False)
+@party_blueprint_v1.route("/<partyID>", strict_slashes=False)
 def get_single_party(partyID):
     get_party_output = PartyModel.get_single_party(int(partyID))
 
@@ -76,7 +76,7 @@ def get_single_party(partyID):
 
     return ApiFunctions.return_200_response([get_party_output]) 
 
-@party_blueprint_v1.route("/parties", methods=['POST'], strict_slashes=False)
+@party_blueprint_v1.route("/", methods=['POST'], strict_slashes=False)
 def create_party():
     json_data = request.get_json(force=True)
 

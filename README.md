@@ -7,6 +7,11 @@
 
 <a href="https://codeclimate.com/github/Paul-weqe/POLITICO-API/maintainability"><img src="https://api.codeclimate.com/v1/badges/ad5d7bcf66ab6b32b852/maintainability" /></a>
 
+## What is politico?
+
+Politico is a government-like voting system. It allows for candidates to vie under political parties and allows for regular users to vote. 
+
+This API allows for exposure of the data held by POLITICO. This reference guide shows you how you can be able to access the data inside the POLITICO system online. <a href="https://paul-weqe.github.io/POLITICO/UI/index.html">Our frontend</a>
 
 ## Setup guide
 

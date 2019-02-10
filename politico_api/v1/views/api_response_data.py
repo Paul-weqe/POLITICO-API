@@ -12,8 +12,16 @@ mandatory_fields = {
         "party_logo_url": str, 
         "party_motto": str, 
         "party_members": int
+    },
+    "create_user": {
+        "first_name": str,
+        "last_name" : str,
+        "other_name" : str,
+        "email" : str,
+        "phone_number":str,
+        "passport_url" : str,
+        "is_admin" : bool,
     }
-
 }
 
 error_dictionary = {
@@ -40,6 +48,12 @@ error_dictionary = {
         "ID_HAS_TO_BE_NUMBER": "partyID has to be a number",
         "UNABLE_TO_FIND_PARTY": "unable to delete party with ID {}",
         "ID_HAS_TO_BE_POSITIVE": "partyID cannot be 0 or a negative number"
+    },
+    "find_user": {
+        "CANNOT_FIND_ID": "Unable to find user with ID {}",
+        "ID_MUST_BE_REAL_NUMBER": "userID must be a real number",
+    },
+    "delete_user": {
+        "CANNOT_DELETE_USER": "Unable to delete user with ID {}"
     }
-    
 }

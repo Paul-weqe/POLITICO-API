@@ -3,9 +3,9 @@ from politico_api.v1.models.office import OfficeModel
 from politico_api.v1.views.api_functions import ApiFunctions
 from politico_api.v1.views.api_response_data import mandatory_fields, error_dictionary
 
-office_blueprint_v1 = Blueprint('office_blueprint', __name__, url_prefix="/api/v1")
+office_blueprint_v1 = Blueprint('office_blueprint', __name__, url_prefix="/api/v1/offices")
 
-@office_blueprint_v1.route("/offices/", strict_slashes=False, methods=['POST'])
+@office_blueprint_v1.route("/", strict_slashes=False, methods=['POST'])
 def create_office():
     json_data = request.get_json(force=True)
 
@@ -44,12 +44,12 @@ def create_office():
     return ApiFunctions.return_406_response(error)
 
 
-@office_blueprint_v1.route("/offices", strict_slashes=False)
+@office_blueprint_v1.route("/", strict_slashes=False)
 def get_all_offices():
     return ApiFunctions.return_200_response(OfficeModel.get_all_offices())
 
 
-@office_blueprint_v1.route("/offices/<officeID>", strict_slashes=False)
+@office_blueprint_v1.route("/<officeID>", strict_slashes=False)
 def get_single_office(officeID):
     
     # gets all the errors for the get_single_office function
@@ -72,4 +72,4 @@ def get_single_office(officeID):
     if error == None : error =  ApiFunctions.check_error_if_item_is_true(office, None, error, errors["COULD_NOT_FIND_OFFICE"].format(officeID))
     
     return ApiFunctions.return_406_response(error)
-    
+

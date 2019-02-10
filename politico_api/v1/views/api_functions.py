@@ -20,6 +20,13 @@ class ApiFunctions:
             "error": error_message
         }), 406)
 
+    @staticmethod
+    def return_error_response(status_number, error_message):
+        return make_response(jsonify({
+            "status": status_number,
+            "error": error_message
+        }), status_number)
+
     # this method checks for the presence of the mandatory fields in specific input data
     # both the required_input and received_input will be dictionaries
     @staticmethod
@@ -27,7 +34,7 @@ class ApiFunctions:
         for input_data in required_input:
             if input_data not in received_input:
                 return input_data
-        return True
+        return None
 
     # this method checks if all the data in the required input has the same data type as it's corresponding values in received_input
     # both will be dictionaries. 
@@ -37,7 +44,7 @@ class ApiFunctions:
             if type(received_input[input_data]) != required_input[input_data]:
                 return [input_data, required_input[input_data]]
         
-        return True
+        return None
     
     # checks for the presence of special characters in any string
     # this may be useful when trying to generate or filter words and do not need special characters
@@ -76,4 +83,14 @@ class ApiFunctions:
             return True
         return False
     
-    
+    # this method looks if an ID entered is valid
+    # it first looks if it is a valid number then looks if it is a negative number
+    @staticmethod
+    def check_if_is_valid_id(string_id):
+        result = None 
+        if ApiFunctions.check_is_integer(string_id) == False:
+            result =  [ 406, "ID_MUST_BE_REAL_NUMBER" ]
+        elif ApiFunctions.check_if_number_is_zero_or_negative(int(string_id)) == True:
+            result =  [ 406, "ID_CANNOT_BE_ZERO_OR_NEGATIVE" ]
+        return result
+        

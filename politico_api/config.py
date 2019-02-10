@@ -1,11 +1,14 @@
 from politico_api.v1.views.office.office_blueprint import office_blueprint_v1
 from politico_api.v1.views.party.party_blueprint import party_blueprint_v1
+from politico_api.v1.views.user.user_blueprint import user_blueprint_v1
+
 from flask import Flask, make_response, jsonify
 
 app = Flask(__name__)
 
 app.register_blueprint(office_blueprint_v1)
 app.register_blueprint(party_blueprint_v1)
+app.register_blueprint(user_blueprint_v1)
 
 def handle_error(error_number, error_message):
     @app.errorhandler(error_number)
