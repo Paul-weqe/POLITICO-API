@@ -5,7 +5,7 @@ import json
 sys.path.insert(0,'../..')
 
 from politico_api.tests.functions_for_tests import bytes_to_dict
-from politico_api.config import app 
+from politico_api import app 
 
 class TestJsonDataTypes(unittest.TestCase):
     
