@@ -30,16 +30,33 @@ class UserConnection:
             self.curr.close()
         if self.conn != None:
             self.conn.close()
-        
-    def check_if_email_exists(self, email):
+    
+    
+    def select_elements(self, table_name, condition=None):
         try:
             self.create_connection()
 
-            sql_command = "SELECT * FROM users where email='{}'".format(email)
-            self.curr.execute(sql_command)
+            if condition != None:
+                sql_query = "SELECT * FROM {} WHERE {}".format(table_name, condition)
+            else:
+                sql_query = "SELECT * FROM {}".format(table_name)
+            
+            self.curr.execute(sql_query)
+            fetched_data = self.curr.fetchall()
+            self.close_connection()
+            return fetched_data
+        
+        except Exception as e:
+            print("!!! ERROR SELECTING !!!")
+            print(e)
+            print("!!! ERROR SELECTING !!!")
+            print(False)
 
-            user_exists = self.curr.fetchall()
-            if len(user_exists) > 0:
+    def check_if_email_exists(self, email):
+        try:
+            email = self.select_elements("users", "email='{}'".format(email))
+
+            if len(email) > 0:
                 return True
             return False
 
@@ -99,22 +116,19 @@ class UserConnection:
     
     def find_user_by_email_and_password(self, user_email, user_password):
         try:
-            self.create_connection()
-
-            sql_command = "SELECT * FROM users WHERE email='{}' and password='{}'".format(user_email, user_password)
-            self.curr.execute(sql_command)
             
-            single_user = self.curr.fetchone()
-            if single_user == None:
-                return None
-            return single_user
+            select_response = self.select_elements("users", "email='{}' and password='{}'".format(user_email, user_password))
+            if len(select_response) > 0:
+                select_response = select_response[0]
+
+            return select_response
         
         except Exception as e:
             print("!!! ERROR FINDING USER !!!")
             print(e)
             print("!!! ERROR FINDING USER !!!")
             return False
-
+    
 
 u = UserConnection()
-print(u.find_user_by_email_and_password("paul@paul.com", "paulpasswor"))
+u.restructure_tables()

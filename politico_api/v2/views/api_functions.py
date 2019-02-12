@@ -93,4 +93,21 @@ class ApiFunctions:
         elif ApiFunctions.check_if_number_is_zero_or_negative(int(string_id)) == True:
             result =  [ 406, "ID_CANNOT_BE_ZERO_OR_NEGATIVE" ]
         return result
+
+    # checks if the required fields are present
+    # then checks if the fields are the correct type
+    @staticmethod
+    def check_valid_fields(required_input, received_input):
+        required_fields_present = ApiFunctions.test_required_fields(required_input, received_input)
+        valid_data_types = None 
+
+        if required_fields_present == None and ApiFunctions.test_data_type(required_input, received_input) == None:
+            return True
         
+        valid_data_types = ApiFunctions.test_data_type(required_input, received_input)
+
+        if valid_data_types != None:
+            return False
+        else:
+            return False
+

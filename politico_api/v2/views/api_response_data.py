@@ -1,6 +1,12 @@
 
 mandatory_fields = {
 
+    "create_user": {
+        "username": str, 
+        "email": str,
+        "password": str,
+    },
+
     "create_office": {
         "office_type": str,
         "office_name": str
@@ -13,14 +19,10 @@ mandatory_fields = {
         "party_motto": str, 
         "party_members": int
     },
-    "create_user": {
-        "first_name": str,
-        "last_name" : str,
-        "other_name" : str,
-        "email" : str,
-        "phone_number":str,
-        "passport_url" : str,
-        "is_admin" : bool,
+
+    "login_user" : {
+        "email": str,
+        "password": str
     }
 }
 
