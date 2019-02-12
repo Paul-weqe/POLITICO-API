@@ -4,9 +4,9 @@ sys.path.insert(0,'../../..')
 
 from politico_api.v1.models.model_functions import GeneralModelMethods
 
-offices = [
-
-]
+offices = {
+    
+}
 
 class OfficeModel:
 

@@ -4,9 +4,9 @@ sys.path.insert(0,'../../')
 
 from politico_api.v1.models.model_functions import GeneralModelMethods
 
-parties = [
+parties = {
 
-]
+}
 
 # finds out if a particular ID already exists in a list of items deeming it unusable. Searches the 'list_to_search' for the 'id_number'
 # returns True if the ID number does not exist and False if the ID number exists
@@ -43,4 +43,4 @@ class PartyModel:
     
     @staticmethod
     def delete_party(party_id):
-        return GeneralModelMethods.delete_item(parties, party_id)
+        return GeneralModelMethods.delete_single_item(parties, party_id)

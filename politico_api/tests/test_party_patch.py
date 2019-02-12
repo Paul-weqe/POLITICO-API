@@ -15,20 +15,15 @@ class TestJsonDataTypes(unittest.TestCase):
     # in /api/v1/parties/<partyID>/<partyName>-PATCH, the partyID should be an integer
     # we will use a string which should return a 404 error
     def test_party_when_partyID_is_string(self):
-        response = self.client.patch("/api/v1/parties/notinteger/ODM")
+        response = self.client.patch("/api/v1/parties/notinteger", data=json.dumps(dict(
+            partyName="DOIDS"
+        )), content_type="application/json")
 
         response_data = bytes_to_dict(response.data)
+        print(response.status_code)
         expected_response = { "status": 406, "error": "partyID has to be a number" }
 
         self.assertDictEqual(response_data, expected_response)
-        self.assertEqual(response.status_code, 406)
-
-    # in /api/v1/parties/<partyID>/<partyName>-PATCH, the partyName should be a string
-    # it should not contain special characters such as () 
-    # we will use [notstring] in place of partyName and expect a 404 error
-    def test_party_when_partyName_is_list(self):
-        response = self.client.patch("/api/v1/parties/1/[notstring]")
-
         self.assertEqual(response.status_code, 406)
 
 class TestMandatoryFields(unittest.TestCase):
@@ -39,7 +34,9 @@ class TestMandatoryFields(unittest.TestCase):
     # PATCH for '/api/v1/parties/<partyID>/<partyName>' requires both partyID and partyName
     # We will test for what happens when we miss one of the fields. We expect a 405 status code
     def test_response_without_a_single_field(self):
-        response = self.client.patch("/api/v1/parties/only_field")
+        response = self.client.patch("/api/v1/parties/only_field", data=json.dumps(dict(
+            partyName="POLITICO"
+        )) ,content_type="application/json")
 
         # self.assertDictEqual()
-        self.assertEqual(response.status_code, 405)
+        self.assertEqual(response.status_code, 406)

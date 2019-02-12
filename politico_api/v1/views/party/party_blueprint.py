@@ -10,12 +10,15 @@ party_blueprint_v1 = Blueprint('party_blueprint', __name__, url_prefix="/api/v1/
 def get_all_parties():
     return ApiFunctions.return_200_response(PartyModel.get_all_parties())
 
-@party_blueprint_v1.route("/<partyID>/<partyName>", methods=['PATCH'], strict_slashes=False)
-def edit_party(partyID, partyName):
+@party_blueprint_v1.route("/<partyID>", methods=['PATCH'], strict_slashes=False)
+def edit_party(partyID):
 
     edit_party_error_statements = error_dictionary["edit_party"]
     edit_party_output = None 
     
+    json_data = request.get_json()
+    partyName = json_data["partyName"]
+
     error = None
     
     # make sure the partyID is a number(int)
@@ -47,6 +50,7 @@ def edit_party(partyID, partyName):
 def delete_party(partyID):
 
     delete_party_error_statements = error_dictionary["delete_party"]
+
     delete_party_output = None
     error = None 
 
@@ -69,12 +73,26 @@ def delete_party(partyID):
 
 @party_blueprint_v1.route("/<partyID>", strict_slashes=False)
 def get_single_party(partyID):
-    get_party_output = PartyModel.get_single_party(int(partyID))
+    
+    error = None 
+    get_party_output=None
 
-    if get_party_output == None:
-        return ApiFunctions.return_406_response("unable to find party with ID {}".format(partyID))
+    if not ApiFunctions.check_is_integer(partyID):
+        error = "partyID must be an integer"
+    
+    else:
+        get_party_output = PartyModel.get_single_party(int(partyID))
+    
 
+    if get_party_output == None and error == None:
+        error = "unable to find party with ID {}".format(partyID)
+    
+    print(error)
+    print("###")
+    if error != None:
+        return ApiFunctions.return_406_response(error)
     return ApiFunctions.return_200_response([get_party_output]) 
+
 
 @party_blueprint_v1.route("/", methods=['POST'], strict_slashes=False)
 def create_party():
