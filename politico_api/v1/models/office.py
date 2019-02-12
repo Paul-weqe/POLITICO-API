@@ -13,7 +13,7 @@ class OfficeModel:
     def __init__(self, office_data):
         self.type = office_data["office_type"]
         self.name = office_data["office_name"]
-
+        
     def create_office(self):
         try:
             dict_info = { "type": self.type, "name": self.name }
@@ -21,7 +21,7 @@ class OfficeModel:
             return dict_info
         except Exception:
             return False
-    
+
     @staticmethod
     def get_all_offices():
         return offices

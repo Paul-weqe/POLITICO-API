@@ -8,7 +8,7 @@ party_blueprint_v1 = Blueprint('party_blueprint', __name__, url_prefix="/api/v1/
 
 @party_blueprint_v1.route("/", strict_slashes=False)
 def get_all_parties():
-    ApiFunctions.return_200_response(PartyModel.get_all_parties())
+    return ApiFunctions.return_200_response(PartyModel.get_all_parties())
 
 @party_blueprint_v1.route("/<partyID>/<partyName>", methods=['PATCH'], strict_slashes=False)
 def edit_party(partyID, partyName):
@@ -71,7 +71,7 @@ def delete_party(partyID):
 def get_single_party(partyID):
     get_party_output = PartyModel.get_single_party(int(partyID))
 
-    if get_party_output == False:
+    if get_party_output == None:
         return ApiFunctions.return_406_response("unable to find party with ID {}".format(partyID))
 
     return ApiFunctions.return_200_response([get_party_output]) 
