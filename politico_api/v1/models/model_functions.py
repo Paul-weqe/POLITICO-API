@@ -36,7 +36,7 @@ class GeneralModelMethods():
 
         if id_number in dict_to_search:
             dict_to_search[id_number][item_to_change] = new_value
-            return dict_to_search(id_number)
+            return dict_to_search[id_number]
         return False
     
     # deletes one particular item

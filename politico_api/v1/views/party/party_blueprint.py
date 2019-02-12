@@ -8,7 +8,7 @@ party_blueprint_v1 = Blueprint('party_blueprint', __name__, url_prefix="/api/v1/
 
 @party_blueprint_v1.route("/", strict_slashes=False)
 def get_all_parties():
-    return ApiFunctions.return_200_response(PartyModel.get_all_parties())
+    return ApiFunctions.return_200_response([PartyModel.get_all_parties()])
 
 @party_blueprint_v1.route("/<partyID>", methods=['PATCH'], strict_slashes=False)
 def edit_party(partyID):
@@ -44,7 +44,7 @@ def edit_party(partyID):
     if error != None:
         return ApiFunctions.return_406_response(error)
     
-    return ApiFunctions.return_200_response(edit_party_output)
+    return ApiFunctions.return_200_response([edit_party_output])
 
 @party_blueprint_v1.route("/<partyID>", methods=['DELETE'], strict_slashes=False)
 def delete_party(partyID):
@@ -115,3 +115,4 @@ def create_party():
     party = PartyModel(json_data)
     created_party_output = party.createParty()
     return ApiFunctions.return_200_response([created_party_output])
+

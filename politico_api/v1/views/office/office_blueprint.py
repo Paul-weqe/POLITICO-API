@@ -78,7 +78,7 @@ def get_single_office(officeID):
     
     # office = Office.get_single_office(officeID)
     elif office != None:
-        return ApiFunctions.return_200_response(office)
+        return ApiFunctions.return_200_response([office])
     
     if error == None: 
         error =  ApiFunctions.check_error_if_item_is_true(office, None, error, errors["COULD_NOT_FIND_OFFICE"].format(officeID))
