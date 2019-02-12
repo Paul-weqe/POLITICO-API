@@ -31,19 +31,4 @@ class OfficeModel:
     @staticmethod
     def get_single_office(office_id):
         return GeneralModelMethods.get_single_item(offices, office_id)
-    
-# default fields when the app starts
-offices += [
-    {
-        "id": 1, "type": "local_government", "name": "chief",
-    },
-    {
-        "id": 2, "type": "legislative", "name": "MP"
-    },
-    {
-        "id": 3, "type": "state", "name": "president"
-    },
-    {
-        "id": 4, "type": "federal", "name": "magistrate"
-    }
-]
+ 

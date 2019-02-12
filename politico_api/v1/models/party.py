@@ -44,15 +44,3 @@ class PartyModel:
     @staticmethod
     def delete_party(party_id):
         return GeneralModelMethods.delete_item(parties, party_id)
-
-parties += [
-    {
-        "id": 1, "name": "Party 1", "hqAddress": "Nairobi", "logoUrl": "https://martialartsworldnews.com/wp-content/uploads/2015/11/1.jpg", "motto": "We are one", "members": 2000,
-    },
-    {
-        "id": 2, "name": "Party 2", "hqAddress": "Mombasa", "logoUrl": "https://www.michels.ca/ckfinder/userfiles/images/number2tm.png", "motto": "we are two", "members": 2500,
-    },
-    {
-        "id": 3, "name": "Party 3", "hqAddress": "Kisumu", "logoUrl": "https://vignette.wikia.nocookie.net/opartshunter/images/7/79/3.jpg/revision/latest?cb=20130603053056", "motto": "we are three", "members": 3000,
-    }
-]

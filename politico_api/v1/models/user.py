@@ -34,22 +34,4 @@ class UserModel:
     def delete_user(user_id):
         return GeneralModelMethods.delete_item(users, user_id)
     
-        
-users = [
-    {
-        "id": 1, "first_name": "Paul", "last_name": "Wekesa", "other_name": "Waswa", 
-        "email": "paul1tw1@gmail.com", "phone_number": "0712345", "passport_url": "http://paul-url", "is_admin": False
-    },
-    {
-        "id": 2, "first_name": "Gideon", "last_name": "Koima", "other_name": "Kari", "email": "gidi@gidi.com",
-        "phone_number": "071273734", "passport_url": "http://gidi-url", "is_admin": False
-    },
-    {
-        "id": 3, "first_name": "Brenda", "last_name": "Sagide", "other_name": "Njeri", "email": "brenda@brenda.com",
-        "phone_number": "07127374", "passport_url": "http://brenda-url", "is_admin": True
-    },
-    {
-        "id": 4, "first_name": "Byron", "last_name": "Kibet", "other_name": "Chep", "email": "byron@byron.com", 
-        "phone_number": "077273723", "passport_url": "http://byron-url", "is_admin": True
-    }
-]
+ 
