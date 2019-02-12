@@ -1,6 +1,6 @@
 # allow for import from the politico_app folder 
 import sys
-sys.path.insert(0,'../../')
+sys.path.insert(0,'../..')
 
 import json
 from politico_api.config import app 
