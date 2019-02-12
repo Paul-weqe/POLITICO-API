@@ -5,7 +5,7 @@ users_blueprint_v2 = Blueprint('user_blueprint_v2', __name__, url_prefix="/api/v
 
 
 # enables the creation of a specific user in the system
-@users_blueprint_v2.route("/", strict_slashes=False, methods=["POST"])
+@users_blueprint_v2.route("/signup", strict_slashes=False, methods=["POST"])
 def create_new_user():
 
     required_fields = {
@@ -47,3 +47,41 @@ def create_new_user():
             "status": 406,
             "error": "unable to create user. Look at log for details"
             }), 406)
+
+
+@users_blueprint_v2.route("/login", strict_slashes=False, methods=["POST"])
+def login_user():
+    required_fields = {
+        "email": str,
+        "password": str
+    }
+    json_data = request.get_json()
+
+    for field in required_fields:
+        if field not in json_data:
+            return make_response(jsonify({
+                "status": 406,
+                "error": "field {} is mandatory".format(field)
+            }), 406)
+
+        elif required_fields[field] != type(json_data[field]):
+            return make_response(jsonify({
+                "status": 406,
+                "error": 406
+            }), 406)
+    
+    user_info = UserModel.find_user_by_email_and_password(json_data["email"], json_data["password"])
+    print(type(user_info))
+    if type(user_info) == tuple:
+        return make_response(jsonify({
+            "status": 200,
+            "data": "login user {}".format(user_info[1])
+        }), 200)
+    
+    return make_response(jsonify({
+        "status": 406,
+        "error": "cannot find user. Try again"
+    }))
+
+
+

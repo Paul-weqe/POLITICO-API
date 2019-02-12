@@ -14,3 +14,8 @@ class UserModel:
     def restructure_database():
         user = UserConnection()
         return user.restructure_tables()
+    
+    @staticmethod
+    def find_user_by_email_and_password(email, password):
+        user = UserConnection()
+        return user.find_user_by_email_and_password(email, password)

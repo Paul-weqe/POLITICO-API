@@ -75,7 +75,7 @@ class UserConnection:
         try:
             self.create_connection()
 
-            drop_tables_commands = ["DROP TABLE users",]
+            drop_tables_commands = ["DROP TABLE IF EXISTS users",]
             for command in drop_tables_commands:
                 self.curr.execute(command)
             
@@ -96,5 +96,25 @@ class UserConnection:
             print("!!! ERRROR RESTRUCTURING TABLES !!!")
             return False
 
-    # authenticates a specific user based on their email and password
-    # def authenticate_user(self, email, password):
+    
+    def find_user_by_email_and_password(self, user_email, user_password):
+        try:
+            self.create_connection()
+
+            sql_command = "SELECT * FROM users WHERE email='{}' and password='{}'".format(user_email, user_password)
+            self.curr.execute(sql_command)
+            
+            single_user = self.curr.fetchone()
+            if single_user == None:
+                return None
+            return single_user
+        
+        except Exception as e:
+            print("!!! ERROR FINDING USER !!!")
+            print(e)
+            print("!!! ERROR FINDING USER !!!")
+            return False
+
+
+u = UserConnection()
+print(u.find_user_by_email_and_password("paul@paul.com", "paulpasswor"))

@@ -17,6 +17,24 @@ This API allows for exposure of the data held by POLITICO. This reference guide 
 
 ## Setup guide
 
+### creating the virtual environment
+ ```
+ virtualenv venv
+ ```
+
+### activating the virtual environment
+
+While on linux
+```
+source venv/bin/activate
+```
+
+on Windows:
+```
+venv\Scripts\activate
+```
+
+
 ### installing the requirements
 
 All of the requirements will be installed through the requirements.txt file. Run the following command to install:
