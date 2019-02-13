@@ -3,12 +3,9 @@ import unittest
 import sys
 import json
 from politico_api.tests.functions_for_tests import bytes_to_dict
-from .config_test import app
+from .config_test import BaseTest
 
-class TestJsonDataTypes(unittest.TestCase):
-    
-    def setUp(self):
-        self.client = app.test_client()
+class TestJsonDataTypes(BaseTest):
 
     # in /api/v1/parties/<partyID>/<partyName>-PATCH, the partyID should be an integer
     # we will use a string which should return a 404 error
@@ -24,10 +21,7 @@ class TestJsonDataTypes(unittest.TestCase):
         self.assertDictEqual(response_data, expected_response)
         self.assertEqual(response.status_code, 406)
 
-class TestMandatoryFields(unittest.TestCase):
-
-    def setUp(self):
-        self.client = app.test_client()
+class TestMandatoryFields(BaseTest):
     
     # PATCH for '/api/v1/parties/<partyID>/<partyName>' requires both partyID and partyName
     # We will test for what happens when we miss one of the fields. We expect a 405 status code

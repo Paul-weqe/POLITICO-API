@@ -3,18 +3,15 @@ import sys
 import json
 import unittest
 from politico_api.tests.functions_for_tests import bytes_to_dict
-from .config_test import app
+from .config_test import BaseTest
 
-class TestMandatoryFields(unittest.TestCase):
+class TestMandatoryFields(BaseTest):
     """
     This class will be used to test for the presence of all the required fields in the JSON of the POST data to the
     '/parties' route 
     the mandatory fields are: 
         party_name, party_hq_address, party_motto, party_members and party_logo_url
     """
-
-    def setUp(self):
-        self.client = app.test_client()
     
     # this will test for the response when there is no party name in the POSTed JSON to '/parties'
     # should return a 404 error
@@ -94,15 +91,12 @@ class TestMandatoryFields(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
     
 
-class TestFieldsDataTypes(unittest.TestCase):
+class TestFieldsDataTypes(BaseTest):
     """
     This class will be used to test for the validity of the data types of JSON fields POSTed to the server's
     '/parties' route 
     e.g if a field is supposed to be an integer, only an integer will lead to the correct 200 response
     """
-
-    def setUp(self):
-        self.client = app.test_client()
     
     
     # test if party_name only accepts strings. party_name will be an integer
@@ -177,6 +171,3 @@ class TestFieldsDataTypes(unittest.TestCase):
         response_data = bytes_to_dict(response.data)
         self.assertEqual(response.status_code, 200)
         
-
-if __name__ == "__main__":
-    unittest.main()

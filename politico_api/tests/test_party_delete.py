@@ -2,13 +2,10 @@ import sys
 import json
 import unittest
 from politico_api.tests.functions_for_tests import bytes_to_dict
-from .config_test import app
+from .config_test import BaseTest
 
 
-class TestPartyId(unittest.TestCase):
-
-    def setUp(self):
-        self.client = app.test_client()
+class TestPartyId(BaseTest):
     
     # write test for when the ID is not an integer
     # we will write for when the partyid is a string - 'notinteger'

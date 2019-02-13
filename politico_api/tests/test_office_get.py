@@ -2,7 +2,7 @@
 import sys
 import json
 import unittest
-from .config_test import app
+from .config_test import BaseTest
 
 
 # converts bytes responses to dictionaries. Meant for when the JSON response is received in bytes, it can be transformed to a dictionary
@@ -11,14 +11,11 @@ def bytes_to_dict(byte_input):
     return dict_output
 
 
-class TestOfficeID(unittest.TestCase):
+class TestOfficeID(BaseTest):
     """
     This class carries out test on the officeID for the 'GET' method in the '/offices/<officeID>' route
     the description of each test is on the one or two line comment before each function that starts with "test_"
     """
-
-    def setUp(self):
-        self.client = app.test_client()
     
 
     # test for if the officeID in the GET request for '/offices/<officeID>' is negative
@@ -69,14 +66,11 @@ class TestOfficeID(unittest.TestCase):
         self.assertEqual(response.status_code, 406)
         self.assertDictEqual(response_data, expected_data)
 
-class TestEmptyRequest(unittest.TestCase):
+class TestEmptyRequest(BaseTest):
     """
     This class is meant to test for a get request without any parameters
     basically sends a '/offices' without anything more
     """
-
-    def setUp(self):
-        self.client = app.test_client()
     
     def test_response(self):
         response = self.client.get("/api/v1/offices")
