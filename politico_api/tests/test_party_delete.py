@@ -1,9 +1,8 @@
 import sys
 import json
 import unittest
-from politico_api.v1 import create_app
 from politico_api.tests.functions_for_tests import bytes_to_dict
-app = create_app() 
+from .config_test import app
 
 
 class TestPartyId(unittest.TestCase):

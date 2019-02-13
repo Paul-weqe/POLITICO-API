@@ -2,8 +2,7 @@
 import sys
 import json
 import unittest
-from politico_api.v1 import create_app
-app = create_app()
+from .config_test import app
 
 
 # converts bytes responses to dictionaries. Meant for when the JSON response is received in bytes, it can be transformed to a dictionary
@@ -27,10 +26,10 @@ class TestOfficeID(unittest.TestCase):
     def test_offices_when_officeID_is_negative(self):
         response = self.client.get("/api/v1/offices/-1")
         response_data = bytes_to_dict(response.data)
-        # expected_data = { "status": 406, "error": "officeID cannot be zero or a negative number" }
+        expected_data = { "status": 406, "error": "officeID cannot be zero or a negative number" }
 
         self.assertEqual(response.status_code, 406)
-        # self.assertDictEqual(response_data, expected_data)
+        self.assertDictEqual(response_data, expected_data)
     
     # test for if the officeID in the GET request for '/offices/<officeID>' is zero
     # should return a 404 error whenever the officeID is negative
@@ -64,10 +63,11 @@ class TestOfficeID(unittest.TestCase):
     def test_offices_when_officeID_is_string(self):
         response = self.client.get("/api/v1/offices/thisID")
         response_data = bytes_to_dict(response.data)
-        expected_data = { "status": 406, "error": "you must enter a real number at officeID in '/offices/<officeID>'" }
+        expected_data = { "status": 406, "error": "office id must be an integer" }
+        print(response_data)
 
         self.assertEqual(response.status_code, 406)
-        # self.assertDictEqual(response_data, expected_data)
+        self.assertDictEqual(response_data, expected_data)
 
 class TestEmptyRequest(unittest.TestCase):
     """
@@ -83,6 +83,3 @@ class TestEmptyRequest(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
     
 
-
-if __name__ == "__main__":
-    unittest.main()

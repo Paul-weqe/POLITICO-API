@@ -2,9 +2,7 @@
 import unittest
 import sys
 import json
-from politico_api.v1 import create_app
-
-app = create_app()
+from .config_test import app 
 
 class TestJsonDataTypes(unittest.TestCase):
     """
