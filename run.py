@@ -1,4 +1,4 @@
-from politico_api.config import app 
+from politico_api import app 
 
 if __name__ == "__main__":
     app.run(debug=True)

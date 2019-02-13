@@ -31,7 +31,10 @@ class PartyModel:
 
     @staticmethod
     def get_all_parties():
-        return parties
+        all_parties = []
+        for party in parties:
+            all_parties.append(parties[party])
+        return all_parties
     
     @staticmethod
     def get_single_party(party_id):

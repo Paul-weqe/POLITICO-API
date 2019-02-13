@@ -48,7 +48,7 @@ def create_office():
 
 @office_blueprint_v1.route("/", strict_slashes=False)
 def get_all_offices():
-    return ApiFunctions.return_200_response([OfficeModel.get_all_offices()])
+    return ApiFunctions.return_200_response(OfficeModel.get_all_offices())
 
 
 @office_blueprint_v1.route("/<officeID>", strict_slashes=False)

@@ -24,7 +24,10 @@ class OfficeModel:
 
     @staticmethod
     def get_all_offices():
-        return offices
+        all_offices = []
+        for office in offices:
+            all_offices.append(offices[office])
+        return all_offices
 
     # gets single items from the list of offices with ID office_id
     # queries the GeneralModelMethods to find the item
