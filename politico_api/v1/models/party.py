@@ -1,8 +1,5 @@
-from random import randint
 import sys
 sys.path.insert(0,'../../')
-
-from politico_api.v1.models.model_functions import GeneralModelMethods
 
 parties = {
 
@@ -24,10 +21,11 @@ class PartyModel:
         new_party_info = {
             "name": self.party_name, "hqAddress": self.hq_address, "logoUrl": self.logo_url, "motto": self.motto, "members": self.members
         }
-        created_party = GeneralModelMethods.create_item(parties, new_party_info)
-        if created_party != None:
-            return { "id": created_party["id"], "name": created_party["name"]}
-        return None 
+        id = len(parties) + 1
+        new_party_info["id"] = id
+        parties[id] = new_party_info
+        return new_party_info
+    
 
     @staticmethod
     def get_all_parties():
@@ -36,14 +34,23 @@ class PartyModel:
             all_parties.append(parties[party])
         return all_parties
     
+
     @staticmethod
     def get_single_party(party_id):
-        return GeneralModelMethods.get_single_item(parties, party_id)
+        if party_id in parties:
+            return parties[party_id]
+        return None 
 
     @staticmethod
     def edit_party(party_id, party_name):
-        return GeneralModelMethods.edit_single_item(parties, party_id, "name", party_name)
+        if party_id in parties:
+            parties[party_id]["name"] = party_name
+            return parties[party_id]
+        return False
     
     @staticmethod
     def delete_party(party_id):
-        return GeneralModelMethods.delete_single_item(parties, party_id)
+        if party_id in parties:
+            del parties[party_id]
+            return True
+        return False

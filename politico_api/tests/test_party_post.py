@@ -2,11 +2,9 @@
 import sys
 import json
 import unittest
-sys.path.insert(0,'../..')
-
-from politico_api.config import app 
 from politico_api.tests.functions_for_tests import bytes_to_dict
-
+from politico_api.v1 import create_app
+app = create_app()
 
 class TestMandatoryFields(unittest.TestCase):
     """
@@ -41,6 +39,10 @@ class TestMandatoryFields(unittest.TestCase):
 
         response_data = bytes_to_dict(response.data)
         expected_response_data = { "error": "'party_hq_address' is a mandatory field", "status": 406 }
+        print(response.status_code)
+        print("##")
+        print(response_data)
+        print("##")
         self.assertEqual(response.status_code, 406)
         self.assertDictEqual(response_data, expected_response_data)
     
@@ -112,7 +114,7 @@ class TestFieldsDataTypes(unittest.TestCase):
         )))
 
         response_data = bytes_to_dict(response.data)
-        expected_response = { "status": 406, "error": "'party_name' field must be a '<class 'str'>'" }
+        expected_response = { "status": 406, "error": "'party_name' field must be a <class 'str'>" }
         self.assertEqual(response.status_code, 406)
         self.assertDictEqual(response_data, expected_response)
     
@@ -125,7 +127,7 @@ class TestFieldsDataTypes(unittest.TestCase):
         )))
 
         response_data = bytes_to_dict(response.data)
-        expected_response = { "status": 406, "error": "'party_logo_url' field must be a '<class 'str'>'" }
+        expected_response = { "status": 406, "error": "'party_logo_url' field must be a <class 'str'>" }
         self.assertEqual(response.status_code, 406)
         self.assertDictEqual(response_data, expected_response)
 
@@ -138,7 +140,7 @@ class TestFieldsDataTypes(unittest.TestCase):
         )))
 
         response_data = bytes_to_dict(response.data)
-        expected_response = { "status": 406, "error": "'party_hq_address' field must be a '<class 'str'>'" }
+        expected_response = { "status": 406, "error": "'party_hq_address' field must be a <class 'str'>" }
         self.assertEqual(response.status_code, 406)
         self.assertDictEqual(response_data, expected_response)
     
@@ -150,7 +152,7 @@ class TestFieldsDataTypes(unittest.TestCase):
         )))
 
         response_data = bytes_to_dict(response.data)
-        expected_response = { "status": 406, "error": "'party_motto' field must be a '<class 'str'>'" }
+        expected_response = { "status": 406, "error": "'party_motto' field must be a <class 'str'>" }
         self.assertEqual(response.status_code, 406)
         self.assertDictEqual(response_data, expected_response)
 
@@ -162,7 +164,7 @@ class TestFieldsDataTypes(unittest.TestCase):
         )))
 
         response_data = bytes_to_dict(response.data)
-        expected_response = { "status": 406, "error": "'party_members' field must be a '<class 'int'>'" }
+        expected_response = { "status": 406, "error": "'party_members' field must be a <class 'int'>" }
         self.assertEqual(response.status_code, 406)
         self.assertDictEqual(response_data, expected_response)    
     

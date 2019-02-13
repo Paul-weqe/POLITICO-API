@@ -1,10 +1,10 @@
 import sys
 import json
 import unittest
-sys.path.insert(0,'../..')
-
-from politico_api.config import app 
+from politico_api.v1 import create_app
 from politico_api.tests.functions_for_tests import bytes_to_dict
+app = create_app() 
+
 
 class TestPartyId(unittest.TestCase):
 

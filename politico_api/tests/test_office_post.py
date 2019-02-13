@@ -2,9 +2,9 @@
 import unittest
 import sys
 import json
-sys.path.insert(0,'../..')
+from politico_api.v1 import create_app
 
-from politico_api.config import app 
+app = create_app()
 
 class TestJsonDataTypes(unittest.TestCase):
     """
