@@ -12,9 +12,8 @@ class OfficeModel:
         self.name = office_data["office_name"]
         
     def create_office(self):
-        id = len(offices) + 1
         dict_info = {"type": self.type, "name": self.name}
-        dict_info["id"] = id
+        dict_info["id"] = len(offices) + 1
         offices[id] = dict_info
         return True
 

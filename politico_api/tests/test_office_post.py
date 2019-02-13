@@ -2,17 +2,13 @@
 import unittest
 import sys
 import json
-from politico_api.v1 import create_app
+from .config_test import BaseTest 
 
-app = create_app()
-
-class TestJsonDataTypes(unittest.TestCase):
+class TestJsonDataTypes(BaseTest):
     """
     This class is meant for testing the data types of the JSON data being POSTed to the '/offices' route
     for instance some fields require only a string
     """
-    def setUp(self):
-        self.client = app.test_client()
     
     # tests for when the wrong data type is used for office_type
     # this method uses office_type=2 which is an integer. A string is the required data type. 
@@ -41,10 +37,7 @@ class TestJsonDataTypes(unittest.TestCase):
         )), content_type="application/json")
         self.assertEqual(response.status_code, 200)
 
-class TestMandatoryFields(unittest.TestCase):
-
-    def setUp(self):
-        self.client = app.test_client()
+class TestMandatoryFields(BaseTest):
 
     # tests for when a POST request is sent to the '/offices' route without the office_name being part of the data that is sent
     # a 406 error is sent since this is a mandatory field
@@ -71,6 +64,3 @@ class TestMandatoryFields(unittest.TestCase):
             office_name="President", office_type="legislative"
         )), content_type="application/json")
         self.assertEqual(response.status_code, 200)
-
-if __name__ == "__main__":
-    unittest.main()
