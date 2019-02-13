@@ -34,4 +34,3 @@ class OfficeModel:
     @staticmethod
     def get_single_office(office_id):
         return GeneralModelMethods.get_single_item(offices, office_id)
- 

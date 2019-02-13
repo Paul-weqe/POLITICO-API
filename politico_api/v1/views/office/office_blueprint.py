@@ -1,4 +1,6 @@
 from flask import Blueprint, jsonify, request, make_response
+
+
 from politico_api.v1.models.office import OfficeModel
 from politico_api.v1.views.api_functions import ApiFunctions
 from politico_api.v1.views.api_response_data import mandatory_fields, error_dictionary
@@ -19,7 +21,7 @@ def create_office():
     required_fields_present = ApiFunctions.test_required_fields(create_office_required_fields, json_data)
     data_types_correct = None
     
-    
+
     if required_fields_present == None:
         # checks for the data type of the fields that have been confirmed to be present
         data_types_correct = ApiFunctions.test_data_type(create_office_required_fields, json_data)
@@ -44,7 +46,7 @@ def create_office():
     
     error = create_office_errors["UNABLE_TO_ADD_OFFICE"]
     return ApiFunctions.return_406_response(error)
-
+    
 
 @office_blueprint_v1.route("/", strict_slashes=False)
 def get_all_offices():
