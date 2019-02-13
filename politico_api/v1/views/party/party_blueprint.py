@@ -8,14 +8,15 @@ party_blueprint_v1 = Blueprint('party_blueprint', __name__, url_prefix="/api/v1/
 
 @party_blueprint_v1.route("/", strict_slashes=False)
 def get_all_parties():
-    return ApiFunctions.return_200_response(PartyModel.get_all_parties())
+    return make_response(jsonify({
+        "status": 200,
+        "data": PartyModel.get_all_parties()
+    }), 200)
 
 @party_blueprint_v1.route("/<partyID>", methods=['PATCH'], strict_slashes=False)
 def edit_party(partyID):
 
-    edit_party_error_statements = error_dictionary["edit_party"]
-    edit_party_output = None 
-    
+    edit_party_response = None 
     json_data = request.get_json()
     partyName = json_data["partyName"]
 
@@ -23,28 +24,36 @@ def edit_party(partyID):
     
     # make sure the partyID is a number(int)
     if ApiFunctions.check_is_integer(partyID) == False:
-        error = edit_party_error_statements["ID_HAS_TO_BE_NUMBER"]
+        error = "partyID has to be a number"
     
     # partyID cannot be 0 or a negative number
     elif int(partyID) < 1 and error == None:
-        error = edit_party_error_statements["ID_HAS_TO_BE_MORE_THAN_ZERO"]
+        error = "partyID has to be more than 0"
 
     # making sure that the partyName does not contain any special characters
     elif ApiFunctions.check_for_special_characters(partyName):
-        error = edit_party_error_statements["NAME_CANNOT_CONTAIN_SPECIAL_CHARACTERS"]
+        error = "partyName cannot contain special characters like @ or $"
     
     # make sure the party exists before it is edited
     # edit_party_output will return False if the party does not exist but will return the party details after editing if the party exists
     
     else:
-        edit_party_output = PartyModel.edit_party(int(partyID), partyName)
+        edit_party_response = PartyModel.edit_party(int(partyID), partyName)
     
-    if error == None: error = ApiFunctions.check_error_if_item_is_true(edit_party_output, False, error, edit_party_error_statements["CANNOT_FIND_PARTY"].format(partyID))
+    if edit_party_response == False and error == None:
+            return "cannot find party with ID {}".format(partyID)
 
     if error != None:
-        return ApiFunctions.return_406_response(error)
+        return make_response(jsonify({
+            "status": 406,
+            "error": error
+        }), 406)
+
     
-    return ApiFunctions.return_200_response([edit_party_output])
+    return make_response(jsonify({
+        "status": 200, "data": [edit_party_response]
+    }), 200)
+
 
 @party_blueprint_v1.route("/<partyID>", methods=['DELETE'], strict_slashes=False)
 def delete_party(partyID):
@@ -56,19 +65,25 @@ def delete_party(partyID):
 
     # check if partyID is integer 
     if ApiFunctions.check_is_integer(partyID) == False:
-        error = delete_party_error_statements["ID_HAS_TO_BE_NUMBER"]
+        error = "partyID has to be a number"
     
-    elif ApiFunctions.check_if_number_is_zero_or_negative(int(partyID)):
-        error = delete_party_error_statements["ID_HAS_TO_BE_POSITIVE"]
+    elif int(partyID) < 1:
+        error = "partyID cannot be 0 or a negative number"
 
     # deletePartyOutput = PartyModel.delete_party(int(partyID))
     elif PartyModel.delete_party(int(partyID)) == False:
-        error = delete_party_error_statements["UNABLE_TO_FIND_PARTY"].format(partyID)
-    
-    if error != None:
-        return ApiFunctions.return_406_response(error)
+        error = "unable to delete party with ID {}".format(partyID)
 
-    return ApiFunctions.return_200_response("successfully deleted")
+    if error != None:
+        return make_response(jsonify({
+            "status": 406,
+            "error": error
+        }), 406)
+
+    return make_response(jsonify({
+        "status": 200,
+        "data": "successfully deleted"
+    }), 200)
     
 
 @party_blueprint_v1.route("/<partyID>", strict_slashes=False)
@@ -90,8 +105,15 @@ def get_single_party(partyID):
     print(error)
     print("###")
     if error != None:
-        return ApiFunctions.return_406_response(error)
-    return ApiFunctions.return_200_response([get_party_output]) 
+        return make_response(jsonify({
+            "status": 406,
+            "error": error
+        }), 406)
+    
+    return make_response(jsonify({
+        "status": 200,
+        "data": [get_party_output]
+    }), 200)
 
 
 @party_blueprint_v1.route("/", methods=['POST'], strict_slashes=False)
@@ -105,14 +127,25 @@ def create_party():
 
         # checks if any of the mandatory field is absent in the JSON data which will lead to a 404 error
         if field not in json_data:
-            return ApiFunctions.return_406_response("'{}' is a mandatory field".format(field))
+            return make_response(jsonify({
+                "status": 406,
+                "error": "'{}' is a mandatory field".format(field)
+            }), 406)
 
         # testing for the data type of the fields based on the corresponding value in required_fields dictionary
         elif type(json_data[field]) != create_party_required[field]:
-            return ApiFunctions.return_406_response("'{}' field must be a '{}'".format(field, create_party_required[field]))
+            return make_response(jsonify({
+                "status": 406,
+                "error": "'{}' field must be a {}".format(field, create_party_required[field])
+            }), 406)
 
     # initialize a party using the PartyModel
     party = PartyModel(json_data)
     created_party_output = party.createParty()
-    return ApiFunctions.return_200_response([created_party_output])
+    print(created_party_output)
+
+    return make_response(jsonify({
+        "status": 200,
+        "data": [created_party_output]
+    }), 200)
 
