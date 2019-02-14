@@ -9,7 +9,7 @@ users_blueprint_v2 = Blueprint('user_blueprint_v2', __name__, url_prefix="/api/v
 def create_user():
     
     required_fields = {
-        "first_name": str, "last_name": str, "other_name": str, "email": str, "phone_number": str, "passport_url": str
+        "first_name": str, "last_name": str, "other_name": str, "email": str, "phone_number": str, "passport_url": str, "password": str
     }
     optional_fields = {
         "is_admin": bool, "is_politician": bool
@@ -34,7 +34,8 @@ def create_user():
             break
 
     if error == None:
-        new_user = User.create_user(**json_data)
+        user_obj = User(**json_data)
+        new_user = user_obj.create_user()
         if new_user != False:
             return make_response(jsonify({
                 "status": 200,
@@ -47,5 +48,43 @@ def create_user():
         "error": error[1]
     }), error[0])
 
+@users_blueprint_v2.route("/change-password", methods=["PATCH"])
+def change_password():
 
-        
+    required_fields = {
+        "email": str, "old_password": str, "new_password": str
+    }
+    json_data = request.get_json()
+
+    ## 
+    print("###")
+    print(json_data)
+    error = None 
+    changed_password = None
+
+    for field in required_fields:
+        if field not in json_data:
+            error = "{} is a mandatory field".format(field)
+            break
+        elif required_fields[field] != type(json_data[field]):
+            error = "{} must be a {}".format(field, required_fields[field])
+            break
+    
+    if error == None:
+        user = User()
+        changed_password = user.change_password(json_data["email"], json_data["old_password"], json_data["new_password"])
+    
+    ## When change password returns true. Meaning the password has been changed successfully
+    if changed_password == True and error == None:
+        return make_response(jsonify({
+            "status": 200,
+            "data": "Password for {} has been changed successfully".format(json_data["email"])
+        }), 200)
+    
+    if error == None:
+        error = "The user could not be found" if changed_password == None else changed_password
+    print(error)
+    return make_response(jsonify({
+        "status": 406, "error": error
+    }), 406)
+
