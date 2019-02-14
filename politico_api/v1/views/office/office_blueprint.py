@@ -11,8 +11,9 @@ def get_single_office(officeID):
     
     # gets all the errors for the get_single_office function
     # this is from the error_dictionary in the required_fields.py
-    errors = error_dictionary["get_single_office"]
+    
     error = None 
+    office_obj = OfficeModel()
     office = None 
 
     if not ApiFunctions.check_is_integer(officeID):
@@ -29,8 +30,7 @@ def get_single_office(officeID):
         error = "officeID cannot be zero or a negative number"
     
     else:
-        office = OfficeModel.get_single_office(int(officeID))
-    
+        office = office_obj.get_single_office(int(officeID))
 
     if office != None and error == None:
         return make_response(jsonify({
@@ -54,7 +54,6 @@ def create_office():
 
     # get all the errors associated with this function and all the required fields for this office
     required_fields = mandatory_fields["create_office"]
-    create_office_errors = error_dictionary["create_office"]
     error = None
     
     # checks if all the mandatory fields are present
@@ -100,9 +99,10 @@ def create_office():
 
 @office_blueprint_v1.route("/", strict_slashes=False)
 def get_all_offices():
+    office = OfficeModel()
     return make_response(jsonify({
         "status": 200, 
-        "data": OfficeModel.get_all_offices()
+        "data": office.get_all_offices()
     }), 200)
 
 

@@ -36,6 +36,7 @@ class UserConnection:
         try:
 
             self.open_connection()
+            
             first_name = user_details_kwargs["first_name"]
             last_name = user_details_kwargs["last_name"]
             other_name = user_details_kwargs["other_name"]
@@ -119,7 +120,7 @@ class UserConnection:
         try:
             self.open_connection()
             if schema_file == None:
-                self.curr.execute(open("schema.sql", "r").read())
+                self.curr.execute(open("schema.txt", "r").read())
             else:
                 self.curr.execute(open(schema_file, "r").read())
             self.conn.commit()
