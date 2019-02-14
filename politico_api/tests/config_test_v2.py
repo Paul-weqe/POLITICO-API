@@ -1,10 +1,11 @@
 import unittest
 from politico_api.v2 import create_app
+from config import TestConfig
 
 class BaseTest(unittest.TestCase):
 
     def setUp(self):
-        self.app = create_app()
+        self.app = create_app(TestConfig)
         self.client = self.app.test_client()
         
         self.data = {

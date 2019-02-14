@@ -1,4 +1,4 @@
-from .config_test_v2 import BaseTest
+from politico_api.tests.config_test_v2 import BaseTest
 import json
 import ast
 

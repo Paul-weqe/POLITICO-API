@@ -3,7 +3,7 @@ import sys
 import json
 import unittest
 from politico_api.tests.functions_for_tests import bytes_to_dict
-from .config_test import BaseTest
+from politico_api.tests.config_test import BaseTest
 
 class TestMandatoryFields(BaseTest):
     """
