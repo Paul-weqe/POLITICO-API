@@ -8,9 +8,10 @@ party_blueprint_v1 = Blueprint('party_blueprint', __name__, url_prefix="/api/v1/
 
 @party_blueprint_v1.route("/", strict_slashes=False)
 def get_all_parties():
+    party = PartyModel()
     return make_response(jsonify({
         "status": 200,
-        "data": PartyModel.get_all_parties()
+        "data": party.get_all_parties()
     }), 200)
 
 @party_blueprint_v1.route("/<partyID>", methods=['PATCH'], strict_slashes=False)
@@ -38,7 +39,8 @@ def edit_party(partyID):
     # edit_party_output will return False if the party does not exist but will return the party details after editing if the party exists
     
     else:
-        edit_party_response = PartyModel.edit_party(int(partyID), partyName)
+        party = PartyModel()
+        edit_party_response = party.edit_party(int(partyID), partyName)
     
     if edit_party_response == False and error == None:
             return "cannot find party with ID {}".format(partyID)
@@ -62,6 +64,7 @@ def delete_party(partyID):
 
     delete_party_output = None
     error = None 
+    party = PartyModel()
 
     # check if partyID is integer 
     if ApiFunctions.check_is_integer(partyID) == False:
@@ -71,7 +74,7 @@ def delete_party(partyID):
         error = "partyID cannot be 0 or a negative number"
 
     # deletePartyOutput = PartyModel.delete_party(int(partyID))
-    elif PartyModel.delete_party(int(partyID)) == False:
+    elif party.delete_party(int(partyID)) == False:
         error = "unable to delete party with ID {}".format(partyID)
 
     if error != None:
@@ -91,12 +94,13 @@ def get_single_party(partyID):
     
     error = None 
     get_party_output=None
+    party = PartyModel()
 
     if not ApiFunctions.check_is_integer(partyID):
         error = "partyID must be an integer"
     
     else:
-        get_party_output = PartyModel.get_single_party(int(partyID))
+        get_party_output = party.get_single_party(int(partyID))
     
 
     if get_party_output == None and error == None:

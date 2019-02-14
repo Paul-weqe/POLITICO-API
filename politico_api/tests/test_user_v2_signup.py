@@ -4,6 +4,14 @@ import ast
 
 class TestDataType(BaseTest):
 
+    
+    def test_when_all_fields_are_correct_type(self):
+        test_data = self.create_user_data
+        test_data["email"] = "correct_typ@correct.com"
+        response = self.client.post("/api/v2/users/signup", data=json.dumps(test_data))
+
+        self.assertEqual(response.status_code, 200)
+        
     # first_name is supposed to be string, so we will test it with integer
     def test_when_first_name_is_integer(self):
         test_data = self.create_user_data
@@ -71,12 +79,6 @@ class TestDataType(BaseTest):
         self.assertEqual(response.status_code, 406)
     
     
-    def test_when_all_fields_are_correct_type(self):
-        test_data = self.create_user_data
-        test_data["email"] = "correct_typ@correct.com"
-        response = self.client.post("/api/v2/users/signup", data=json.dumps(test_data))
-
-        self.assertEqual(response.status_code, 200)
     
     
 

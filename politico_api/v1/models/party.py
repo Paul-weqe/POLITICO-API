@@ -1,6 +1,3 @@
-import sys
-sys.path.insert(0,'../../')
-
 parties = {
 
 }
@@ -10,13 +7,14 @@ parties = {
 
 class PartyModel:
 
-    def __init__(self, party_data):
-        self.party_name = party_data["party_name"]
-        self.hq_address = party_data["party_hq_address"]
-        self.logo_url = party_data["party_logo_url"]
-        self.members = party_data["party_members"]
-        self.motto = party_data["party_motto"]
-
+    def __init__(self, party_data=None):
+        if party_data != None:
+            self.party_name = party_data["party_name"]
+            self.hq_address = party_data["party_hq_address"]
+            self.logo_url = party_data["party_logo_url"]
+            self.members = party_data["party_members"]
+            self.motto = party_data["party_motto"]
+    
     def createParty(self):
         new_party_info = {
             "name": self.party_name, "hqAddress": self.hq_address, "logoUrl": self.logo_url, "motto": self.motto, "members": self.members
@@ -26,30 +24,25 @@ class PartyModel:
         parties[id] = new_party_info
         return new_party_info
     
-
-    @staticmethod
-    def get_all_parties():
+    def get_all_parties(self):
         all_parties = []
         for party in parties:
             all_parties.append(parties[party])
         return all_parties
     
-
-    @staticmethod
-    def get_single_party(party_id):
+    
+    def get_single_party(self, party_id):
         if party_id in parties:
             return parties[party_id]
         return None 
 
-    @staticmethod
-    def edit_party(party_id, party_name):
+    def edit_party(self, party_id, party_name):
         if party_id in parties:
             parties[party_id]["name"] = party_name
             return parties[party_id]
         return False
-    
-    @staticmethod
-    def delete_party(party_id):
+
+    def delete_party(self, party_id):
         if party_id in parties:
             del parties[party_id]
             return True

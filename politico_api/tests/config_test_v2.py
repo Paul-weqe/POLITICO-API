@@ -8,7 +8,9 @@ class BaseTest(unittest.TestCase):
     def setUp(self):
         self.u = UserConnection()
         self.app = create_app(TestConfig)
-        self.u.reset_database("reset.txt")
+
+        self.u.reset_database("schema.txt")
+        print("Database reset")
         self.client = self.app.test_client()
         
         self.create_user_data = dict(
