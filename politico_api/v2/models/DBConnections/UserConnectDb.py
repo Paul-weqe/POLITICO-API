@@ -42,6 +42,7 @@ class UserConnection:
             email = user_details_kwargs["email"]
             phone_number = user_details_kwargs["phone_number"]
             passport_url = user_details_kwargs["passport_url"]
+            password = user_details_kwargs["password"]
             is_politician = 'false'
             is_admin = 'false'
 
@@ -54,11 +55,11 @@ class UserConnection:
             
             sql_command = """
             INSERT INTO users
-            (first_name, last_name, other_name, email, phone_number, passport_url, is_politician, is_admin)
+            (first_name, last_name, other_name, email, phone_number, passport_url, is_politician, is_admin, password)
             VALUES 
-            ('{}', '{}', '{}', '{}', '{}', '{}', {}, {})
+            ('{}', '{}', '{}', '{}', '{}', '{}', {}, {}, '{}')
             """.format(
-                first_name, last_name, other_name, email, phone_number, passport_url, is_politician, is_admin
+                first_name, last_name, other_name, email, phone_number, passport_url, is_politician, is_admin, password
             )
             self.curr.execute(sql_command)
             self.conn.commit()
@@ -73,3 +74,62 @@ class UserConnection:
             print(e)
             print("!!! UNABLE TO CREATE NEW USER !!!")
             return False
+
+    def change_user_password(self, email, old_password, new_password):
+
+
+        try:
+            self.open_connection()
+            
+            # confirm if the user is actually in the system
+
+            sql_command = """
+            SELECT * FROM users WHERE email='{}'
+            """.format(email)
+            self.curr.execute(sql_command)
+            
+            # if email not in the system, the method returns None
+            single_user = self.curr.fetchone() 
+            if single_user == None: return None 
+            
+            # if the old passwords do not match with the one entered
+            print(single_user[5])
+            if single_user[5] != old_password:
+                return "the old password you entered is not correct"
+            
+            # if everything is fine so far
+            sql_command = """
+            UPDATE users SET password='{}' WHERE email='{}'
+            """.format(new_password, email)
+
+            self.curr.execute(sql_command)
+            self.conn.commit()
+
+            self.close_connection()
+            return True
+        
+        except Exception as e:
+            print("!!! ERROR CHANGING USER PASSWORD !!!")
+            print(e)
+            print("!!! ERROR CHANGING USER PASSWORD !!!")
+            return False
+
+    ## WARNING: TO BE USED FOR TESTING DATABASE ONLY ##
+    def reset_database(self, schema_file=None):
+        try:
+            self.open_connection()
+            if schema_file == None:
+                self.curr.execute(open("schema.sql", "r").read())
+            else:
+                self.curr.execute(open(schema_file, "r").read())
+            self.conn.commit()
+            self.close_connection()
+            return True
+        except Exception as e:
+            print("!!! ERROR RESETTING DATABASE USER PASSWORD !!!")
+            print(e)
+            print("!!! ERROR RESETING DATABASE !!!")
+            return False
+
+u = UserConnection()
+u.reset_database()
