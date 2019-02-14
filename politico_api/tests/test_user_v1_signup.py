@@ -41,7 +41,7 @@ class TestDuplicate(BaseTest):
             email="paul@gmail.com", password="paulpassword", username="paul" 
         )), content_type="application/json")
         
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 200)
 
 class TestDataTypes(BaseTest):
 
