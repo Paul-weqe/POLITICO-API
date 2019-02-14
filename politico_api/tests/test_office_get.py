@@ -2,7 +2,7 @@
 import sys
 import json
 import unittest
-from .config_test import BaseTest
+from politico_api.tests.config_test import BaseTest
 
 
 # converts bytes responses to dictionaries. Meant for when the JSON response is received in bytes, it can be transformed to a dictionary
