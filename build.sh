@@ -1,2 +1,2 @@
-cd politico_app/tests/
+cd politico_api/tests/
 pytest
