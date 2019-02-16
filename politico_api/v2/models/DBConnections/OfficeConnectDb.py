@@ -77,3 +77,36 @@ class OfficeConnection:
             print(e)
             print("!!! UNABLE TO FIND OFFICE RESULTS !!!")
             return False 
+    
+    # creates a new office with the valid parameters
+    def create_office(self, office_name, office_type):
+        try:
+            self.open_connection()
+
+            # this SQL query looks if the parameters aimed to be used to create this party already exist
+            sql_if_office_exists_command = """
+            SELECT * FROM offices WHERE office_name='{}' and office_type='{}'
+            """.format(office_name, office_type)
+            
+            self.curr.execute(sql_if_office_exists_command)
+            office_exists = self.curr.fetchall()
+
+            if len(office_exists) > 0:
+                return None
+            
+            # if the office does not already exist, it is then created
+            # this way:
+            sql_command = """
+            INSERT INTO offices(office_name, office_type) VALUES ('{}', '{}')
+            """.format(office_name, office_type)
+
+            self.curr.execute(sql_command)
+            self.conn.commit()
+            self.close_connection()
+
+            return True
+        except Exception as e:
+            print("!!! UNABLE TO CREATE NEW OFFICE !!!")
+            print(e)
+            print("!!! UNABLE TO CREATE NEW OFFICE !!!")
+            return False
