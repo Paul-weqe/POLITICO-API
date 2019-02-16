@@ -34,7 +34,7 @@ class BaseTest(unittest.TestCase):
             email = "random@random.com", old_password= "random_password", new_password = "new_random_password",
         )
         
-        # self.u.reset_database()
+        self.u.reset_database()
         
 
     def tearDown(self):
