@@ -2,6 +2,10 @@ import psycopg2
 import os
 
 class UserConnection:
+    """
+    This class is used to connect a cursor to the politico database
+    This will contain methods that carry out SQL queries and commands on the database
+    """
 
     def __init__(self, **kwargs):
         self.conn = None 
@@ -11,6 +15,7 @@ class UserConnection:
             self.kwargs = kwargs
 
     def open_connection(self):
+        # this function should be carried out before every function to carry out SQL queries begins
         try:
             if self.kwargs==None:
                 self.conn = psycopg2.connect(
@@ -32,6 +37,8 @@ class UserConnection:
     
 
     def close_connection(self):
+        # this function should be carried out after evey function that is carrying out SQL queries
+
         try:
             if (self.conn):
                 self.curr.close()

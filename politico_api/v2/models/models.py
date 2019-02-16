@@ -1,5 +1,6 @@
 from politico_api.v2.models.DBConnections.UserConnectDb import UserConnection
 from politico_api.v2.models.DBConnections.VoteConnectDb import VoteConnection
+from politico_api.v2.models.DBConnections.OfficeConnectDb import OfficeConnection
 
 class User:
 
@@ -30,4 +31,15 @@ class Vote:
     def create_vote(self):
         new_vote =VoteConnection()
         return new_vote.create_vote(self.voter_id, self.office_id, self.candidate_id)
+
+class Office:
+
+    def __init__(self, office_name=None, office_type=None):
+        self.office_name = office_name
+        self.office_type = office_type
         
+    def count_office_votes(self, office_id):
+        office_conn = OfficeConnection()
+        results = office_conn.get_office_results(office_id)
+        return results
+
