@@ -88,3 +88,34 @@ def change_password():
         "status": 406, "error": error
     }), 406)
 
+@users_blueprint_v2.route("/login", methods=["POST"])
+def user_login():
+    json_data = request.get_json()
+    required_fields = {
+        "email": str, "password": str
+    }
+    error = None 
+
+    for field in required_fields:
+        if field not in json_data:
+            error = [400, "{} is a mandatory field"]
+        elif required_fields[field] != type(json_data[field]):
+            error = [400, "{} must be a {}".format(field, required_fields[field])]
+    
+
+    user = User()
+    find_user_response = user.get_user_by_email_and_password(json_data["email"], json_data["password"])
+    if find_user_response == None and error == None:
+        error = [404, "could not find the user specified"]
+    
+    if error == None:
+        return make_response(jsonify({
+            "status": 200,
+            "data": find_user_response
+        }), 200)
+    
+    return make_response(jsonify({
+        "status": error[0], 
+        "error": error[1]
+    }), error[0])
+
