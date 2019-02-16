@@ -43,3 +43,7 @@ class Office:
         results = office_conn.get_office_results(office_id)
         return results
 
+    def create_office(self):
+        office_conn = OfficeConnection()
+        return office_conn.create_office(self.office_name, self.office_type)
+    
