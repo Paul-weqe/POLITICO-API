@@ -6,12 +6,9 @@ class UserConnection:
     def __init__(self, **kwargs):
         self.conn = None 
         self.curr = None 
-        self.kwargs = kwargs
-        print("""
-        ####################
-        ####################
-        """)
-        print(self.kwargs)
+        self.kwargs = None
+        if len(kwargs) != 0:
+            self.kwargs = kwargs
 
     def open_connection(self):
         try:
@@ -128,6 +125,46 @@ class UserConnection:
             print("!!! ERROR CHANGING USER PASSWORD !!!")
             return False
 
+        
+    def find_user_by_email_and_password(self, email, password):
+        try:
+            self.open_connection()
+
+            sql_command = """
+            SELECT * FROM users WHERE email='{}' and password='{}'
+            """.format(email, password)
+            self.curr.execute(sql_command)
+
+            user_info = self.curr.fetchone()
+
+            self.close_connection()
+            return user_info
+
+        except Exception as e:
+            print("!!! ERROR FINDING USER !!!")
+            print(e)
+            print("!!! ERROR FINDING USER !!!")
+            return False 
+    
+    def find_user_by_id(self, user_id):
+        try:
+            self.open_connection()
+
+            sql_command = """
+            SELECT * FROM users WHERE id={}
+            """.format(user_id)
+            
+            self.curr.execute(sql_command)
+            user_info = self.curr.fetchone()
+
+            self.close_connection()
+            return user_info
+            
+        except Exception as e:
+            print("!!! UNABLE TO FIND USER BY ID !!!")
+            print(e)
+            print("!!! UNABLE TO FIND USER BY ID !!!")
+
     ## WARNING: TO BE USED FOR TESTING DATABASE ONLY ##
     def reset_database(self, schema_file=None):
         try:
@@ -146,4 +183,4 @@ class UserConnection:
             return False
 
 u = UserConnection()
-u.reset_database()
+u.insert_user(**{"username": "weqe", "email": "weqe@weqe.com", "password": "popopo"})
