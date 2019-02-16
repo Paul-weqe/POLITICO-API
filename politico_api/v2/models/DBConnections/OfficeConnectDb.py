@@ -1,10 +1,9 @@
 import psycopg2
 import os 
 # from politico_api.v2.models.DBConnections.UserConnectDb import UserConnection
-from politico_api.v2.models.DBConnections.UserConnectDb import UserConnection
 
 
-class VoteConnection:
+class OfficeConnection:
     """
     this class creates a connection to the politico database
     SQL queries can be carried through methods in this class
@@ -48,47 +47,33 @@ class VoteConnection:
             print(e)
             print("!!! UNABLE TO CONNECT TO THE DATABASE !!!")
     
-    def create_vote(self, voter_id, office_id, candidate_id):
+
+    # this returns the result of the office with ID officeID
+    def get_office_results(self, office_id):
         try:
             self.open_connection()
+            sql_find_office_command = """
+            SELECT * FROM offices WHERE id={}
+            """.format(office_id)
 
-            # checks if the user has already voted for that office
-            sql_check_if_voted_command = """
-            select * from users inner join votes on votes.created_by=users.id WHERE users.id={} and votes.office={}
-            """.format(voter_id, office_id)
-            self.curr.execute(sql_check_if_voted_command)
-            results = self.curr.fetchall()
-
-            if len(results) != 0:
-                return "already voted"
-            
-            # validate if the user exists
-            u = UserConnection()
-            
-            ## TODO - ADD VALIDATION FOR THE office_id
-            
-            if u.find_user_by_id(voter_id) == None:
+            self.curr.execute(sql_find_office_command)
+            office = self.curr.fetchall()
+            if len(office) == 0:
                 return None
-            elif u.find_user_by_id(candidate_id) == None:
-                return None 
 
             sql_command = """
-            INSERT INTO votes(created_by, office, voted_for) VALUES (
-                {}, {}, {}
-            )
-            """.format(voter_id, office_id, candidate_id)
+            SELECT users.id, users.first_name, count(votes.voted_for) as number_of_votes from users LEFT JOIN votes 
+            ON (votes.voted_for=users.id) WHERE (users.is_politician=true) AND (users.office_interested={}) group by users.id
+            """.format(office_id)
 
             self.curr.execute(sql_command)
-            self.conn.commit()
+            votes_results = self.curr.fetchall()
             self.close_connection()
 
-            return True
-            
+            return votes_results
 
         except Exception as e:
-            print("!!! UNABLE TO ADD A NEW VOTE !!!")
+            print("!!! UNABLE TO FIND OFFICE RESULTS !!!")
             print(e)
-            print("!!! UNABLE TO ADD A NEW VOTE !!!")
-            return False
-    
-    
+            print("!!! UNABLE TO FIND OFFICE RESULTS !!!")
+            return False 
