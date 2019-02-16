@@ -2,8 +2,16 @@ from flask import Blueprint, make_response, jsonify, request
 from politico_api.v2.models.models import User
 from politico_api.v2.views.api_response_data import mandatory_fields
 from politico_api.v2.views.api_functions import ApiFunctions
+from politico_api.v2.views.jtw_decorators import token_required
+from functools import wraps
+import datetime
+import jwt
+import os
+
 
 users_blueprint_v2 = Blueprint('user_blueprint_v2', __name__, url_prefix="/api/v2/users")
+
+
 
 @users_blueprint_v2.route("/signup", methods=['POST'])
 def create_user():
@@ -95,28 +103,39 @@ def user_login():
         "email": str, "password": str
     }
     error = None 
+    response = None
 
     for field in required_fields:
         if field not in json_data:
-            error = [400, "{} is a mandatory field"]
+            error = [400, "{} is a mandatory field".format(field)]
         elif required_fields[field] != type(json_data[field]):
             error = [400, "{} must be a {}".format(field, required_fields[field])]
     
 
     user = User()
-    find_user_response = user.get_user_by_email_and_password(json_data["email"], json_data["password"])
-    if find_user_response == None and error == None:
-        error = [404, "could not find the user specified"]
     
     if error == None:
+        response = user.get_user_by_email_and_password(json_data["email"], json_data["password"])
+        if response == None:
+            error = [404, "could not find the user specified"]
+    
+    if error == None:
+        token = jwt.encode({'email': json_data["email"], 'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=2)},
+            os.getenv('SECRET_KEY'))
         return make_response(jsonify({
+            "token": token.decode('UTF-8'),
             "status": 200,
-            "data": find_user_response
+            "data": response
         }), 200)
     
     return make_response(jsonify({
-        "status": error[0], 
+        "status": error[0],
         "error": error[1]
     }), error[0])
 
+
+@users_blueprint_v2.route("/authenticated", strict_slashes=False)
+@token_required
+def authenticated():
+    return make_response(jsonify({"message": "this message is valid to only people with a token"}))
 

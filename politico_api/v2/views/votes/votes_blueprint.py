@@ -1,9 +1,11 @@
 from flask import Blueprint, request, jsonify, make_response
 from politico_api.v2.models.models import Vote
+from politico_api.v2.views.jtw_decorators import token_required
 
 votes_blueprint_v2 = Blueprint('vote_blueprint_v2', __name__, url_prefix="/api/v2/votes")
 
 @votes_blueprint_v2.route("/", methods=["POST"], strict_slashes=False)
+@token_required
 def cast_vote():
 
     json_data = request.get_json()

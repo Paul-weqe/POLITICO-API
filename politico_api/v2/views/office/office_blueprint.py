@@ -1,5 +1,6 @@
 from flask import Blueprint, jsonify, request, make_response
 from politico_api.v2.models.models import Office
+# from politico_api.v2.views.jtw_decorators import token_required
 
 office_blueprint_v2 = Blueprint('office_blueprint_v2', __name__, url_prefix="/api/v2/offices")
 
