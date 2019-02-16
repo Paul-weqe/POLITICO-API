@@ -1,1 +1,2 @@
 FLASK_APP=run.py
+SECRET_KEY=4ndel4
