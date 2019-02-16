@@ -181,6 +181,3 @@ class UserConnection:
             print(e)
             print("!!! ERROR RESETING DATABASE !!!")
             return False
-
-u = UserConnection()
-u.insert_user(**{"username": "weqe", "email": "weqe@weqe.com", "password": "popopo"})

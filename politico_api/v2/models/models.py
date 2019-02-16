@@ -1,4 +1,5 @@
 from politico_api.v2.models.DBConnections.UserConnectDb import UserConnection
+from politico_api.v2.models.DBConnections.VoteConnectDb import VoteConnection
 
 class User:
 
@@ -18,3 +19,15 @@ class User:
     def get_user_by_email_and_password(self, email, password):
         user = UserConnection()
         return user.find_user_by_email_and_password(email, password)
+
+class Vote:
+
+    def __init__(self, voter_id=None, office_id=None, candidate_id=None):
+        self.voter_id = voter_id
+        self.office_id = office_id
+        self.candidate_id = candidate_id
+
+    def create_vote(self):
+        new_vote =VoteConnection()
+        return new_vote.create_vote(self.voter_id, self.office_id, self.candidate_id)
+        
