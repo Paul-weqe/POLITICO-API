@@ -1,6 +1,7 @@
 from politico_api.v2.models.DBConnections.UserConnectDb import UserConnection
 from politico_api.v2.models.DBConnections.VoteConnectDb import VoteConnection
 from politico_api.v2.models.DBConnections.OfficeConnectDb import OfficeConnection
+from politico_api.v2.models.DBConnections.PetitionConnectDb import PetitionConnection
 
 class User:
 
@@ -46,4 +47,14 @@ class Office:
     def create_office(self):
         office_conn = OfficeConnection()
         return office_conn.create_office(self.office_name, self.office_type)
+
+class Petition:
+
+    def __init__(self, created_by=None, office=None, body=None):
+        self.created_by = created_by
+        self.office = office
+        self.body = body 
     
+    def create_petition(self):
+        petition_conn = PetitionConnection()
+        return petition_conn.create_petition(self.created_by, self.office, self.body)
