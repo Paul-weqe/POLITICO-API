@@ -15,7 +15,6 @@ users_blueprint_v2 = Blueprint('user_blueprint_v2', __name__, url_prefix="/api/v
 
 @users_blueprint_v2.route("/signup", methods=['POST'])
 def create_user():
-    
     required_fields = {
         "first_name": str, "last_name": str, "other_name": str, "email": str, "phone_number": str, "passport_url": str, "password": str
     }
@@ -28,28 +27,33 @@ def create_user():
     # checks for the presence of the required fields and their data types
     for field in required_fields:
         if field not in json_data:
-            error = [406, "{} is a mandatory field".format(field)]
+            error = [400, "{} is a mandatory field".format(field)]
             break 
         elif required_fields[field] != type(json_data[field]):
-            error = [406, "{} is supposed to be a {}".format(field, required_fields[field])]
+            error = [400, "{} is supposed to be a {}".format(field, required_fields[field])]
             print(type(json_data[field]))
             break
     
     # looks for if the optional fields are present and makes sure the daya types used in them are correct
     for field in optional_fields:
         if (field in json_data) and (optional_fields[field] != type(json_data[field])) and (error==None):
-            error = [406, "{} has to be a {}".format(field, optional_fields[field])]
+            error = [400, "{} has to be a {}".format(field, optional_fields[field])]
             break
+    
 
     if error == None:
         user_obj = User(**json_data)
         new_user = user_obj.create_user()
-        if new_user != False:
+
+        ## create_user() returns None if the user already exists
+        if new_user == None:
+            error = [404, "a user with the email already exists"]
+
+        elif new_user != False:
             return make_response(jsonify({
                 "status": 200,
                 "data": new_user
             }), 200)
-        error = [406, "unable to create user"]
     
     return make_response(jsonify({
         "status": error[0],
@@ -72,10 +76,10 @@ def change_password():
 
     for field in required_fields:
         if field not in json_data:
-            error = "{} is a mandatory field".format(field)
+            error = [400, "{} is a mandatory field".format(field)]
             break
         elif required_fields[field] != type(json_data[field]):
-            error = "{} must be a {}".format(field, required_fields[field])
+            error = [400, "{} must be a {}".format(field, required_fields[field])]
             break
     
     if error == None:
@@ -90,11 +94,11 @@ def change_password():
         }), 200)
     
     if error == None:
-        error = "The user could not be found" if changed_password == None else changed_password
-    print(error)
+        error = [404, "The user could not be found" if changed_password == None else changed_password]
+    
     return make_response(jsonify({
-        "status": 406, "error": error
-    }), 406)
+        "status": error[0], "error": error[1]
+    }), error[0])
 
 @users_blueprint_v2.route("/login", methods=["POST"])
 def user_login():
@@ -133,9 +137,4 @@ def user_login():
         "error": error[1]
     }), error[0])
 
-
-@users_blueprint_v2.route("/authenticated", strict_slashes=False)
-@token_required
-def authenticated():
-    return make_response(jsonify({"message": "this message is valid to only people with a token"}))
 

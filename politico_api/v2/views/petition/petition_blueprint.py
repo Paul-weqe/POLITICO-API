@@ -18,7 +18,7 @@ def create_petition():
 
     for field in required_fields:
         if field not in json_data:
-            error = [400, "{} is a required field"]
+            error = [400, "{} is a required field".format(field)]
             break
         elif required_fields[field] != type(json_data[field]):
             error = [400, "{} must be a {}".format(field, required_fields[field])]
@@ -28,14 +28,16 @@ def create_petition():
         petition = Petition(json_data["created_by"], json_data["office"], json_data["body"])
         create_petition_response = petition.create_petition()
 
-        if not create_petition_response:
+        if create_petition_response == False:
             error = [500, "There is a problem on our side. We will be back to you shortly"]
+        elif create_petition_response == None:
+            error = [417, "User with ID {} has already filed a petition for office {}".format(json_data["created_by"], json_data["office"])]
     
     if error == None:
         return make_response(jsonify({
-            "status": 200,
+            "status": 201,
             "message": "petition successfully created"
-        }), 200)
+        }), 201)
     
     return make_response(jsonify({
         "status": error[0],

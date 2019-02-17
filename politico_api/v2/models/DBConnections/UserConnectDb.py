@@ -19,7 +19,7 @@ class UserConnection:
         try:
             if self.kwargs==None:
                 self.conn = psycopg2.connect(
-                    user=os.getenv("DATABASE_USER"), password=os.getenv("DATABASE_PASSWORD"), host="localhost", database=os.getenv("DATABASE_NAME")
+                    user=os.getenv("DATABASE_USER"), password=os.getenv("DATABASE_PASSWORD"), host=os.getenv("DATABASE_HOST"), database=os.getenv("DATABASE_NAME")
                 )
                 self.curr = self.conn.cursor()
                 print("connection established")
@@ -53,7 +53,7 @@ class UserConnection:
         try:
 
             self.open_connection()
-            
+
             first_name = user_details_kwargs["first_name"]
             last_name = user_details_kwargs["last_name"]
             other_name = user_details_kwargs["other_name"]
@@ -71,6 +71,16 @@ class UserConnection:
             if "is_admin" in user_details_kwargs:
                 is_admin = 'true' if user_details_kwargs["is_admin"] else 'false'
             
+            ## confirm if user with unique credentials already exists
+            sql_command_if_exists = """
+            SELECT * FROM users WHERE email='{}'
+            """.format(email)
+            
+            self.curr.execute(sql_command_if_exists)
+            user_exists = self.curr.fetchall()
+
+            if len(user_exists) > 0: return None 
+
             sql_command = """
             INSERT INTO users
             (first_name, last_name, other_name, email, phone_number, passport_url, is_politician, is_admin, password)
@@ -85,7 +95,7 @@ class UserConnection:
 
             self.close_connection()
 
-            return [{"first_name": first_name, "last_name": last_name}]
+            return "user successfully created"
 
         except Exception as e:
             print("!!! UNABLE TO CREATE NEW USER !!!")

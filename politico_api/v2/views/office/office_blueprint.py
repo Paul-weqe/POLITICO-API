@@ -4,7 +4,7 @@ from politico_api.v2.views.jtw_decorators import token_required
 
 office_blueprint_v2 = Blueprint('office_blueprint_v2', __name__, url_prefix="/api/v2/offices")
 
-@office_blueprint_v2.route("/get-office-results", strict_slashes=False)
+@office_blueprint_v2.route("/get-office-results/", strict_slashes=False)
 def get_office_results():
 
     error = None 
@@ -74,7 +74,6 @@ def create_office():
     }), error[0])
 
 @office_blueprint_v2.route("/", strict_slashes=False)
-@token_required
 def get_all_offices():
     office_conn = Office()
     all_offices = office_conn.get_all_offices()

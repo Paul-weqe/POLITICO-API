@@ -12,9 +12,10 @@ def cast_vote():
     required_fields = {
         "voter_id": int, "office_id": int, "candidate_id": int
     }
+
     error = None
     vote_inserted = None 
-
+    
     # checks for all the fields that are mandatory
     for field in required_fields:
         if field not in json_data:
