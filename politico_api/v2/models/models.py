@@ -47,6 +47,10 @@ class Office:
     def create_office(self):
         office_conn = OfficeConnection()
         return office_conn.create_office(self.office_name, self.office_type)
+    
+    def get_all_offices(self):
+        office_conn = OfficeConnection()
+        return office_conn.get_all_offices()
 
 class Petition:
 
