@@ -19,7 +19,7 @@ class UserConnection:
         try:
             if self.kwargs==None:
                 self.conn = psycopg2.connect(
-                    user=os.getenv("DATABASE_USER"), password=os.getenv("DATABASE_PASSWORD"), host="localhost", database=os.getenv("DATABASE_NAME")
+                    user=os.getenv("DATABASE_USER"), password=os.getenv("DATABASE_PASSWORD"), host=os.getenv("DATABASE_HOST"), database=os.getenv("DATABASE_NAME")
                 )
                 self.curr = self.conn.cursor()
                 print("connection established")
