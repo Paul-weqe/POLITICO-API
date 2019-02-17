@@ -1,5 +1,7 @@
 from functools import wraps
 from flask import request, make_response, jsonify
+import jwt
+import os
 
 def token_required(f):
     @wraps(f)

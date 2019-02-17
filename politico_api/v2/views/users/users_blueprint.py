@@ -120,7 +120,7 @@ def user_login():
             error = [404, "could not find the user specified"]
     
     if error == None:
-        token = jwt.encode({'email': json_data["email"], 'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=2)},
+        token = jwt.encode({'email': json_data["email"], 'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=30)},
             os.getenv('SECRET_KEY'))
         return make_response(jsonify({
             "token": token.decode('UTF-8'),
