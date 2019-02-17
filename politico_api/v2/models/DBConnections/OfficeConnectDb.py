@@ -110,3 +110,21 @@ class OfficeConnection:
             print(e)
             print("!!! UNABLE TO CREATE NEW OFFICE !!!")
             return False
+    
+    def get_all_offices(self):
+        try:
+            self.open_connection()
+
+            sql_command = "SELECT * FROM offices"
+
+            self.curr.execute(sql_command)
+            all_offices = self.curr.fetchall()
+
+            self.close_connection()
+            return all_offices
+
+        except Exception as e:
+            print("!!! UNABLE TO GET ALL OFFICES !!!")
+            print(e)
+            print("!!! UNABLE TO GET ALL OFFICES !!!")
+            return False

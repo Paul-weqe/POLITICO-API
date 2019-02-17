@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request, make_response
 from politico_api.v2.models.models import Office
-# from politico_api.v2.views.jtw_decorators import token_required
+from politico_api.v2.views.jtw_decorators import token_required
 
 office_blueprint_v2 = Blueprint('office_blueprint_v2', __name__, url_prefix="/api/v2/offices")
 
@@ -16,7 +16,6 @@ def get_office_results():
         
     elif type(json_data["office_id"]) != int:
         error = [400, "office_id must be an integer"]
-        
     
     
     if error == None:
@@ -37,7 +36,8 @@ def get_office_results():
         "error": error[1]
     }), error[0])
 
-@office_blueprint_v2.route("/", methods=['POST'])
+@office_blueprint_v2.route("/", methods=['POST'], strict_slashes=False)
+@token_required
 def create_office():
 
     required_fields = {
@@ -72,6 +72,20 @@ def create_office():
         "status": error[0],
         "error": error[1]
     }), error[0])
-        
 
-    return None 
+@office_blueprint_v2.route("/", strict_slashes=False)
+@token_required
+def get_all_offices():
+    office_conn = Office()
+    all_offices = office_conn.get_all_offices()
+
+    if not all_offices:
+        return make_response(jsonify({
+            "status": 500,
+            "message": "The error is on our side. We will be back to you shortly"
+        }), 500)
+    
+    return make_response(jsonify({
+        "status": 200,
+        "data": all_offices
+    }), 200)
