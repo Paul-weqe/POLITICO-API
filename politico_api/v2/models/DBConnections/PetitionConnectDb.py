@@ -35,7 +35,6 @@ class PetitionConnection:
             print(e)
             print("!!! UNABLE TO CONNECT TO THE DATABASE !!!")
     
-
     def close_connection(self):
         # this function should be carried out after evey function that is carrying out SQL queries
 
@@ -53,6 +52,16 @@ class PetitionConnection:
 
             self.open_connection()
             
+            ### command to make sure one does not create petition for the same office twice
+            sql_if_has_filed_command = """
+            SELECT * FROM petitions WHERE created_by={} and office={}
+            """.format(created_by, office)
+            self.curr.execute(sql_if_has_filed_command)
+
+            entries = self.curr.fetchall()
+            if len(entries) > 1: return None
+
+            ### creates the petition
             sql_command = """
             INSERT INTO petitions(created_by, office, body) VALUES ({}, {}, '{}')
             """.format(created_by, office, body)
@@ -68,5 +77,6 @@ class PetitionConnection:
             print(e)
             print("!!! UNABLE TO CONNECT TO THE DATABASE !!!")
             return False
+
 
 

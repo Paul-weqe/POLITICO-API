@@ -74,7 +74,6 @@ def create_office():
     }), error[0])
 
 @office_blueprint_v2.route("/", strict_slashes=False)
-@token_required
 def get_all_offices():
     office_conn = Office()
     all_offices = office_conn.get_all_offices()

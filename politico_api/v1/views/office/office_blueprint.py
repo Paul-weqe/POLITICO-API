@@ -49,36 +49,29 @@ def get_single_office(officeID):
 
 
 @office_blueprint_v1.route("/", strict_slashes=False, methods=['POST'])
+
 def create_office():
     json_data = request.get_json(force=True)
+    required_fields = {
+        "office_name": str, "office_type": str
+    }
 
     # get all the errors associated with this function and all the required fields for this office
-    required_fields = mandatory_fields["create_office"]
+    # required_fields = mandatory_fields["create_office"]
     error = None
     
-    # checks if all the mandatory fields are present
-    is_data_type_wrong = None
     
+
+    # checks if the field is mandatory then checks for the datatype of the field
     for field in required_fields:
         if field not in json_data:
-            error = "'{}' is a mandatory field".format(field)
+            error = [400, "'{}' is a mandatory field".format(field)]
+            break
+        elif type(json_data[field]) != required_fields[field]:
+            error = [400, "'{}' must be a {}".format(field, required_fields[field])]
+            break
 
-    if error == None:
-        # checks for the data type of the fields that have been confirmed to be present
-        # checks the required fields against the json_data that has been received
-        is_data_type_wrong = ApiFunctions.test_data_type(required_fields, json_data)
-        
-        if is_data_type_wrong != None and error == None:
-            # this is done since the ApiFunctions.test_data_type() returns the field whose data type is not correct, 
-            # and this is stored in the data_type_correct variable, this will be used to format the message output
-            error = "Field '{}' has to be a '{}'".format(is_data_type_wrong[0], is_data_type_wrong[1])
     
-    if error != None:
-        return make_response(jsonify({
-            "status": 406,
-            "data": error,
-        }), 406)
-        
     # the following two lines try and create a new office
     new_office = OfficeModel(json_data)
     office_info = new_office.create_office()
@@ -90,12 +83,15 @@ def create_office():
             "data": [office_info]
         }), 200)
     
-    error = "unable to add office"
-    return make_response(jsonify({
-        "status": 406,
-        "error": error
-    }), 406)
+    if error == None:
+        error = [400, "unable to add office"]
     
+    if error != None:
+        return make_response(jsonify({
+            "status": error[0],
+            "data": error[1],
+        }), error[0])
+        
 
 @office_blueprint_v1.route("/", strict_slashes=False)
 def get_all_offices():
