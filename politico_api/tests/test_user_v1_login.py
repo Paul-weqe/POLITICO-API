@@ -18,7 +18,7 @@ class TestDataTypes(BaseTest):
             email="paul@paul.com", password="password"
         )), content_type="application/json")
         
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 404)
     
 
 class TestMandatoryFields(BaseTest):

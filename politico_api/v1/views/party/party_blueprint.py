@@ -14,74 +14,60 @@ def get_all_parties():
         "data": party.get_all_parties()
     }), 200)
 
-@party_blueprint_v1.route("/<partyID>", methods=['PATCH'], strict_slashes=False)
+@party_blueprint_v1.route("/<int:partyID>", methods=['PATCH'], strict_slashes=False)
 def edit_party(partyID):
 
     edit_party_response = None 
     json_data = request.get_json()
-    partyName = json_data["partyName"]
+    party_name = json_data["party_name"]
 
     error = None
     
-    # make sure the partyID is a number(int)
-    if ApiFunctions.check_is_integer(partyID) == False:
-        error = "partyID has to be a number"
-    
     # partyID cannot be 0 or a negative number
-    elif int(partyID) < 1 and error == None:
-        error = "partyID has to be more than 0"
+    if partyID < 1 and error == None:
+        error = [400, "partyID has to be more than 0"]
 
-    # making sure that the partyName does not contain any special characters
-    elif ApiFunctions.check_for_special_characters(partyName):
-        error = "partyName cannot contain special characters like @ or $"
-    
     # make sure the party exists before it is edited
     # edit_party_output will return False if the party does not exist but will return the party details after editing if the party exists
     
     else:
         party = PartyModel()
-        edit_party_response = party.edit_party(int(partyID), partyName)
+        edit_party_response = party.edit_party(int(partyID), party_name)
     
     if edit_party_response == False and error == None:
-            return "cannot find party with ID {}".format(partyID)
+        error = [404, "cannot find party with ID {}".format(partyID)]
 
     if error != None:
         return make_response(jsonify({
-            "status": 406,
-            "error": error
-        }), 406)
+            "status": error[0],
+            "error": error[1]
+        }), error[0])
 
     
     return make_response(jsonify({
+        "message": "successfully edited party",
         "status": 200, "data": [edit_party_response]
     }), 200)
 
 
-@party_blueprint_v1.route("/<partyID>", methods=['DELETE'], strict_slashes=False)
+@party_blueprint_v1.route("/<int:partyID>", methods=['DELETE'], strict_slashes=False)
 def delete_party(partyID):
 
-    delete_party_error_statements = error_dictionary["delete_party"]
-
-    delete_party_output = None
     error = None 
     party = PartyModel()
 
-    # check if partyID is integer 
-    if ApiFunctions.check_is_integer(partyID) == False:
-        error = "partyID has to be a number"
-    
-    elif int(partyID) < 1:
-        error = "partyID cannot be 0 or a negative number"
+    if partyID < 1:
+        error = [400, "partyID cannot be 0 or a negative number"]
 
     # deletePartyOutput = PartyModel.delete_party(int(partyID))
     elif party.delete_party(int(partyID)) == False:
-        error = "unable to delete party with ID {}".format(partyID)
+        error = [404, "unable to find party with ID {}".format(partyID)]
 
     if error != None:
         return make_response(jsonify({
-            "status": 406,
-            "error": error
-        }), 406)
+            "status": error[0],
+            "error": error[1]
+        }), error[0])
 
     return make_response(jsonify({
         "status": 200,
@@ -97,22 +83,20 @@ def get_single_party(partyID):
     party = PartyModel()
 
     if not ApiFunctions.check_is_integer(partyID):
-        error = "partyID must be an integer"
+        error = [400, "partyID must be an integer"]
     
     else:
         get_party_output = party.get_single_party(int(partyID))
     
 
     if get_party_output == None and error == None:
-        error = "unable to find party with ID {}".format(partyID)
+        error = [404, "unable to find party with ID {}".format(partyID)]
     
-    print(error)
-    print("###")
     if error != None:
         return make_response(jsonify({
-            "status": 406,
-            "error": error
-        }), 406)
+            "status": error[0],
+            "error": error[1]
+        }), error[0])
     
     return make_response(jsonify({
         "status": 200,
@@ -125,31 +109,49 @@ def create_party():
     json_data = request.get_json(force=True)
 
     # dictionary of the mandatory fields together with the datatypes that they are required to be of
-    create_party_required = mandatory_fields["create_party"]
+    create_party_required = {
+        "party_name": str, 
+        "party_hq_address": str, 
+        "party_logo_url": str, 
+        "party_motto": str, 
+        "party_members": int
+    }
+    error = None
+    created_party_output = None
     
     for field in create_party_required:
 
         # checks if any of the mandatory field is absent in the JSON data which will lead to a 404 error
         if field not in json_data:
-            return make_response(jsonify({
-                "status": 406,
-                "error": "'{}' is a mandatory field".format(field)
-            }), 406)
+            error = [400, "'{}' is a mandatory field".format(field)]
+            break 
 
         # testing for the data type of the fields based on the corresponding value in required_fields dictionary
         elif type(json_data[field]) != create_party_required[field]:
-            return make_response(jsonify({
-                "status": 406,
-                "error": "'{}' field must be a {}".format(field, create_party_required[field])
-            }), 406)
-
+            error = [400, "'{}' field must be a {}".format(field, create_party_required[field])]
+            break
+            
     # initialize a party using the PartyModel
-    party = PartyModel(json_data)
-    created_party_output = party.createParty()
-    print(created_party_output)
+    
+    if error == None:
+        party = PartyModel(json_data)
+        created_party_output = party.createParty()
+        if created_party_output == None:
+            error = [400, "Party with name {} has already been created".format(json_data["party_name"])]
 
+    if created_party_output != None:
+        return make_response(jsonify({
+            "status": 201,
+            "data": [created_party_output]
+        }), 201)
+    
     return make_response(jsonify({
-        "status": 200,
-        "data": [created_party_output]
-    }), 200)
+        "status": error[0],
+        "error": error[1]
+    }), error[0])
+
+    
+    
+    
+
 

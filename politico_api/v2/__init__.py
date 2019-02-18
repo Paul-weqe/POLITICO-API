@@ -6,7 +6,7 @@ def create_app(config_object=None):
     from politico_api.v2.views.votes.votes_blueprint import votes_blueprint_v2
     from politico_api.v2.views.office.office_blueprint import office_blueprint_v2
     from politico_api.v2.views.petition.petition_blueprint import peition_blueprint_v2
-
+    
     v2_app = Flask(__name__)
     
     if config_object != None:

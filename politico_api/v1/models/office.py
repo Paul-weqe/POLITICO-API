@@ -10,8 +10,14 @@ class OfficeModel:
             self.name = office_data["office_name"]
         
     def create_office(self):
+        for office in offices:
+            if offices[office]["name"] == self.name:
+                return False
+
         dict_info = {"type": self.type, "name": self.name}
-        dict_info["id"] = len(offices) + 1
+        #dict_info["id"]
+        id = len(offices) + 1
+        dict_info["id"] = id
         offices[id] = dict_info
         return True
     
@@ -23,6 +29,7 @@ class OfficeModel:
 
     
     def get_single_office(self, office_id):
+        print(offices)
         if office_id in offices:
             return offices[office_id]
         return None 

@@ -12,7 +12,7 @@ class UserModel:
         for user in users:
             if users[user]["email"] == self.user_data["email"]:
                 return "the email is already in use"
-
+                
         if self.user_data != None:
             id = len(users) + 1
             self.user_data["id"] = id

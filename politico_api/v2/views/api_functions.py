@@ -10,7 +10,7 @@ class ApiFunctions:
             "status": 200,
             "data": data
         }), 200)
-
+        
     # structures response for a 406 response
     # the error will be the error_message input
     @staticmethod

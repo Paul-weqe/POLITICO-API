@@ -3,12 +3,12 @@ import json
 from politico_api.tests.config_test import BaseTest
 
 class TestMandatoryFields(BaseTest):
-
+    
     def test_when_email_is_absent(self):
         response = self.client.post("/api/v1/users/signup", data=json.dumps(dict(
             username="paul", password="paulpassword"
         )), content_type="application/json")
-        
+
         self.assertEqual(response.status_code, 400)
     
     def test_when_username_is_absent(self):
@@ -30,7 +30,7 @@ class TestMandatoryFields(BaseTest):
             email="paul@gmail.com", password="paulpassword", username="paul"
         )), content_type="application/json")
 
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 201)
 
 
 class TestDuplicate(BaseTest):
@@ -38,10 +38,10 @@ class TestDuplicate(BaseTest):
     def test_when_email_duplicates_are_used(self):
         # trying to create an account that was created above
         response = self.client.post("/api/v1/users/signup", data=json.dumps(dict(
-            email="paul@gmail.com", password="paulpassword", username="paul" 
+            email="paul@gmil.com", password="paulpassword", username="paul" 
         )), content_type="application/json")
         
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 201)
 
 class TestDataTypes(BaseTest):
 
@@ -71,7 +71,7 @@ class TestDataTypes(BaseTest):
             email="abc@abc.com", password="abcpassword", username="abc"
         )), content_type="application/json")
 
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 201)
 
         
     

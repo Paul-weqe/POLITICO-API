@@ -1,6 +1,6 @@
 import unittest
 from politico_api.v2 import create_app
-from config import TestConfig
+from config import TestConfig, ProductionConfig
 from politico_api.v2.models.DBConnections.UserConnectDb import UserConnection
 import os
 
@@ -8,14 +8,14 @@ class BaseTest(unittest.TestCase):
 
     def setUp(self):
         
-        self.app = create_app(TestConfig)
+        self.app = create_app(ProductionConfig)
         self.client = self.app.test_client()
         
         self.u = UserConnection(
-            DB_NAME = self.app.config['TEST_DATABASE_NAME'], DB_PASSWORD= self.app.config['TEST_DATABASE_PASSWORD'],
-            DB_USER = self.app.config['TEST_DATABASE_USER'] 
+            DB_NAME = self.app.config['DATABASE_NAME'], DB_PASSWORD= self.app.config['DATABASE_PASSWORD'],
+            DB_USER = self.app.config['DATABASE_USER'], DB_HOST = self.app.config['DATABASE_HOST']
             )
-
+        
         self.u.reset_database("schema.txt")
         
         self.create_user_data = dict(

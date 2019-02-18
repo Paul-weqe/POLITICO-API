@@ -18,6 +18,7 @@ class UserConnection:
         # this function should be carried out before every function to carry out SQL queries begins
         try:
             if self.kwargs==None:
+                print("NOT FOUND")
                 self.conn = psycopg2.connect(
                     user=os.getenv("DATABASE_USER"), password=os.getenv("DATABASE_PASSWORD"), host=os.getenv("DATABASE_HOST"), database=os.getenv("DATABASE_NAME")
                 )
@@ -25,7 +26,7 @@ class UserConnection:
                 print("connection established")
             else:
                 self.conn = psycopg2.connect(
-                    user=self.kwargs["DB_USER"], password=self.kwargs["DB_PASSWORD"], host="localhost", database=self.kwargs["DB_NAME"]
+                    user=self.kwargs["DB_USER"], password=self.kwargs["DB_PASSWORD"], host=self.kwargs["DB_HOST"], database=self.kwargs["DB_NAME"]
                 )
                 self.curr = self.conn.cursor()
                 print("Connection  established test")
