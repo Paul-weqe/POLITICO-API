@@ -81,37 +81,37 @@ INSERT INTO users(first_name, last_name, other_name, email, phone_number, passpo
 
 -- PRESIDENCY VOTES
 -- the first 10 voters will vote for politician1 and the last last three will vote for politican2
-INSERT INTO votes(created_by, office, voted_for) VALUES 
-(1, 1, 14),
-(2, 1, 14),
-(3, 1, 14),
-(4, 1, 14),
-(5, 1, 14),
-(6, 1, 14),
-(7, 1, 14),
-(8, 1, 14),
-(9, 1, 14),
-(10, 1, 14),
-(11, 1, 15),
-(12, 1, 15),
-(13, 1, 15);
+-- INSERT INTO votes(created_by, office, voted_for) VALUES 
+-- (1, 1, 14),
+-- (2, 1, 14),
+-- (3, 1, 14),
+-- (4, 1, 14),
+-- (5, 1, 14),
+-- (6, 1, 14),
+-- (7, 1, 14),
+-- (8, 1, 14),
+-- (9, 1, 14),
+-- (10, 1, 14),
+-- (11, 1, 15),
+-- (12, 1, 15),
+-- (13, 1, 15);
 
 -- HEADBOY VOTES
 -- the first 8 will vote for headboy1 and the last 5 will vote for headboy2
-INSERT INTO votes(created_by, office, voted_for) VALUES 
-(1, 2, 16),
-(2, 2, 16),
-(3, 2, 16),
-(4, 2, 16),
-(5, 2, 16),
-(6, 2, 16),
-(7, 2, 16),
-(8, 2, 16),
-(9, 2, 17),
-(10, 2, 17),
-(11, 2, 17),
-(12, 2, 17),
-(13, 2, 17);
+-- INSERT INTO votes(created_by, office, voted_for) VALUES 
+-- (1, 2, 16),
+-- (2, 2, 16),
+-- (3, 2, 16),
+-- (4, 2, 16),
+-- (5, 2, 16),
+-- (6, 2, 16),
+-- (7, 2, 16),
+-- (8, 2, 16),
+-- (9, 2, 17),
+-- (10, 2, 17),
+-- (11, 2, 17),
+-- (12, 2, 17),
+-- (13, 2, 17);
 
 -- GET THE RESULTS FOR THE PRESIDENCY
 SELECT users.id, users.first_name, count(votes.voted_for) as number_of_votes from users 

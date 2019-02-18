@@ -16,6 +16,11 @@ class PartyModel:
             self.motto = party_data["party_motto"]
     
     def createParty(self):
+
+        for party in parties:
+            if parties[party]["name"] == self.party_name:
+                return None 
+
         new_party_info = {
             "name": self.party_name, "hqAddress": self.hq_address, "logoUrl": self.logo_url, "motto": self.motto, "members": self.members
         }

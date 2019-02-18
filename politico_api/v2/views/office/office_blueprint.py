@@ -1,29 +1,31 @@
 from flask import Blueprint, jsonify, request, make_response
 from politico_api.v2.models.models import Office
 from politico_api.v2.views.jtw_decorators import token_required
+from politico_api.v2.views.api_functions import ApiFunctions
 
 office_blueprint_v2 = Blueprint('office_blueprint_v2', __name__, url_prefix="/api/v2/offices")
 
-@office_blueprint_v2.route("/get-office-results/", strict_slashes=False)
-def get_office_results():
+@office_blueprint_v2.route("/get-office-results/<office_id>", strict_slashes=False)
+def get_office_results(office_id):
 
     error = None 
     json_data = request.get_json()
     office_results = None 
 
-    if "office_id" not in json_data:
-        error = [400, "office_id is a mandatory field"]
+    # if "office_id" not in json_data:
+    #     error = [400, "office_id is a mandatory field"]
         
-    elif type(json_data["office_id"]) != int:
+    # elif type(json_data["office_id"]) != int:
+    if not ApiFunctions.check_is_integer(office_id):
         error = [400, "office_id must be an integer"]
     
     
     if error == None:
         office_obj = Office()
-        office_results = office_obj.count_office_votes(json_data["office_id"])
+        office_results = office_obj.count_office_votes(office_id)
     
     if error == None and office_results == None:
-        error = [404, "office with ID {} does not exist".format(json_data["office_id"])]
+        error = [404, "office with ID {} does not exist".format(office_id)]
 
     if error == None:
         return make_response(jsonify({

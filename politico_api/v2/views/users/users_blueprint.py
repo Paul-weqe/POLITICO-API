@@ -100,7 +100,7 @@ def change_password():
         "status": error[0], "error": error[1]
     }), error[0])
 
-@users_blueprint_v2.route("/login", methods=["POST"])
+@users_blueprint_v2.route("/login", methods=["POST"], strict_slashes=False)
 def user_login():
     json_data = request.get_json()
     required_fields = {
