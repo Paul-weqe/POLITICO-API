@@ -52,31 +52,31 @@ INSERT INTO parties ( party_name, party_hq_address, party_logo_url ) VALUES
 
 -- CREATE DUMMY POLITICO USERS WHO ARE NOT POLITICIANS
 INSERT INTO users (first_name, last_name, other_name, email, phone_number, passport_url, password) VALUES 
-('voter1_first', 'voter1_last', 'voter1_other', 'voter1@voter1.com', '07102737457', 'voter1_passport', 'voter1_password'),
-('voter2_first', 'voter2_last', 'voter2_other', 'voter2@voter2.com', '07140737457', 'voter2_passport', 'voter2_password'),
-('voter3_first', 'voter3_last', 'voter3_other', 'voter3@voter3.com', '07146737457', 'voter3_passport', 'voter3_password'),
-('voter4_first', 'voter4_last', 'voter4_other', 'voter4@voter4.com', '07108737457', 'voter4_passport', 'voter4_password'),
-('voter5_first', 'voter5_last', 'voter5_other', 'voter1@voter5.com', '07164737457', 'voter5_passport', 'voter5_password'),
-('voter6_first', 'voter6_last', 'voter6_other', 'voter1@voter6.com', '07180737457', 'voter6_passport', 'voter6_password'),
-('voter7_first', 'voter7_last', 'voter7_other', 'voter1@voter7.com', '07112737457', 'voter7_passport', 'voter7_password'),
-('voter8_first', 'voter8_last', 'voter8_other', 'voter1@voter8.com', '07191737457', 'voter8_passport', 'voter8_password'),
-('voter9_first', 'voter9_last', 'voter9_other', 'voter1@voter9.com', '07180737457', 'voter9_passport', 'voter9_password'),
-('voter10_first', 'voter10_last', 'voter10_other', 'voter1@voter10.com', '07562737457', 'voter10_passport', 'voter10_password'),
-('voter11_first', 'voter11_last', 'voter11_other', 'voter1@voter11.com', '07652737457', 'voter11_passport', 'voter11_password'),
-('voter12_first', 'voter12_last', 'voter12_other', 'voter1@voter12.com', '07832737457', 'voter12_passport', 'voter12_password'),
-('voter13_first', 'voter13_last', 'voter13_other', 'voter1@voter13.com', '07122737457', 'voter13_passport', 'voter13_password')
+('voter1_first', 'voter1_last', 'voter1_other', 'voter1@voter1.com', '07102737457', 'voter1_passport', md5('voter1_password')),
+('voter2_first', 'voter2_last', 'voter2_other', 'voter2@voter2.com', '07140737457', 'voter2_passport', md5('voter2_password')),
+('voter3_first', 'voter3_last', 'voter3_other', 'voter3@voter3.com', '07146737457', 'voter3_passport', md5('voter3_password')),
+('voter4_first', 'voter4_last', 'voter4_other', 'voter4@voter4.com', '07108737457', 'voter4_passport', md5('voter4_password')),
+('voter5_first', 'voter5_last', 'voter5_other', 'voter1@voter5.com', '07164737457', 'voter5_passport', md5('voter5_password')),
+('voter6_first', 'voter6_last', 'voter6_other', 'voter1@voter6.com', '07180737457', 'voter6_passport', md5('voter6_password')),
+('voter7_first', 'voter7_last', 'voter7_other', 'voter1@voter7.com', '07112737457', 'voter7_passport', md5('voter7_password')),
+('voter8_first', 'voter8_last', 'voter8_other', 'voter1@voter8.com', '07191737457', 'voter8_passport', md5('voter8_password')),
+('voter9_first', 'voter9_last', 'voter9_other', 'voter1@voter9.com', '07180737457', 'voter9_passport', md5('voter9_password')),
+('voter10_first', 'voter10_last', 'voter10_other', 'voter1@voter10.com', '07562737457', 'voter10_passport', md5('voter10_password')),
+('voter11_first', 'voter11_last', 'voter11_other', 'voter1@voter11.com', '07652737457', 'voter11_passport', md5('voter11_password')),
+('voter12_first', 'voter12_last', 'voter12_other', 'voter1@voter12.com', '07832737457', 'voter12_passport', md5('voter12_password')),
+('voter13_first', 'voter13_last', 'voter13_other', 'voter1@voter13.com', '07122737457', 'voter13_passport', md5('voter13_password'))
 ;
 
 -- CREATE DUMMY USERS WHO ARE  POLITICIANS 
 INSERT INTO users(first_name, last_name, other_name, email, phone_number, passport_url, is_politician, political_party, office_interested, password) VALUES 
 -- two political candidates both vying for the presidential seat
-('politician1_first', 'politician1_last', 'politician1_other', 'politician1@poltician1.com', '07034566723', 'politican1_passport', true, 1, 1, 'politician1_password'),
-('politician2_first', 'politician2_last', 'politician2_other', 'politician2@poltician2.com', '07078566723', 'politican2_passport', true, 2, 1, 'politician2_password');
+('politician1_first', 'politician1_last', 'politician1_other', 'politician1@poltician1.com', '07034566723', 'politican1_passport', true, 1, 1, md5('politician1_password')),
+('politician2_first', 'politician2_last', 'politician2_other', 'politician2@poltician2.com', '07078566723', 'politican2_passport', true, 2, 1, md5('politician2_password'));
 
 -- two politicians both vying to be the headboy (LOL)
 INSERT INTO users(first_name, last_name, other_name, email, phone_number, passport_url, is_politician, political_party, office_interested, password) VALUES 
-('headboy1_first', 'headboy1_last', 'headboy1_other', 'headboy1@headboy1.com', '0717273745', 'headboy1_passport', true, 1, 2, 'headboy1_password'),
-('headboy2_first', 'headboy2_last', 'headboy2_other', 'headboy2@headboy2.com', '0717273745', 'headboy2_passport', true, 2, 2, 'headboy1_password');
+('headboy1_first', 'headboy1_last', 'headboy1_other', 'headboy1@headboy1.com', '0717273745', 'headboy1_passport', true, 1, 2, md5('headboy1_password')),
+('headboy2_first', 'headboy2_last', 'headboy2_other', 'headboy2@headboy2.com', '0717273745', 'headboy2_passport', true, 2, 2, md5('headboy1_password'));
 
 
 -- PRESIDENCY VOTES

@@ -1,4 +1,5 @@
 import psycopg2
+import hashlib
 import os
 
 class UserConnection:
@@ -86,7 +87,7 @@ class UserConnection:
             INSERT INTO users
             (first_name, last_name, other_name, email, phone_number, passport_url, is_politician, is_admin, password)
             VALUES 
-            ('{}', '{}', '{}', '{}', '{}', '{}', {}, {}, '{}')
+            ('{}', '{}', '{}', '{}', '{}', '{}', {}, {}, md5('{}'))
             """.format(
                 first_name, last_name, other_name, email, phone_number, passport_url, is_politician, is_admin, password
             )
@@ -123,7 +124,7 @@ class UserConnection:
             
             # if the old passwords do not match with the one entered
             print(single_user[5])
-            if single_user[5] != old_password:
+            if single_user[5] != hashlib.md5(old_password.encode()).hexdigest():
                 return "the old password you entered is not correct"
             
             # if everything is fine so far
@@ -149,10 +150,10 @@ class UserConnection:
             self.open_connection()
 
             sql_command = """
-            SELECT * FROM users WHERE email='{}' and password='{}'
+            SELECT * FROM users WHERE email='{}' and password=md5('{}')
             """.format(email, password)
             self.curr.execute(sql_command)
-
+            
             user_info = self.curr.fetchone()
 
             self.close_connection()

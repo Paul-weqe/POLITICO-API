@@ -7,7 +7,7 @@ office_blueprint_v2 = Blueprint('office_blueprint_v2', __name__, url_prefix="/ap
 
 @office_blueprint_v2.route("/get-office-results/<office_id>", strict_slashes=False)
 def get_office_results(office_id):
-
+    
     error = None 
     json_data = request.get_json()
     office_results = None 

@@ -49,3 +49,13 @@ class TestDataTypes(BaseTest):
 
         self.assertEqual(response.status_code, 400)
         self.assertIn("password must be a <class 'str'>", response.data.decode('utf-8'))
+
+class TestValidation(BaseTest):
+
+    # test when email is not a valid style
+    def test_when_email_is_wrong_format(self):
+        response = self.client.post("/api/v2/users/login", data=json.dumps(dict(
+            email="not_valid_email", password="password"
+            )), content_type="application/json")
+            
+        self.assertEqual(response.status_code, 400)

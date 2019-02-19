@@ -18,7 +18,8 @@ def token_required(f):
             data = jwt.decode(token, os.getenv('SECRET_KEY'))
         
         except Exception as e:
-            return jsonify({'message': 'Token is invalid'}), 403
+            return make_request(jsonify({'message': 'Token is invalid'}), 403)
             
         return f(*args, **kwargs) 
     return decorated
+

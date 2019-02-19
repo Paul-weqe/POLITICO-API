@@ -119,4 +119,35 @@ class TestMandatoryFields(BaseTest):
         response = self.client.post("/api/v2/users/signup", data=json.dumps(test_data))
 
         self.assertEqual(response.status_code, 400)
+    
+class TestValidation(BaseTest):
+    """
+    TESTS FOR VALIDATION OF THE FIELDS e.g email is something@something.com or phone number is 0712345678
+    """
+
+    # email should be in format abc@abc.com
+    def test_when_email_is_wrong_format(self):
+        test_data = self.create_user_data
+        test_data["email"] = "not_valid_email"
+        
+        response = self.client.post("/api/v2/users/signup", data=json.dumps(test_data), content_type="application/json")
+        self.assertTrue(response.status_code, 400)
+
+    # phone_number should be a 10 digit number 
+    def test_when_phone_number_is_wrong_format(self):
+        test_data = self.create_user_data
+        test_data["phone_number"] = "07748949"
+        
+        response = self.client.post("/api/v2/users/signup", data=json.dumps(test_data), content_type="application/json")
+        self.assertTrue(response.status_code, 400)
+    
+    # url is supposed to be in the format: http://some_url.com
+    def test_when_passport_url_is_wrong_format(self):
+        test_data = self.create_user_data
+        test_data["passport_url"] = "not_a_valid_url"
+
+        response = self.client.post("/api/v2/users/signup", data=json.dumps(test_data), content_type="application/json")
+        return self.assertEqual(response.status_code, 400)
+        
+
    

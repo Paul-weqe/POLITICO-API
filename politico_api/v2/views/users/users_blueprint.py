@@ -1,8 +1,9 @@
-from flask import Blueprint, make_response, jsonify, request
-from politico_api.v2.models.models import User
 from politico_api.v2.views.api_response_data import mandatory_fields
-from politico_api.v2.views.api_functions import ApiFunctions
 from politico_api.v2.views.jtw_decorators import token_required
+from flask import Blueprint, make_response, jsonify, request
+from politico_api.v2.views.api_functions import ApiFunctions
+from politico_api.v2.validators import RegularExpressions
+from politico_api.v2.models.models import User
 from functools import wraps
 import datetime
 import jwt
@@ -34,6 +35,16 @@ def create_user():
             print(type(json_data[field]))
             break
     
+    
+    if error == None and not RegularExpressions.is_email(json_data["email"]):
+        error = [400, "email is not in the valid email structure"]
+
+    elif error == None and not RegularExpressions.is_phone_number(json_data["phone_number"]):
+        error = [400, "phone_numbe ris not in the valid phone number structure"]
+    
+    elif error == None and not RegularExpressions.is_http_input(json_data["passport_url"]):
+        error = [400, "passport_url is not in the valid url structure"]
+
     # looks for if the optional fields are present and makes sure the daya types used in them are correct
     for field in optional_fields:
         if (field in json_data) and (optional_fields[field] != type(json_data[field])) and (error==None):
@@ -69,8 +80,8 @@ def change_password():
     json_data = request.get_json()
 
     ## 
-    print("###")
-    print(json_data)
+    # print("###")
+    # print(json_data)
     error = None 
     changed_password = None
 
@@ -81,6 +92,9 @@ def change_password():
         elif required_fields[field] != type(json_data[field]):
             error = [400, "{} must be a {}".format(field, required_fields[field])]
             break
+    
+    if error == None and not RegularExpressions.is_email(json_data["email"]):
+        error = [400, "email is not in the correct email structure(e.g abc@abc.com)"]
     
     if error == None:
         user = User()
@@ -117,6 +131,9 @@ def user_login():
     
 
     user = User()
+
+    if error == None and not RegularExpressions.is_email(json_data["email"]):
+        error = [400, "email not in the correct structure e.g abc@abc.com"]
     
     if error == None:
         response = user.get_user_by_email_and_password(json_data["email"], json_data["password"])
@@ -129,12 +146,10 @@ def user_login():
         return make_response(jsonify({
             "token": token.decode('UTF-8'),
             "status": 200,
-            "data": response
+            "message": "successfully logged in"
         }), 200)
     
     return make_response(jsonify({
         "status": error[0],
         "error": error[1]
     }), error[0])
-
-
