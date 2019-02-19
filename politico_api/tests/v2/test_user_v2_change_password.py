@@ -35,3 +35,13 @@ class TestDataTypes(BaseTest):
         self.assertEqual(response.status_code, 400)
         self.assertIn("new_password must be a <class 'str'>", response.data.decode('utf-8'))
     
+class TestValidation(BaseTest):
+
+    # email is expected to be abc@abc.com
+    def test_when_email_is_wrong_format(self):
+        test_data=self.change_password_data
+        test_data["email"] = "not_valid_email"
+
+        response = self.client.patch("/api/v2/users/change-password", data=json.dumps(test_data), content_type="application/json")
+        print(response.data)
+        self.assertEqual(response.status_code, 400)

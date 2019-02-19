@@ -1,6 +1,7 @@
-from flask import Blueprint, request, jsonify, make_response
 from politico_api.v2.views.jtw_decorators import token_required
+from flask import Blueprint, request, jsonify, make_response
 from politico_api.v2.models.models import Petition
+from politico_api.v2.validators import Validate
 
 peition_blueprint_v2 = Blueprint('petition_blueprint_v2', __name__, url_prefix="/api/v2/petitions")
 
@@ -15,15 +16,21 @@ def create_petition():
     }
     error = None
     create_petition_response = None
-
+    
     for field in required_fields:
         if field not in json_data:
             error = [400, "{} is a required field".format(field)]
             break
+
         elif required_fields[field] != type(json_data[field]):
             error = [400, "{} must be a {}".format(field, required_fields[field])]
             break
-    
+
+        elif Validate.validate_field(json_data[field]) !=  True and required_fields[field] == str:
+            validation_message = Validate.validate_field([json_data[field]])
+            error = [400, validation_message.format(field)]
+            break
+
     if error == None:
         petition = Petition(json_data["created_by"], json_data["office"], json_data["body"])
         create_petition_response = petition.create_petition()
