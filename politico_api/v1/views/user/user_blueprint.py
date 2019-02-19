@@ -30,7 +30,7 @@ def get_single_user(userID):
         }), 200)
     elif user_info == None and error == None:
         error = "user with ID {} not found".format(userID)
-
+        
     return make_response(jsonify({
         "status": 400,
         "error": error 
@@ -115,7 +115,6 @@ def login_user():
         "status": error[0],
         "error": error[1]
     }), error[0])
-
 
 # delete user route
 @user_blueprint_v1.route("/<userID>", methods=["DELETE"], strict_slashes=False)

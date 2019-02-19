@@ -7,7 +7,7 @@ class UserConnection:
     This class is used to connect a cursor to the politico database
     This will contain methods that carry out SQL queries and commands on the database
     """
-
+    
     def __init__(self, **kwargs):
         self.conn = None 
         self.curr = None 
@@ -145,7 +145,7 @@ class UserConnection:
             return False
 
         
-    def find_user_by_email_and_password(self, email, password):
+    def find_by_email_password(self, email, password):
         try:
             self.open_connection()
 

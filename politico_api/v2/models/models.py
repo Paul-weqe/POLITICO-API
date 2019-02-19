@@ -20,7 +20,8 @@ class User:
         
     def get_user_by_email_and_password(self, email, password):
         user = UserConnection()
-        return user.find_user_by_email_and_password(email, password)
+        # return user.find_user_by_email_and_password(email, password)
+        return user.find_by_email_password(email, password)
 
 class Vote:
 

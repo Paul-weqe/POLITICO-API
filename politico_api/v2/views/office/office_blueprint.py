@@ -2,20 +2,16 @@ from flask import Blueprint, jsonify, request, make_response
 from politico_api.v2.models.models import Office
 from politico_api.v2.views.jtw_decorators import token_required
 from politico_api.v2.views.api_functions import ApiFunctions
+from politico_api.v2.validators import Validate
+from politico_api.v2.views.jtw_decorators import admin_required, token_required
 
 office_blueprint_v2 = Blueprint('office_blueprint_v2', __name__, url_prefix="/api/v2/offices")
 
 @office_blueprint_v2.route("/get-office-results/<office_id>", strict_slashes=False)
+@token_required
 def get_office_results(office_id):
-    
     error = None 
-    json_data = request.get_json()
-    office_results = None 
-
-    # if "office_id" not in json_data:
-    #     error = [400, "office_id is a mandatory field"]
-        
-    # elif type(json_data["office_id"]) != int:
+    office_results = None
     if not ApiFunctions.check_is_integer(office_id):
         error = [400, "office_id must be an integer"]
     
@@ -26,7 +22,7 @@ def get_office_results(office_id):
     
     if error == None and office_results == None:
         error = [404, "office with ID {} does not exist".format(office_id)]
-
+    
     if error == None:
         return make_response(jsonify({
             "status": 200,
@@ -39,12 +35,14 @@ def get_office_results(office_id):
     }), error[0])
 
 @office_blueprint_v2.route("/", methods=['POST'], strict_slashes=False)
-@token_required
+@admin_required
 def create_office():
 
     required_fields = {
         "office_name": str, "office_type": str
     }
+    office_types = ["federal", "legislative", "state", "local_government"]
+
     json_data = request.get_json()
     error = None
     office_created = None
@@ -53,9 +51,19 @@ def create_office():
         if field not in json_data:
             error = [400, "{} is a mandatory field".format(field)]
             break
+
         elif type(json_data[field]) != required_fields[field]:
             error = [400, "{} must be a {}".format(request, required_fields[field])]
             break
+
+        elif Validate.validate_field(json_data[field]) != True:
+            validation_message = Validate.validate_field(json_data[field])
+            error = [400, validation_message.format(field)]
+            break
+
+    if error == None and json_data["office_type"] not in office_types:
+        error_message = "office_type has to be one of: 'federal', 'legislative', 'state' or 'local_government' not {}".format(json_data["office_type"])
+        error = [404, error_message]
     
     if error == None:
         office = Office(office_name=json_data["office_name"], office_type=json_data["office_type"])
@@ -67,7 +75,7 @@ def create_office():
     if error == None:
         return make_response(jsonify({
             "status": 201,
-            "data": "office successfully created"
+            "data": "office {} successfully created".format(json_data["office_name"])
         }), 201)
     
     return make_response(jsonify({
