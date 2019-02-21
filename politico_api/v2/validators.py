@@ -2,9 +2,17 @@ import re
 import os
 
 class RegularExpressions:
+    """
+    THis holds the items that may be verified by the use of regular expressions
+    Include: 
+        1. Phone number
+        2. Email
+        3. URL inputs
+    """
 
     @staticmethod
     def is_email(email):
+        # Returns true if the input entered is an email
         regex = re.compile("^([a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+)$")
         matches = regex.findall(email)
         if len(matches) != 1:
@@ -13,6 +21,7 @@ class RegularExpressions:
     
     @staticmethod
     def is_phone_number(phone_number):
+        # Returns true if the inpur entered is a valid phone number
         regex = re.compile("^\d{10}$")
         matches = regex.findall(phone_number)
         if len(matches) != 1:
@@ -21,6 +30,8 @@ class RegularExpressions:
 
     @staticmethod
     def is_http_input(url_input):
+        # adopted from https://stackoverflow.com/questions/7160737/python-how-to-validate-a-url-in-python-malformed-or-not
+        # using Django's url validator
         regex = re.compile(
         r'^(?:http|ftp)s?://' # http:// or https://
         r'(?:(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+(?:[A-Z]{2,6}\.?|[A-Z0-9-]{2,}\.?)|' # domain...
@@ -71,6 +82,7 @@ class Validate:
     
     @staticmethod
     def validate_field(field):
+        # validates fields and makes sure that the fields are not empty or starting with a space
 
         if field.strip() == "":
             return "{} Cannot be empty"

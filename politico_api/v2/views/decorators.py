@@ -6,12 +6,6 @@ import os
 def token_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
-        # token = request.args.get('token')
-        # app = kwargs["app_name"]
-        # json_data = request.get_json()
-
-        # if "token" not in json_data:
-        #     return make_response(jsonify({'message': 'token is missing'}), 403)
         
         if "Authorization" in request.headers:
             header_data = request.headers["Authorization"].split(" ")

@@ -15,8 +15,6 @@ users_blueprint_v2 = Blueprint('user_blueprint_v2', __name__, url_prefix="/api/v
 @users_blueprint_v2.route("/signup", methods=['POST'])
 @json_required
 def create_user():
-    print("$$$")
-    print(request.content_type)
     required_fields = {
         "first_name": str, "last_name": str, "other_name": str, "email": str, "phone_number": str, "passport_url": str, "password": str,
         "username": str
@@ -34,14 +32,13 @@ def create_user():
             error = [400, "{} is supposed to be a {}".format(field, required_fields[field])]
             print(type(json_data[field]))
             break
-        
+
         # check for the validity of the fields
         elif required_fields[field] == str and Validate.validate_field(json_data[field]) != True:
             validate_message = Validate.validate_field(json_data[field])
             error = [400, validate_message.format(field)]
             break
-
-    
+        
     # if  json_data["password"]
     if error == None and Validate.validate_password(json_data["password"]) != True:
         validate_message = Validate.validate_password(json_data["password"])
@@ -68,7 +65,10 @@ def create_user():
         elif new_user != False:
             return make_response(jsonify({
                 "status": 201,
-                "data": new_user
+                "user info": [{
+                    "username": json_data["username"],
+                    "email": json_data["email"]
+                }] #new_user
             }), 201)
     
     if error == None:

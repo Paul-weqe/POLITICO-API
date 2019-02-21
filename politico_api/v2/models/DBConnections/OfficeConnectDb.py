@@ -152,7 +152,7 @@ class OfficeConnection:
     def get_office_by_name(self, office_name):
         try:
             self.open_connection()
-
+            
             sql_command = """
             SELECT * FROM offices WHERE office_name='{}'
             """.format(office_name)
@@ -161,7 +161,6 @@ class OfficeConnection:
 
             self.close_connection()
             return office
-            self.close_connection()
 
         except Exception as e:
             print("!!! UNABLE TO GET A SINGLE OFFICE BY ID !!!")

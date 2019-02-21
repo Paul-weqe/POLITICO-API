@@ -29,7 +29,7 @@ def create_party():
             error = [400, validate_message.format(field)]
             break
     
-    if RegularExpressions.is_http_input(json_data["party_logo"]) is False and error==None:
+    if error==None and RegularExpressions.is_http_input(json_data["party_logo"]) is not True:
         error = [400, "the party_logo field has to be a url"]
     
     if error == None:
@@ -49,4 +49,3 @@ def create_party():
         "status": error[0],
         "error": error[1]
     }), error[0])
-    

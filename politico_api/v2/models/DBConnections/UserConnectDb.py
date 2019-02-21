@@ -172,10 +172,11 @@ class UserConnection:
                 return None
             
             sql_command = """
-            UPDATE users SET is_admin=true WHERE user_id={}
+            UPDATE users SET is_admin=true WHERE id={}
             """.format(user_id)
+
             self.curr.execute(sql_command)
-            self.curr.commit()
+            self.conn.commit()
             
             self.close_connection()
             return True

@@ -37,14 +37,9 @@ CREATE TABLE users(
     username varchar(20) UNIQUE NOT NULL
     );
 
+INSERT INTO users (first_name, last_name, other_name, email, password, phone_number, passport_url, is_admin, username) VALUES 
+('Paul', 'Wekesa', 'Waswa', 'paul@paul.com', md5('Omwene11@'), '0703656039', 'http://passport_url', true, 'weqe');
 
-CREATE TABLE votes (
-    id serial primary key,
-    created_on date NOT NULL DEFAULT CURRENT_DATE,
-    created_by integer references users(id),
-    office integer references offices(id),
-    voted_for integer references users(id)
-);
 
 create table petitions (
     id serial primary key,
@@ -55,7 +50,17 @@ create table petitions (
      );
 
 create table candidates(
-    user_id integer references users(id),
+    id serial,
+    user_id integer unique references users(id),
     office_id integer references users(id),
-    party_id integer references parties(id)
+    party_id integer references parties(id),
+    primary key(user_id, office_id, id)
+);
+
+
+CREATE TABLE votes (
+    id serial primary key,
+    created_on date NOT NULL DEFAULT CURRENT_DATE,
+    candidate_id integer references candidates(user_id),
+    voter_id integer references users(id)
 );
