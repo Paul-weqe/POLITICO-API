@@ -36,9 +36,11 @@ class RegularExpressions:
         return True
 
 class Validate:
+
     @staticmethod
     def validate_password(password):
         # check for password length
+        error = None
         if len(password) < 8:
             return "password length should be at least 8 characters long"
         
@@ -46,11 +48,24 @@ class Validate:
         with open("common_passwords.txt") as f:
             lines = [line.strip("\n") for line in f.readlines()]
         
-        if password in lines:
+        if password in lines and error == None:
             return "password should not be a commonly used password. Use a stronger password"
         
-        if password[0] == " " or password[-1] == " ":
+        if password[0] == " " or password[-1] == " " and error == None:
             return "passwords should not end or begin with a space"
+        
+        special_characters_regex = re.compile(r'[!@#$%^&*(),.?":{}|<>]')
+        capital_letters_regex = re.compile(r'[A-Z]')
+        small_letters_regex = re.compile(r'[a-z]')
+        all_numbers_regex = re.compile(r'[0-9]')
+        
+        matches_special = special_characters_regex.findall(password)
+        matches_capital = capital_letters_regex.findall(password)
+        matches_small = small_letters_regex.findall(password)
+        matches_numbers = all_numbers_regex.findall(password)
+
+        if (len(matches_special) == 0 or len(matches_capital) == 0 or len(matches_small) == 0 or len(matches_numbers) == 0):
+            return "your password must have at least a special character, a small letter, a capital letter and a number"
         
         return True
     

@@ -2,7 +2,7 @@ from flask import make_response, jsonify
 
 class ApiFunctions:
 
-    
+    # 
     # returns a success 200 status_code with data 
     @staticmethod
     def return_200_response(data):

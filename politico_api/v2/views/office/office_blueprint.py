@@ -1,13 +1,12 @@
 from flask import Blueprint, jsonify, request, make_response
-from politico_api.v2.models.models import Office
-from politico_api.v2.views.jtw_decorators import token_required
+from politico_api.v2.models.models import Office, Candidate
 from politico_api.v2.views.api_functions import ApiFunctions
 from politico_api.v2.validators import Validate
-from politico_api.v2.views.jtw_decorators import admin_required, token_required
+from politico_api.v2.views.decorators import admin_required, token_required, json_required
 
-office_blueprint_v2 = Blueprint('office_blueprint_v2', __name__, url_prefix="/api/v2/offices")
+office_blueprint_v2 = Blueprint('office_blueprint_v2', __name__, url_prefix="/api/v2/office")
 
-@office_blueprint_v2.route("/get-office-results/<office_id>", strict_slashes=False)
+@office_blueprint_v2.route("/<office_id>/result", strict_slashes=False)
 @token_required
 def get_office_results(office_id):
     error = None 
@@ -23,11 +22,17 @@ def get_office_results(office_id):
     if error == None and office_results == None:
         error = [404, "office with ID {} does not exist".format(office_id)]
     
+    office_results_list = []
+    for result in office_results: 
+        result_info = { "candidate id": result[0],  "candidate name": result[1], "number of votes": result[2], "office_id": int(office_id) }
+        office_results_list.append(result_info)
+
     if error == None:
         return make_response(jsonify({
             "status": 200,
-            "data": office_results
+            "data": office_results_list
         }), 200)
+    
 
     return make_response(jsonify({
         "status": error[0],
@@ -36,6 +41,7 @@ def get_office_results(office_id):
 
 @office_blueprint_v2.route("/", methods=['POST'], strict_slashes=False)
 @admin_required
+@json_required
 def create_office():
 
     required_fields = {
@@ -83,18 +89,102 @@ def create_office():
         "error": error[1]
     }), error[0])
 
+
 @office_blueprint_v2.route("/", strict_slashes=False)
 def get_all_offices():
     office_conn = Office()
     all_offices = office_conn.get_all_offices()
 
+    print(request.content_type)
     if not all_offices:
         return make_response(jsonify({
-            "status": 500,
-            "message": "The error is on our side. We will be back to you shortly"
-        }), 500)
+            "status": 404,
+            "message": "There is currently no offices to display"
+        }), 404)
     
+
+    all_offices_list = []
+
+    for office in all_offices:
+        office_info = { "office_id": office[0], "office_name": office[1], "office_type": office[2] }
+        all_offices_list.append(office_info)
+
+
     return make_response(jsonify({
         "status": 200,
-        "data": all_offices
+        "offices": all_offices_list
+    }), 200)
+
+
+@office_blueprint_v2.route("/<int:office_id>/register", methods=['POST'], strict_slashes=False)
+@admin_required
+def create_candidate(office_id):
+    required_fields = {
+        "candidate_username": str, "party_name": str
+    }
+    json_data = request.get_json()
+    error = None
+    
+    for field in required_fields:
+        if field not in json_data:
+            error = [403, "Field {} is a mandatory field".format(field)]
+            break
+
+        elif required_fields[field] != type(json_data[field]):
+            error = [403, "Field {} must be of type {}".format(field, required_fields[field])]
+            break
+
+        elif required_fields[field] == str and Validate.validate_field(json_data[field]) != True:
+            validate_message = Validate.validate_field(json_data[field])
+            error = [400, validate_message.format(field)]
+            break
+        
+    if error == None:
+        
+        candidate = Candidate()
+        response = candidate.create_candidate_by_name(json_data["candidate_username"], json_data["party_name"], office_id)
+
+        if response == True:
+            return make_response(jsonify({
+                "message": "Candidate successfully created",
+                "status": 201
+            }), 201)
+        error = [400, response]
+
+    return make_response(jsonify({
+        "error": error[1],
+        "status": error[0]
+    }), error[1])
+
+@office_blueprint_v2.route("/<int:office_id>", strict_slashes=False)
+def get_office_by_id(office_id):
+
+    office_information = Office().get_office_by_id(office_id)
+    if office_information == None:
+        return make_response(jsonify({
+            "status": 404,
+            "error": "Office with ID {} could not be found".format(office_id)
+        }), 404)
+
+    info_dict = {"id": office_information[0], "office name": office_information[1], "office type": office_information[2]}
+    return make_response(jsonify({
+        "status": 200,
+        "office info": info_dict
+    }), 200)
+
+@office_blueprint_v2.route("/<office_name>", strict_slashes=False)
+def get_office_by_name(office_name):
+
+    office_info = Office().get_office_by_name(office_name)
+
+    if office_info == None:
+        return make_response(jsonify({
+            "status": 404,
+            "error": "Office with name {} could not be found".format(office_name)
+        }), 404)
+    
+    info_dict = {"id": office_info[0], "office name": office_info[1], "office type": office_info[2]}
+    return make_response(jsonify({
+        "status": 200,
+        "office info": info_dict
     }), 200)

@@ -1,25 +1,27 @@
 import psycopg2
-import os
+import os 
+# from politico_api.v2.models.DBConnections.UserConnectDb import UserConnection
 
-class PetitionConnection:
-    """
-    This class is used to connect a cursor to the politico database
-    This will contain methods that carry out SQL queries and commands on the database specifically for the petitions table
-    """
 
+class PartyConnection:
+    """
+    this class creates a connection to the politico database
+    SQL queries can be carried through methods in this class
+    """
     def __init__(self, **kwargs):
         self.conn = None 
         self.curr = None 
-        self.kwargs = None
-        if len(kwargs) != 0:
+        self.kwargs = None 
+        if len(kwargs) > 0:
             self.kwargs = kwargs
+        
 
     def open_connection(self):
-        # this function should be carried out before every function to carry out SQL queries begins
         try:
+            print(self.kwargs)
             if self.kwargs==None:
                 self.conn = psycopg2.connect(
-                    user=os.getenv("DATABASE_USER"), password=os.getenv("DATABASE_PASSWORD"), host="localhost", database=os.getenv("DATABASE_NAME")
+                    user=os.getenv("DATABASE_USER"), password=os.getenv("DATABASE_PASSWORD"), host=os.getenv("DATABASE_HOST"), database=os.getenv("DATABASE_NAME")
                 )
                 self.curr = self.conn.cursor()
                 print("connection established")
@@ -36,8 +38,6 @@ class PetitionConnection:
             print("!!! UNABLE TO CONNECT TO THE DATABASE !!!")
     
     def close_connection(self):
-        # this function should be carried out after evey function that is carrying out SQL queries
-
         try:
             if (self.conn):
                 self.curr.close()
@@ -46,26 +46,23 @@ class PetitionConnection:
             print("!!! UNABLE TO CONNECT TO THE DATABASE !!!")
             print(e)
             print("!!! UNABLE TO CONNECT TO THE DATABASE !!!")
+
     
-    def create_petition(self, created_by, office, body):
+    def create_party(self, party_name, party_hq, party_logo):
         try:
-
             self.open_connection()
-            
-            ### command to make sure one does not create petition for the same office twice
-            sql_if_has_filed_command = """
-            SELECT * FROM petitions WHERE create_by={} and office={}
-            """.format(created_by, office)
-            self.curr.execute(sql_if_has_filed_command)
 
-            entries = self.curr.fetchall()
-            if len(entries) > 1: return None
-
-            ### creates the petition
             sql_command = """
-            INSERT INTO petitions(create_by, office, body) VALUES ({}, {}, '{}')
-            """.format(created_by, office, body)
+            SELECT FROM PARTIES WHERE party_name='{}'
+            """.format(party_name)
+            self.curr.execute(sql_command)
+            party_exists = self.curr.fetchone()
+            if party_exists is not None:
+                return "Party with name {} already exists".format(party_name)
             
+            sql_command = """
+            INSERT INTO parties(party_name, party_hq_address, party_logo_url) VALUES ('{}', '{}', '{}')
+            """.format(party_name, party_hq, party_logo)
             self.curr.execute(sql_command)
             self.conn.commit()
 
@@ -73,10 +70,6 @@ class PetitionConnection:
             return True
 
         except Exception as e:
-            print("!!! UNABLE TO CONNECT TO THE DATABASE !!!")
+            print("!!! UNABLE TO CREATE A PARTY !!!")
             print(e)
-            print("!!! UNABLE TO CONNECT TO THE DATABASE !!!")
-            return False
-
-
-
+            print("!!! UNABLE TO CREATE A PARTY !!!")

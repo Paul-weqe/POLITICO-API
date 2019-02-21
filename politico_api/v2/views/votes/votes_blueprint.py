@@ -1,18 +1,24 @@
 from flask import Blueprint, request, jsonify, make_response
 from politico_api.v2.models.models import Vote
-from politico_api.v2.views.jtw_decorators import token_required
+from politico_api.v2.views.decorators import token_required, json_required
+import jwt
+import os
 
 votes_blueprint_v2 = Blueprint('vote_blueprint_v2', __name__, url_prefix="/api/v2/votes")
 
 @votes_blueprint_v2.route("/", methods=["POST"], strict_slashes=False)
 @token_required
+@json_required
 def cast_vote():
 
     json_data = request.get_json()
     required_fields = {
-        "voter_id": int, "office_id": int, "candidate_id": int
+        "candidate_id": int
     }
-
+    token = request.headers['Authorization'].split(' ')[1]
+    jwt_data = jwt.decode(token, os.getenv('SECRET_KEY'))
+    user_id = jwt_data["user_id"]
+    
     error = None
     vote_inserted = None 
     
@@ -25,20 +31,20 @@ def cast_vote():
     
     
     if error == None:
-        vote = Vote( voter_id=json_data["voter_id"], office_id=json_data["office_id"], candidate_id=json_data["candidate_id"])
+        vote = Vote( voter_id=user_id, candidate_id=json_data["candidate_id"])
         vote_inserted = vote.create_vote()
     
-    # checks for the candidates presence
+    # # checks for the candidates presence
     if vote_inserted == None and error == None:
-        error = [404, "voter or candidate could not be found"]
+        error = [404, "candidate could not be found"]
     
-    if vote_inserted == False:
-        error = [500, "The error is on our side"]
+    elif vote_inserted == False and error == None:
+        error = [500, "The problem is on our side"]
     
-    # vote_inserted returns "already voted" in case the user had already voted for a particular position
+    # # vote_inserted returns "already voted" in case the user had already voted for a particular position
     elif vote_inserted == "already voted" and error == None:
         # TODO check for the correct status number on this
-        error = [404, "user {} has already voted for that office".format(json_data["voter_id"])]
+        error = [400, "user {} has already voted for that office".format(user_id)]
     
     if error == None and vote_inserted == True:
         return make_response(jsonify({
