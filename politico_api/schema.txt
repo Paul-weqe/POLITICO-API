@@ -68,6 +68,10 @@ INSERT INTO users (first_name, last_name, other_name, email, phone_number, passp
 ('voter13_first', 'voter13_last', 'voter13_other', 'voter1@voter13.com', '07122737457', 'voter13_passport', 'voter13_password')
 ;
 
+
+-- create the table candidates
+CREATE TABLE candidates(user_id integer references users(id), party_id integer references parties(id), office_id integer references offices(id));
+
 -- -- -- CREATE DUMMY USERS WHO ARE  POLITICIANS 
 INSERT INTO users(first_name, last_name, other_name, email, phone_number, passport_url, is_politician, political_party, office_interested, password) VALUES 
 -- two political candidates both vying for the presidential seat

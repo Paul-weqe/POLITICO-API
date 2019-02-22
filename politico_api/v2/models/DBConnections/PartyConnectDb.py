@@ -1,10 +1,9 @@
 import psycopg2
 import os 
 # from politico_api.v2.models.DBConnections.UserConnectDb import UserConnection
-from politico_api.v2.models.DBConnections.UserConnectDb import UserConnection
 
 
-class VoteConnection:
+class PartyConnection:
     """
     this class creates a connection to the politico database
     SQL queries can be carried through methods in this class
@@ -47,63 +46,48 @@ class VoteConnection:
             print("!!! UNABLE TO CONNECT TO THE DATABASE !!!")
             print(e)
             print("!!! UNABLE TO CONNECT TO THE DATABASE !!!")
+
     
-    def create_vote(self, voter_id, candidate_id):
+    def create_party(self, party_name, party_hq, party_logo):
         try:
             self.open_connection()
 
             sql_command = """
-            SELECT user_id from candidates where user_id={}
-            """.format(candidate_id)
+            SELECT FROM PARTIES WHERE party_name='{}'
+            """.format(party_name)
             self.curr.execute(sql_command)
-            candidates = self.curr.fetchone()
-            if candidates == None:
-                return "Unable to find the candidate"
-            
-            sql_find_conflict = """
-            select candidates.office_id from votes inner join candidates on candidates.user_id=votes.candidate_id and votes.voter_id={} 
-            """.format(voter_id)
-            self.curr.execute(sql_find_conflict)
-            already_voted = self.curr.fetchone()
-
-            if already_voted != None:
-                return "already voted"
+            party_exists = self.curr.fetchone()
+            if party_exists is not None:
+                return "Party with name {} already exists".format(party_name)
             
             sql_command = """
-            INSERT INTO votes(voter_id, candidate_id) VALUES ({}, {})
-            """.format(voter_id, candidate_id)
+            INSERT INTO parties(party_name, party_hq_address, party_logo_url) VALUES ('{}', '{}', '{}')
+            """.format(party_name, party_hq, party_logo)
             self.curr.execute(sql_command)
             self.conn.commit()
 
-            # checks if the user has already voted for that office
             self.close_connection()
             return True
 
         except Exception as e:
-            print("!!! UNABLE TO ADD A NEW VOTE !!!")
+            print("!!! UNABLE TO CREATE A PARTY !!!")
             print(e)
-            print("!!! UNABLE TO ADD A NEW VOTE !!!")
-            return False
+            print("!!! UNABLE TO CREATE A PARTY !!!")
     
-    # def create_vote_by_names(self, voter_id, office_name, candidate_name):
-    #     try:
 
-    #         self.open_connection()
+    def get_all_parties(self):
+        try:
+            self.open_connection()
 
-    #         sql_find_office = """
-    #         SELECT id FROM offices WHERE office_name='{}'
-    #         """.format(office_name)
-    #         self.curr.execute(sql_find_office)
-    #         single_office = self.curr.fetchone()
-    #         if single_office == None:
-    #             return "Office with name {} could not be found".format(office_name)
-    #         office_id = single_office[0]
+            sql_command = """
+            SELECT * FROM parties
+            """
+            self.curr.execute(sql_command)
+            all_parties = self.curr.fetchall()
 
-
-    #         self.close_connection()
-
-    #     except Exception as e:
-    #         print("!!! UNABLE TO CREATE A NEW VOTE BY NAME !!!")
-    #         print(e)
-    #         print("!!! UNABLE TO CREATE A NEW VOTE BY NAME !!!")
-    
+            self.close_connection()
+            return all_parties
+        except Exception as e:
+            print("!!! UNABLE TO LIST PARTIES !!!")
+            print(e)
+            print("!!! UNABLE TO LIST PARTIES !!!")

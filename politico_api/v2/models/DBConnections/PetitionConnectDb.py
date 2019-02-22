@@ -54,7 +54,7 @@ class PetitionConnection:
             
             ### command to make sure one does not create petition for the same office twice
             sql_if_has_filed_command = """
-            SELECT * FROM petitions WHERE created_by={} and office={}
+            SELECT * FROM petitions WHERE create_by={} and office={}
             """.format(created_by, office)
             self.curr.execute(sql_if_has_filed_command)
 
@@ -63,7 +63,7 @@ class PetitionConnection:
 
             ### creates the petition
             sql_command = """
-            INSERT INTO petitions(created_by, office, body) VALUES ({}, {}, '{}')
+            INSERT INTO petitions(create_by, office, body) VALUES ({}, {}, '{}')
             """.format(created_by, office, body)
             
             self.curr.execute(sql_command)
@@ -73,6 +73,8 @@ class PetitionConnection:
             return True
 
         except Exception as e:
+            if type(e) == psycopg2.IntegrityError:
+                return "Office could not be found"
             print("!!! UNABLE TO CONNECT TO THE DATABASE !!!")
             print(e)
             print("!!! UNABLE TO CONNECT TO THE DATABASE !!!")

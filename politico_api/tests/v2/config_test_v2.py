@@ -8,7 +8,7 @@ class BaseTest(unittest.TestCase):
 
     def setUp(self):
         
-        self.app = create_app(ProductionConfig)
+        self.app = create_app(TestConfig)
         self.client = self.app.test_client()
         
         self.u = UserConnection(

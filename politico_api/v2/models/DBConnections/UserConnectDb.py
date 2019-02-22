@@ -38,6 +38,7 @@ class UserConnection:
             print("!!! UNABLE TO CONNECT TO THE DATABASE !!!")
     
 
+
     def close_connection(self):
         # this function should be carried out after evey function that is carrying out SQL queries
 
@@ -63,15 +64,7 @@ class UserConnection:
             phone_number = user_details_kwargs["phone_number"]
             passport_url = user_details_kwargs["passport_url"]
             password = user_details_kwargs["password"]
-            is_politician = 'false'
-            is_admin = 'false'
-
-            if "is_politician" in user_details_kwargs:
-                is_politician = 'true' if user_details_kwargs["is_politician"] else 'false'
-            
-
-            if "is_admin" in user_details_kwargs:
-                is_admin = 'true' if user_details_kwargs["is_admin"] else 'false'
+            username = user_details_kwargs["username"]
             
             ## confirm if user with unique credentials already exists
             sql_command_if_exists = """
@@ -85,11 +78,11 @@ class UserConnection:
 
             sql_command = """
             INSERT INTO users
-            (first_name, last_name, other_name, email, phone_number, passport_url, is_politician, is_admin, password)
+            (first_name, last_name, other_name, email, phone_number, passport_url, username, password)
             VALUES 
-            ('{}', '{}', '{}', '{}', '{}', '{}', {}, {}, md5('{}'))
+            ('{}', '{}', '{}', '{}', '{}', '{}', '{}', md5('{}'))
             """.format(
-                first_name, last_name, other_name, email, phone_number, passport_url, is_politician, is_admin, password
+                first_name, last_name, other_name, email, phone_number, passport_url, username, password
             )
             self.curr.execute(sql_command)
             self.conn.commit()
@@ -129,12 +122,12 @@ class UserConnection:
             
             # if everything is fine so far
             sql_command = """
-            UPDATE users SET password='{}' WHERE email='{}'
+            UPDATE users SET password=md5('{}') WHERE email='{}'
             """.format(new_password, email)
 
             self.curr.execute(sql_command)
             self.conn.commit()
-
+            
             self.close_connection()
             return True
         
@@ -150,7 +143,7 @@ class UserConnection:
             self.open_connection()
 
             sql_command = """
-            SELECT * FROM users WHERE email='{}' and password=md5('{}')
+            select * from users where email='{}' and password=md5('{}')
             """.format(email, password)
             self.curr.execute(sql_command)
             
@@ -165,12 +158,42 @@ class UserConnection:
             print("!!! ERROR FINDING USER !!!")
             return False 
     
+    def make_user_admin(self, user_id):
+        try:
+            
+            self.open_connection()
+
+            find_user_sql_command = """
+            SELECT * FROM users WHERE id={}
+            """.format(user_id)
+
+            self.curr.execute(find_user_sql_command)
+            if self.curr.fetchone() == None:
+                return None
+            
+            sql_command = """
+            UPDATE users SET is_admin=true WHERE id={}
+            """.format(user_id)
+            
+            self.curr.execute(sql_command)
+            self.conn.commit()
+            
+            self.close_connection()
+            return True
+
+        except Exception as e:
+            print("!!! ERROR MAKING USER ADMIN !!!")
+            print(e)
+            print("!!! ERROR MAKING USER ADMIN !!!")
+            
+        return True
+
     def find_user_by_id(self, user_id):
         try:
             self.open_connection()
-
+            
             sql_command = """
-            SELECT * FROM users WHERE id={}
+            SELECT exists(select 1 from users where id={})
             """.format(user_id)
             
             self.curr.execute(sql_command)
@@ -200,3 +223,4 @@ class UserConnection:
             print(e)
             print("!!! ERROR RESETING DATABASE !!!")
             return False
+    
