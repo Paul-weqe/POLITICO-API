@@ -131,7 +131,16 @@ class CandidateConnection:
             if office_found is None:
                 return "Office with id {} not found".format(office_id)
             office_id = office_found[0]
-            
+
+            ## look for if the user has already registered for that specific office
+            sql_has_registered = """
+            SELECT * FROM candidates WHERE user_id={} and office_id={}
+            """.format(user_id, office_id)
+            self.curr.execute(sql_has_registered)
+            user_already_registered = self.curr.fetchone()
+            if user_already_registered != None:
+                return "User has already registered for that office"
+
             ## ADD THE CANDIDATE
             sql_command = """
             INSERT INTO candidates(user_id, office_id, party_id) VALUES ({}, {}, {})

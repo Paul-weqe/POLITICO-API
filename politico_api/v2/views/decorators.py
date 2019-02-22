@@ -41,7 +41,7 @@ def admin_required(f):
         if len(header_data) < 2:
             return make_response(jsonify({"message": "token is missing"}), 403)
         elif header_data[0] != "Bearer":
-            return make_response(jsonify({"message": "Authorization to be structured 'Bearer [token]'"}), 403)
+            return make_response(jsonify({"message": "Authorization to be structured 'Bearer [token]'"}), 401)
 
         token = header_data[1]
         try:
@@ -49,7 +49,7 @@ def admin_required(f):
             print("##")
             print(data)
             if data['admin'] != True:
-                return make_response(jsonify({"message": "admin token required"}), 403)
+                return make_response(jsonify({"message": "admin token required"}), 401)
         except Exception as e:
             return make_response(jsonify({"message": "token is invalid"}), 403)
             

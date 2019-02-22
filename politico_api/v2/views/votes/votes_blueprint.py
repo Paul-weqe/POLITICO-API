@@ -52,6 +52,8 @@ def cast_vote():
             "data": "successfully casted your vote..."
         }), 201)
     
+    
+
     return make_response(jsonify({
         "status": error[0],
         "error": error[1]

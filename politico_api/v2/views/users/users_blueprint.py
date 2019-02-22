@@ -186,11 +186,11 @@ def user_login():
     if error == None:
         # print(response[-1])
         if response[-2] == True:
-            token = jwt.encode({'user_id': response[0], 'email': json_data['email'], 'admin': True, 'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=30)}, 
+            token = jwt.encode({'user_id': response[0], 'email': json_data['email'], 'admin': True, 'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=300)}, 
                 os.getenv('SECRET_KEY'))
 
         else:
-            token = jwt.encode({'user_id': response[0], 'email': json_data['email'], 'admin': False, 'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=30)}, 
+            token = jwt.encode({'user_id': response[0], 'email': json_data['email'], 'admin': False, 'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=300)}, 
                 os.getenv('SECRET_KEY'))
 
         print(response)

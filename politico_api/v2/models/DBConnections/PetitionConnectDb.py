@@ -73,6 +73,8 @@ class PetitionConnection:
             return True
 
         except Exception as e:
+            if type(e) == psycopg2.IntegrityError:
+                return "Office could not be found"
             print("!!! UNABLE TO CONNECT TO THE DATABASE !!!")
             print(e)
             print("!!! UNABLE TO CONNECT TO THE DATABASE !!!")

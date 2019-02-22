@@ -42,8 +42,10 @@ def create_petition():
 
         if create_petition_response == False:
             error = [500, "There is a problem on our side. We will be back to you shortly"]
+        elif type(create_petition_response) == str:
+            error = [404, create_petition_response] 
         elif create_petition_response == None:
-            error = [417, "User with ID {} has already filed a petition for office {}".format(json_data["created_by"], json_data["office"])]
+            error = [409, "User with ID {} has already filed a petition for office {}".format(json_data["created_by"], json_data["office"])]
     
     if error == None:
         return make_response(jsonify({

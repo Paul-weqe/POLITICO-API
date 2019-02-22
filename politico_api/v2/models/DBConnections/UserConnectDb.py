@@ -174,7 +174,7 @@ class UserConnection:
             sql_command = """
             UPDATE users SET is_admin=true WHERE id={}
             """.format(user_id)
-
+            
             self.curr.execute(sql_command)
             self.conn.commit()
             

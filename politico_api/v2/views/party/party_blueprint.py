@@ -39,7 +39,12 @@ def create_party():
         if make_party == True:
             return make_response(jsonify({
                 "status": 201,
-                "message": "Party successfully created"
+                "party information": [
+                    {
+                        "party_name": json_data["party_name"],
+                        "party_hq": json_data["party_hq"]
+                    }
+                ]
             }), 201)
         
         error = [400, make_party]
@@ -49,3 +54,21 @@ def create_party():
         "status": error[0],
         "error": error[1]
     }), error[0])
+
+
+@party_blueprint_v2.route("/", strict_slashes=False)
+def get_all_parties():
+    party = Party()
+    all_parties = party.get_all_parties()
+    final_dict = []
+    for p in all_parties:
+        final_dict.append({
+            "id": p[0],
+            "name": p[1],
+            "hq": p[2]
+        })
+
+    return make_response(jsonify({
+        "status": 200,
+        "data": final_dict
+    })) 

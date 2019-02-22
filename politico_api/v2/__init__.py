@@ -31,5 +31,5 @@ def create_app(config_object=None):
             "status": 500,
             "error": "The problem is on our side"
         }), 500)
-
+        
     return v2_app

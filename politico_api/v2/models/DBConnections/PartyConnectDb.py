@@ -73,3 +73,21 @@ class PartyConnection:
             print("!!! UNABLE TO CREATE A PARTY !!!")
             print(e)
             print("!!! UNABLE TO CREATE A PARTY !!!")
+    
+
+    def get_all_parties(self):
+        try:
+            self.open_connection()
+
+            sql_command = """
+            SELECT * FROM parties
+            """
+            self.curr.execute(sql_command)
+            all_parties = self.curr.fetchall()
+
+            self.close_connection()
+            return all_parties
+        except Exception as e:
+            print("!!! UNABLE TO LIST PARTIES !!!")
+            print(e)
+            print("!!! UNABLE TO LIST PARTIES !!!")

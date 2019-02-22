@@ -54,7 +54,7 @@ create table candidates(
     user_id integer unique references users(id),
     office_id integer references users(id),
     party_id integer references parties(id),
-    primary key(user_id, office_id, id)
+    primary key(user_id)
 );
 
 

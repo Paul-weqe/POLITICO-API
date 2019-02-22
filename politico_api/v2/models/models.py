@@ -102,3 +102,7 @@ class Party:
     def create_party(self):
         party = PartyConnection()
         return party.create_party(self.party_name, self.party_hq, self.party_logo)
+    
+    def get_all_parties(self):
+        party = PartyConnection()
+        return party.get_all_parties()

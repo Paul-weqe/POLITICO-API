@@ -23,9 +23,10 @@ def get_office_results(office_id):
         error = [404, "office with ID {} does not exist".format(office_id)]
     
     office_results_list = []
-    for result in office_results: 
-        result_info = { "candidate id": result[0],  "candidate name": result[1], "number of votes": result[2], "office_id": int(office_id) }
-        office_results_list.append(result_info)
+    if error == None:
+        for result in office_results: 
+            result_info = { "candidate id": result[0],  "candidate name": result[1], "number of votes": result[2], "office_id": int(office_id) }
+            office_results_list.append(result_info)
 
     if error == None:
         return make_response(jsonify({
@@ -150,7 +151,10 @@ def create_candidate(office_id):
                 "status": 201
             }), 201)
         error = [400, response]
-
+    
+    if error == None:
+        error = [400, "unable to create the user"]
+        
     return make_response(jsonify({
         "error": error[1],
         "status": error[0]
