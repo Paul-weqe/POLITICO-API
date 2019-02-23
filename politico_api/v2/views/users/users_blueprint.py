@@ -67,7 +67,9 @@ def create_user():
                 "user info": [{
                     "username": json_data["username"],
                     "email": json_data["email"]
+
                 }] 
+
             }), 201)
     
     if error == None:
@@ -127,6 +129,30 @@ def change_password():
         "status": error[0], "error": error[1]
     }), error[0])
     
+@users_blueprint_v2.route("/make-admin/<int:user_id>", methods=['PUT'], strict_slashes=False)
+@admin_required
+def make_admin(user_id):
+    
+    error = None 
+    if user_id < 1:
+        error = [400, "user_id cannot be 0 or a negative number"]
+    
+    user = User()
+    if error == None and user.make_user_admin(user_id) == None:
+        error = [404, "could not find the user specified"]
+    
+    if error == None:
+        return make_response(jsonify({
+            "status": 200,
+            "message": "User has been updated to admin"
+        }), 200)
+    
+    return make_response(jsonify({
+        "status": error[0],
+        "error": error[1]
+    }), error[0])
+
+
 @users_blueprint_v2.route("/make-admin/<int:user_id>", methods=['PUT'], strict_slashes=False)
 @admin_required
 def make_admin(user_id):
