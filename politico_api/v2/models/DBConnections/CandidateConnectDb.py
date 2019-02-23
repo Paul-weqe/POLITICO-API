@@ -1,52 +1,17 @@
 import psycopg2
 import os 
-# from politico_api.v2.models.DBConnections.UserConnectDb import UserConnection
+from politico_api.v2.models.DBConnections.UserConnectDb import UserConnection
+from politico_api.v2.models.DBConnections.BaseConnectionDb import BaseConnection
 
+class CandidateConnection(BaseConnection):
 
-class CandidateConnection:
-    """
-    this class creates a connection to the politico database
-    SQL queries can be carried through methods in this class
-    """
     def __init__(self, **kwargs):
-        self.conn = None 
-        self.curr = None 
-        self.kwargs = None 
-        if len(kwargs) > 0:
-            self.kwargs = kwargs
-        
+        super().__init__(**kwargs)
 
-    def open_connection(self):
-        try:
-            print(self.kwargs)
-            if self.kwargs==None:
-                self.conn = psycopg2.connect(
-                    user=os.getenv("DATABASE_USER"), password=os.getenv("DATABASE_PASSWORD"), host=os.getenv("DATABASE_HOST"), database=os.getenv("DATABASE_NAME")
-                )
-                self.curr = self.conn.cursor()
-                print("connection established")
-            else:
-                self.conn = psycopg2.connect(
-                    user=self.kwargs["DB_USER"], password=self.kwargs["DB_PASSWORD"], host="localhost", database=self.kwargs["DB_NAME"]
-                )
-                self.curr = self.conn.cursor()
-                print("Connection  established test")
+    def create_candidate(self, user_id, party_id, office_id):
+        # Creates a new candidate in the system
+        # the user_id is needed to be able to reference the candidate to a specific user. 
 
-        except Exception as e:
-            print("!!! UNABLE TO CONNECT TO THE DATABASE !!!")
-            print(e)
-            print("!!! UNABLE TO CONNECT TO THE DATABASE !!!")
-    
-    def close_connection(self):
-        try:
-            if (self.conn):
-                self.curr.close()
-    
-        except Exception as e:
-            print("!!! UNABLE TO CONNECT TO THE DATABASE !!!")
-            print(e)
-            print("!!! UNABLE TO CONNECT TO THE DATABASE !!!")
-    
     def create_candidate(self, user_id, party_id, office_id):
         try:
             self.open_connection()
@@ -93,8 +58,6 @@ class CandidateConnection:
             return "Candidate successfully created"
 
         except Exception as e:
-            # if type(e) == psycopg2.IntegrityError:
-            #     return "The user has already been registered as a candidate"
             print("!!! UNABLE TO CREATE A CANDIDATE !!!")
             print(e)
             print("!!! UNABLE TO CREATE A CANDIDATE !!!")

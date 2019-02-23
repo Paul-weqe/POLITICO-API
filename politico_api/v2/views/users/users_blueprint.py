@@ -39,7 +39,6 @@ def create_user():
             error = [400, validate_message.format(field)]
             break
         
-    # if  json_data["password"]
     if error == None and Validate.validate_password(json_data["password"]) != True:
         validate_message = Validate.validate_password(json_data["password"])
         error = [400, validate_message]
@@ -68,7 +67,9 @@ def create_user():
                 "user info": [{
                     "username": json_data["username"],
                     "email": json_data["email"]
-                }] #new_user
+
+                }] 
+
             }), 201)
     
     if error == None:
@@ -77,7 +78,6 @@ def create_user():
         "status": error[0],
         "error": error[1]
         }), error[0])
-
 
 @users_blueprint_v2.route("/change-password", methods=["PATCH"])
 @json_required
@@ -88,9 +88,6 @@ def change_password():
     }
     json_data = request.get_json()
     
-    ## 
-    # print("###")
-    # print(json_data)
     error = None 
     changed_password = None
 
@@ -130,6 +127,29 @@ def change_password():
     
     return make_response(jsonify({
         "status": error[0], "error": error[1]
+    }), error[0])
+    
+@users_blueprint_v2.route("/make-admin/<int:user_id>", methods=['PUT'], strict_slashes=False)
+@admin_required
+def make_admin(user_id):
+    
+    error = None 
+    if user_id < 1:
+        error = [400, "user_id cannot be 0 or a negative number"]
+    
+    user = User()
+    if error == None and user.make_user_admin(user_id) == None:
+        error = [404, "could not find the user specified"]
+    
+    if error == None:
+        return make_response(jsonify({
+            "status": 200,
+            "message": "User has been updated to admin"
+        }), 200)
+    
+    return make_response(jsonify({
+        "status": error[0],
+        "error": error[1]
     }), error[0])
 
 
@@ -184,7 +204,6 @@ def user_login():
             error = [404, "could not find the user specified"]
     
     if error == None:
-        # print(response[-1])
         if response[-2] == True:
             token = jwt.encode({'user_id': response[0], 'email': json_data['email'], 'admin': True, 'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=300)}, 
                 os.getenv('SECRET_KEY'))

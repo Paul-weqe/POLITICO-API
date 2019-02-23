@@ -1,52 +1,12 @@
 import psycopg2
 import os 
-# from politico_api.v2.models.DBConnections.UserConnectDb import UserConnection
+
+from politico_api.v2.models.DBConnections.BaseConnectionDb import BaseConnection
 
 
-class PartyConnection:
-    """
-    this class creates a connection to the politico database
-    SQL queries can be carried through methods in this class
-    """
+class PartyConnection(BaseConnection):
     def __init__(self, **kwargs):
-        self.conn = None 
-        self.curr = None 
-        self.kwargs = None 
-        if len(kwargs) > 0:
-            self.kwargs = kwargs
-        
-
-    def open_connection(self):
-        try:
-            print(self.kwargs)
-            if self.kwargs==None:
-                self.conn = psycopg2.connect(
-                    user=os.getenv("DATABASE_USER"), password=os.getenv("DATABASE_PASSWORD"), host=os.getenv("DATABASE_HOST"), database=os.getenv("DATABASE_NAME")
-                )
-                self.curr = self.conn.cursor()
-                print("connection established")
-            else:
-                self.conn = psycopg2.connect(
-                    user=self.kwargs["DB_USER"], password=self.kwargs["DB_PASSWORD"], host="localhost", database=self.kwargs["DB_NAME"]
-                )
-                self.curr = self.conn.cursor()
-                print("Connection  established test")
-
-        except Exception as e:
-            print("!!! UNABLE TO CONNECT TO THE DATABASE !!!")
-            print(e)
-            print("!!! UNABLE TO CONNECT TO THE DATABASE !!!")
-    
-    def close_connection(self):
-        try:
-            if (self.conn):
-                self.curr.close()
-    
-        except Exception as e:
-            print("!!! UNABLE TO CONNECT TO THE DATABASE !!!")
-            print(e)
-            print("!!! UNABLE TO CONNECT TO THE DATABASE !!!")
-
+        super().__init__(**kwargs)
     
     def create_party(self, party_name, party_hq, party_logo):
         try:
