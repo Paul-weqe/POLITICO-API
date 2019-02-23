@@ -1,8 +1,8 @@
+from politico_api.v2.views.decorators import token_required, json_required, admin_required
 from politico_api.v2.views.api_response_data import mandatory_fields
-from politico_api.v2.views.jtw_decorators import token_required
+from politico_api.v2.validators import RegularExpressions, Validate
 from flask import Blueprint, make_response, jsonify, request
 from politico_api.v2.views.api_functions import ApiFunctions
-from politico_api.v2.validators import RegularExpressions, Validate
 from politico_api.v2.models.models import User
 from functools import wraps
 import datetime
@@ -10,17 +10,14 @@ import jwt
 import os
 
 
-users_blueprint_v2 = Blueprint('user_blueprint_v2', __name__, url_prefix="/api/v2/users")
-
-
+users_blueprint_v2 = Blueprint('user_blueprint_v2', __name__, url_prefix="/api/v2/auth")
 
 @users_blueprint_v2.route("/signup", methods=['POST'])
+@json_required
 def create_user():
     required_fields = {
-        "first_name": str, "last_name": str, "other_name": str, "email": str, "phone_number": str, "passport_url": str, "password": str
-    }
-    optional_fields = {
-        "is_admin": bool, "is_politician": bool
+        "first_name": str, "last_name": str, "other_name": str, "email": str, "phone_number": str, "passport_url": str, "password": str,
+        "username": str
     }
     json_data = request.get_json(force=True)
     error = None 
@@ -35,15 +32,13 @@ def create_user():
             error = [400, "{} is supposed to be a {}".format(field, required_fields[field])]
             print(type(json_data[field]))
             break
-        
+
         # check for the validity of the fields
         elif required_fields[field] == str and Validate.validate_field(json_data[field]) != True:
             validate_message = Validate.validate_field(json_data[field])
             error = [400, validate_message.format(field)]
             break
-
-    
-    # if  json_data["password"]
+        
     if error == None and Validate.validate_password(json_data["password"]) != True:
         validate_message = Validate.validate_password(json_data["password"])
         error = [400, validate_message]
@@ -52,22 +47,12 @@ def create_user():
         error = [400, "email is not in the valid email structure"]
 
     elif error == None and not RegularExpressions.is_phone_number(json_data["phone_number"]):
-        error = [400, "phone_numbe ris not in the valid phone number structure"]
+        error = [400, "phone_number is not in the valid phone number structure"]
     
     elif error == None and not RegularExpressions.is_http_input(json_data["passport_url"]):
         error = [400, "passport_url is not in the valid url structure"]
-
+        
     # looks for if the optional fields are present and makes sure the daya types used in them are correct
-    for field in optional_fields:
-        if (field in json_data) and (optional_fields[field] != type(json_data[field])) and (error==None):
-            error = [400, "{} has to be a {}".format(field, optional_fields[field])]
-            break
-        elif not Validate.validate_field(field):
-            validate_message = Validate.validate_field(field)
-            error = [400, validate_message.format(field)]
-            break
-    
-
     if error == None:
         user_obj = User(**json_data)
         new_user = user_obj.create_user()
@@ -78,26 +63,29 @@ def create_user():
 
         elif new_user != False:
             return make_response(jsonify({
-                "status": 200,
-                "data": new_user
-            }), 200)
+                "status": 201,
+                "user info": [{
+                    "username": json_data["username"],
+                    "email": json_data["email"]
+                }] 
+            }), 201)
     
+    if error == None:
+        error = [400, "a user with a similar username already exists"]
     return make_response(jsonify({
         "status": error[0],
         "error": error[1]
-    }), error[0])
+        }), error[0])
 
 @users_blueprint_v2.route("/change-password", methods=["PATCH"])
+@json_required
 def change_password():
 
     required_fields = {
         "email": str, "old_password": str, "new_password": str
     }
     json_data = request.get_json()
-
-    ## 
-    # print("###")
-    # print(json_data)
+    
     error = None 
     changed_password = None
 
@@ -108,10 +96,19 @@ def change_password():
         elif required_fields[field] != type(json_data[field]):
             error = [400, "{} must be a {}".format(field, required_fields[field])]
             break
-    
+
+        elif required_fields[field] == str and Validate.validate_field(json_data[field]) != True:
+            validate_message = Validate.validate_field(json_data[field])
+            error = [400, validate_message.format(field)]
+            break
+        
     if error == None and not RegularExpressions.is_email(json_data["email"]):
         error = [400, "email is not in the correct email structure(e.g abc@abc.com)"]
     
+    elif error == None and Validate.validate_password(json_data["new_password"]) != True:
+        error_message = Validate.validate_password(json_data["new_password"])
+        error = [400, error_message]
+        
     if error == None:
         user = User()
         changed_password = user.change_password(json_data["email"], json_data["old_password"], json_data["new_password"])
@@ -129,8 +126,32 @@ def change_password():
     return make_response(jsonify({
         "status": error[0], "error": error[1]
     }), error[0])
+    
+@users_blueprint_v2.route("/make-admin/<int:user_id>", methods=['PUT'], strict_slashes=False)
+@admin_required
+def make_admin(user_id):
+    
+    error = None 
+    if user_id < 1:
+        error = [400, "user_id cannot be 0 or a negative number"]
+    
+    user = User()
+    if error == None and user.make_user_admin(user_id) == None:
+        error = [404, "could not find the user specified"]
+    
+    if error == None:
+        return make_response(jsonify({
+            "status": 200,
+            "message": "User has been updated to admin"
+        }), 200)
+    
+    return make_response(jsonify({
+        "status": error[0],
+        "error": error[1]
+    }), error[0])
 
 @users_blueprint_v2.route("/login", methods=["POST"], strict_slashes=False)
+@json_required
 def user_login():
     json_data = request.get_json()
     required_fields = {
@@ -157,15 +178,14 @@ def user_login():
             error = [404, "could not find the user specified"]
     
     if error == None:
-        if response[-3] == True:
-            token = jwt.encode({'email': json_data['email'], 'admin': True, 'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=30)}, 
+        if response[-2] == True:
+            token = jwt.encode({'user_id': response[0], 'email': json_data['email'], 'admin': True, 'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=300)}, 
                 os.getenv('SECRET_KEY'))
-        
+
         else:
-            token = jwt.encode({'email': json_data["email"], 'admin': False, 'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=30)},
+            token = jwt.encode({'user_id': response[0], 'email': json_data['email'], 'admin': False, 'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=300)}, 
                 os.getenv('SECRET_KEY'))
-            
-        
+
         print(response)
         return make_response(jsonify({
             "token": token.decode('UTF-8'),

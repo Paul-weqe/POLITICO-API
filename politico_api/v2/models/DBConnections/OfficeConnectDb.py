@@ -1,51 +1,11 @@
 import psycopg2
 import os 
-# from politico_api.v2.models.DBConnections.UserConnectDb import UserConnection
+from politico_api.v2.models.DBConnections.BaseConnectionDb import BaseConnection
 
 
-class OfficeConnection:
-    """
-    this class creates a connection to the politico database
-    SQL queries can be carried through methods in this class
-    """
+class OfficeConnection(BaseConnection):
     def __init__(self, **kwargs):
-        self.conn = None 
-        self.curr = None 
-        self.kwargs = None 
-        if len(kwargs) > 0:
-            self.kwargs = kwargs
-        
-
-    def open_connection(self):
-        try:
-            print(self.kwargs)
-            if self.kwargs==None:
-                self.conn = psycopg2.connect(
-                    user=os.getenv("DATABASE_USER"), password=os.getenv("DATABASE_PASSWORD"), host=os.getenv("DATABASE_HOST"), database=os.getenv("DATABASE_NAME")
-                )
-                self.curr = self.conn.cursor()
-                print("connection established")
-            else:
-                self.conn = psycopg2.connect(
-                    user=self.kwargs["DB_USER"], password=self.kwargs["DB_PASSWORD"], host="localhost", database=self.kwargs["DB_NAME"]
-                )
-                self.curr = self.conn.cursor()
-                print("Connection  established test")
-
-        except Exception as e:
-            print("!!! UNABLE TO CONNECT TO THE DATABASE !!!")
-            print(e)
-            print("!!! UNABLE TO CONNECT TO THE DATABASE !!!")
-    
-    def close_connection(self):
-        try:
-            if (self.conn):
-                self.curr.close()
-    
-        except Exception as e:
-            print("!!! UNABLE TO CONNECT TO THE DATABASE !!!")
-            print(e)
-            print("!!! UNABLE TO CONNECT TO THE DATABASE !!!")
+        super().__init__(**kwargs)
     
 
     # this returns the result of the office with ID officeID
@@ -57,8 +17,8 @@ class OfficeConnection:
             """.format(office_id)
 
             self.curr.execute(sql_find_office_command)
-            office = self.curr.fetchall()
-            if len(office) == 0:
+            office = self.curr.fetchone()
+            if office == None:
                 return None
 
             sql_command = """
@@ -69,7 +29,7 @@ class OfficeConnection:
             self.curr.execute(sql_command)
             votes_results = self.curr.fetchall()
             self.close_connection()
-
+            
             return votes_results
 
         except Exception as e:
@@ -83,7 +43,7 @@ class OfficeConnection:
         try:
             self.open_connection()
 
-            # this SQL query looks if the parameters aimed to be used to create this party already exist
+            # t his SQL query looks if the parameters aimed to be used to create this party already exist
             sql_if_office_exists_command = """
             SELECT * FROM offices WHERE office_name='{}' and office_type='{}'
             """.format(office_name, office_type)
@@ -128,3 +88,43 @@ class OfficeConnection:
             print(e)
             print("!!! UNABLE TO GET ALL OFFICES !!!")
             return False
+    
+
+    def get_office_by_id(self, office_id):
+
+        try:
+            self.open_connection()
+
+            sql_command = """
+            SELECT * FROM offices WHERE id={}
+            """.format(office_id)
+            self.curr.execute(sql_command)
+            office = self.curr.fetchone()
+
+            self.close_connection()
+            return office
+
+        except Exception as e:
+            print("!!! UNABLE TO GET A SINGLE OFFICE!!!")
+            print(e)
+            print("!!! UNABLE TO GET A SINGLE OFFICE!!!")
+
+    def get_office_by_name(self, office_name):
+        try:
+            self.open_connection()
+            
+            sql_command = """
+            SELECT * FROM offices WHERE office_name='{}'
+            """.format(office_name)
+            self.curr.execute(sql_command)
+            office = self.curr.fetchone()
+
+            self.close_connection()
+            return office
+
+        except Exception as e:
+            print("!!! UNABLE TO GET A SINGLE OFFICE BY ID !!!")
+            print(e)
+            print("!!! UNABLE TO GET A SINGLE OFFICE BY ID !!!")
+    
+    

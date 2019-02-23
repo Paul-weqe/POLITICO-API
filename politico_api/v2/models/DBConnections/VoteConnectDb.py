@@ -48,42 +48,36 @@ class VoteConnection:
             print(e)
             print("!!! UNABLE TO CONNECT TO THE DATABASE !!!")
     
-    def create_vote(self, voter_id, office_id, candidate_id):
+    def create_vote(self, voter_id, candidate_id):
         try:
             self.open_connection()
 
-            # checks if the user has already voted for that office
-            sql_check_if_voted_command = """
-            select * from users inner join votes on votes.created_by=users.id WHERE users.id={} and votes.office={}
-            """.format(voter_id, office_id)
-            self.curr.execute(sql_check_if_voted_command)
-            results = self.curr.fetchall()
+            sql_command = """
+            SELECT user_id from candidates where user_id={}
+            """.format(candidate_id)
+            self.curr.execute(sql_command)
+            candidates = self.curr.fetchone()
+            if candidates == None:
+                return "Unable to find the candidate"
+            
+            sql_find_conflict = """
+            select candidates.office_id from votes inner join candidates on candidates.user_id=votes.candidate_id and votes.voter_id={} 
+            """.format(voter_id)
+            self.curr.execute(sql_find_conflict)
+            already_voted = self.curr.fetchone()
 
-            if len(results) != 0:
+            if already_voted != None:
                 return "already voted"
             
-            # validate if the user exists
-            u = UserConnection()
-            
-            ## TODO - ADD VALIDATION FOR THE office_id
-            
-            if u.find_user_by_id(voter_id) == None:
-                return None
-            elif u.find_user_by_id(candidate_id) == None:
-                return None 
-
             sql_command = """
-            INSERT INTO votes(created_by, office, voted_for) VALUES (
-                {}, {}, {}
-            )
-            """.format(voter_id, office_id, candidate_id)
-
+            INSERT INTO votes(voter_id, candidate_id) VALUES ({}, {})
+            """.format(voter_id, candidate_id)
             self.curr.execute(sql_command)
             self.conn.commit()
-            self.close_connection()
 
+            # checks if the user has already voted for that office
+            self.close_connection()
             return True
-            
 
         except Exception as e:
             print("!!! UNABLE TO ADD A NEW VOTE !!!")
@@ -91,4 +85,25 @@ class VoteConnection:
             print("!!! UNABLE TO ADD A NEW VOTE !!!")
             return False
     
+    # def create_vote_by_names(self, voter_id, office_name, candidate_name):
+    #     try:
+
+    #         self.open_connection()
+
+    #         sql_find_office = """
+    #         SELECT id FROM offices WHERE office_name='{}'
+    #         """.format(office_name)
+    #         self.curr.execute(sql_find_office)
+    #         single_office = self.curr.fetchone()
+    #         if single_office == None:
+    #             return "Office with name {} could not be found".format(office_name)
+    #         office_id = single_office[0]
+
+
+    #         self.close_connection()
+
+    #     except Exception as e:
+    #         print("!!! UNABLE TO CREATE A NEW VOTE BY NAME !!!")
+    #         print(e)
+    #         print("!!! UNABLE TO CREATE A NEW VOTE BY NAME !!!")
     

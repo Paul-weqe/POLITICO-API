@@ -15,7 +15,7 @@ class TestMandatoryFields(BaseTest):
         response = self.client.post("/api/v2/petitions", data=json.dumps(dict(
             created_by=1, body="not fair"
         )), content_type="application/json")
-
+        
         self.assertEqual(response.status_code, 403)
 
 class TestDataTypes(BaseTest):
