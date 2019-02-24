@@ -95,4 +95,151 @@ class TestGet(BaseTest):
     
     def test_correct_request_before_adding(self):
         response = self.client.get("/api/v2/office")
+        self.assertEqual(response.status_code, 200)
+
+class TestCreateCandidate(BaseTest):
+
+    def test_when_correct(self):
+
+        # create a user that will run for an office
+        user_data = self.create_user_data
+
+        response = self.client.post("/api/v2/auth/signup", query_string={"db": "test"}, 
+                    content_type="application/json", data=json.dumps(user_data))
+        
+
+        # create a party that the user will vie with
+        party_data = self.create_party_data
+        token = self.get_token()
+
+        response = self.client.post("/api/v2/party", query_string={"db": "test"},
+                    content_type="application/json", data=json.dumps(party_data),
+                    headers={"Authorization": "Bearer {}".format(token)})
+
+        # create the office to be run for 
+        token = self.get_token()
+        office_data = {"office_name": "MP", "office_type": "legislative"}
+        response = self.client.post("/api/v2/office", query_string={"db": "test"},
+                    content_type="application/json", data=json.dumps(office_data),
+                    headers={"Authorization": "Bearer {}".format(token)})
+            
+        get_offices = self.client.get("/api/v2/office")
+        print(get_offices.data)
+        
+        # run for the office :)
+        token = self.get_token()
+        candidate_data = {"party_name": "democrats", "candidate_username": "kari"}
+
+        response = self.client.post("/api/v2/office/1/register", data=json.dumps(candidate_data),
+                    headers={"Authorization": "Bearer {}".format(token)}, content_type="application/json",
+                    query_string={"db": "test"})
+        
+        self.assertEqual(response.status_code, 201)
+    
+    def test_without_user(self):
+
+        party_data = self.create_party_data
+        token = self.get_token()
+
+        response = self.client.post("/api/v2/party", query_string={"db": "test"},
+                    content_type="application/json", data=json.dumps(party_data),
+                    headers={"Authorization": "Bearer {}".format(token)})
+
+        # create the office to be run for 
+        token = self.get_token()
+        office_data = {"office_name": "MP", "office_type": "legislative"}
+        response = self.client.post("/api/v2/office", query_string={"db": "test"},
+                    content_type="application/json", data=json.dumps(office_data),
+                    headers={"Authorization": "Bearer {}".format(token)})
+
+        # run for the office :)
+        token = self.get_token()
+        candidate_data = {"party_name": "democrats", "candidate_username": "kari"}
+
+        response = self.client.post("/api/v2/office/1/register", data=json.dumps(candidate_data),
+                    headers={"Authorization": "Bearer {}".format(token)}, content_type="application/json",
+                    query_string={"db": "test"})
+        
+        self.assertIn(b"User with name kari not found", response.data)
+        self.assertEqual(response.status_code, 400)
+
+    def test_without_office(self):
+
+        # create a user that will run for an office
+        user_data = self.create_user_data
+
+        response = self.client.post("/api/v2/auth/signup", query_string={"db": "test"}, 
+                    content_type="application/json", data=json.dumps(user_data))
+
+        # create the office to be run for 
+        token = self.get_token()
+        office_data = {"office_name": "MP", "office_type": "legislative"}
+        response = self.client.post("/api/v2/office", query_string={"db": "test"},
+                    content_type="application/json", data=json.dumps(office_data),
+                    headers={"Authorization": "Bearer {}".format(token)})
+
+        get_offices = self.client.get("/api/v2/office")
+        print(get_offices.data)
+
+        # run for the office :)
+        token = self.get_token()
+        candidate_data = {"party_name": "democrats", "candidate_username": "kari"}
+
+        response = self.client.post("/api/v2/office/1/register", data=json.dumps(candidate_data),
+                    headers={"Authorization": "Bearer {}".format(token)}, content_type="application/json",
+                    query_string={"db": "test"})
+        
+        self.assertEqual(response.status_code, 400)
+        self.assertIn(b"Party with name democrats not found", response.data)
+
+    def test_without_party(self):
+
+        # create a user that will run for an office
+        user_data = self.create_user_data
+
+        response = self.client.post("/api/v2/auth/signup", query_string={"db": "test"}, 
+                    content_type="application/json", data=json.dumps(user_data))
+        
+        token = self.get_token()
+        office_data = {"office_name": "MP", "office_type": "legislative"}
+        response = self.client.post("/api/v2/office", query_string={"db": "test"},
+                    content_type="application/json", data=json.dumps(office_data),
+                    headers={"Authorization": "Bearer {}".format(token)})
+
+        get_offices = self.client.get("/api/v2/office")
+        print(get_offices.data)
+
+        # run for the office :)
+        token = self.get_token()
+        candidate_data = {"party_name": "democrats", "candidate_username": "kari"}
+
+        response = self.client.post("/api/v2/office/1/register", data=json.dumps(candidate_data),
+                    headers={"Authorization": "Bearer {}".format(token)}, content_type="application/json",
+                    query_string={"db": "test"})
+        
+        self.assertEqual(response.status_code, 400)
+        self.assertIn(b"Party with name democrats not found", response.data)
+
+class TestGetById(BaseTest):
+
+    def test_with_valid_id(self):
+
+
+        # create the office
+        token = self.get_token()
+        office_name = {"office_name": "democrats", "office_type": "legislative"}
+        response = self.client.post("/api/v2/office", data=json.dumps(office_name), 
+                    headers={"Authorization": "Bearer {}".format(token)}, content_type="application/json", 
+                    query_string={"db": "test"})
+            
+        response = self.client.get("/api/v2/office/1")
+        
+        self.assertEqual(response.status_code, 200)
+    
+    def test_with_invalid_id(self):
+        # try to get an office that has not yet been created
+        response = self.client.get("/api/v2/office/1", query_string={"db": "test"})
+
+        print(response.data)
         self.assertEqual(response.status_code, 404)
+        self.assertIn(b"Office with ID 1 could not be found", response.data)

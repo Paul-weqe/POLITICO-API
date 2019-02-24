@@ -13,6 +13,7 @@ peition_blueprint_v2 = Blueprint('petition_blueprint_v2', __name__, url_prefix="
 @token_required
 @json_required
 def create_petition():
+    db = request.args.get("db")
     json_data = request.get_json()
     required_fields = {
         "office": int, "body": str 
@@ -37,7 +38,7 @@ def create_petition():
     
 
     if error == None:
-        petition = Petition(user_id, json_data["office"], json_data["body"])
+        petition = Petition(user_id, json_data["office"], json_data["body"], db=db)
         create_petition_response = petition.create_petition()
 
         if create_petition_response == False:

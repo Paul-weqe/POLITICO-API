@@ -34,7 +34,7 @@ class BaseTest(unittest.TestCase):
         }
 
         self.create_party_data = {
-            "party_name": "republicans", 
+            "party_name": "democrats", 
             "party_hq": "New york",
             "party_logo": "http://democrats.com"
         }

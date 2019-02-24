@@ -9,6 +9,7 @@ party_blueprint_v2 = Blueprint('party_blueprint_v2', __name__, url_prefix="/api/
 @party_blueprint_v2.route("/", methods=["POST"], strict_slashes=False)
 @admin_required
 def create_party():
+    db = request.args.get('db')
     json_data = request.get_json()
     required_fields = {
         "party_name": str, "party_hq": str, "party_logo": str
@@ -33,7 +34,7 @@ def create_party():
         error = [400, "the party_logo field has to be a url"]
     
     if error == None:
-        party = Party(party_name=json_data["party_name"], party_hq=json_data["party_hq"], party_logo=json_data["party_logo"])
+        party = Party(party_name=json_data["party_name"], party_hq=json_data["party_hq"], party_logo=json_data["party_logo"], db=db)
         make_party = party.create_party()
 
         if make_party == True:

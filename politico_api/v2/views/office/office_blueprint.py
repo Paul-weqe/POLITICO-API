@@ -9,6 +9,7 @@ office_blueprint_v2 = Blueprint('office_blueprint_v2', __name__, url_prefix="/ap
 @office_blueprint_v2.route("/<office_id>/result", strict_slashes=False)
 @token_required
 def get_office_results(office_id):
+    db = request.args.get("db")
     error = None 
     office_results = None
     if not ApiFunctions.check_is_integer(office_id):
@@ -16,7 +17,7 @@ def get_office_results(office_id):
     
     
     if error == None:
-        office_obj = Office()
+        office_obj = Office(db=db)
         office_results = office_obj.count_office_votes(office_id)
     
     if error == None and office_results == None:
@@ -79,7 +80,7 @@ def create_office():
     if error == None and office_created == None:
         error = [404, "an office with these parameters already exists"]
     
-    if error == None:
+    if error == None and office_created == True:
         return make_response(jsonify({
             "status": 201,
             "data": "office {} successfully created".format(json_data["office_name"])
@@ -93,8 +94,8 @@ def create_office():
 
 @office_blueprint_v2.route("/", strict_slashes=False)
 def get_all_offices():
-
-    office_conn = Office()
+    db = request.args.get("db")
+    office_conn = Office(db=db)
     all_offices = office_conn.get_all_offices()
     
     print(request.content_type)
@@ -121,6 +122,7 @@ def get_all_offices():
 @office_blueprint_v2.route("/<int:office_id>/register", methods=['POST'], strict_slashes=False)
 @admin_required
 def create_candidate(office_id):
+    db = request.args.get("db")
     required_fields = {
         "candidate_username": str, "party_name": str
     }
@@ -143,28 +145,31 @@ def create_candidate(office_id):
         
     if error == None:
         
-        candidate = Candidate()
+        candidate = Candidate(db=db)
         response = candidate.create_candidate_by_name(json_data["candidate_username"], json_data["party_name"], office_id)
-
         if response == True:
             return make_response(jsonify({
                 "message": "Candidate successfully created",
                 "status": 201
             }), 201)
         error = [400, response]
+        
     
     if error == None:
         error = [400, "unable to create the user"]
-        
+    
+    print("############")
+    print(error)
     return make_response(jsonify({
         "error": error[1],
         "status": error[0]
-    }), error[1])
+    }), error[0])
 
 @office_blueprint_v2.route("/<int:office_id>", strict_slashes=False)
 def get_office_by_id(office_id):
-
-    office_information = Office().get_office_by_id(office_id)
+    db = request.args.get("db")
+    office = Office(db=db)
+    office_information = office.get_office_by_id(office_id)
     if office_information == None:
         return make_response(jsonify({
             "status": 404,
@@ -179,8 +184,8 @@ def get_office_by_id(office_id):
 
 @office_blueprint_v2.route("/<office_name>", strict_slashes=False)
 def get_office_by_name(office_name):
-
-    office_info = Office().get_office_by_name(office_name)
+    db = request.args.get("db")
+    office_info = Office(db=db).get_office_by_name(office_name)
 
     if office_info == None:
         return make_response(jsonify({

@@ -7,6 +7,7 @@ from politico_api.v2.models.DBConnections.PartyConnectDb import PartyConnection
 import os
 
 class Candidate:
+
     def __init__(self, candidate_id=None, party_id=None, office_id=None, db=None):
         self.candidate_id = candidate_id
         self.party_id = party_id
@@ -23,6 +24,7 @@ class Candidate:
     def create_candidate(self):
         return self.candidate_conn.create_candidate(self.candidate_id, self.party_id, self.office_id)
     
+
     def create_candidate_by_name(self, user_name, party_name, office_id):
         return self.candidate_conn.create_candidate_by_names(user_name, party_name, office_id)
 
@@ -113,8 +115,7 @@ class Petition:
             self.petition_conn = PetitionConnection(DB_NAME=os.getenv('TEST_DATABASE_NAME'),
                                 DB_PASSWORD=os.getenv('TEST_DATABASE_PASSWORD'), DB_USER=os.getenv('TEST_DATABASE_USER'),
                                 DB_HOST=os.getenv('TEST_DATABASE_HOST'))
-        
-    
+
     def create_petition(self):
         return self.petition_conn.create_petition(self.created_by, self.office, self.body)
 
@@ -138,3 +139,4 @@ class Party:
     
     def get_all_parties(self):
         return self.party_conn.get_all_parties()
+

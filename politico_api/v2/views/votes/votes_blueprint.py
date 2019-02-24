@@ -46,7 +46,7 @@ def cast_vote():
         # TODO check for the correct status number on this
         error = [400, "user {} has already voted for that office".format(user_id)]
     
-    if error == None and vote_inserted == True:
+    if error == None:
         return make_response(jsonify({
             "status": 201,
             "data": "successfully casted your vote..."

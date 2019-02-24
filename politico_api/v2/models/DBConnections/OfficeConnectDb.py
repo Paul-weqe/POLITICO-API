@@ -2,7 +2,6 @@ import psycopg2
 import os 
 from politico_api.v2.models.DBConnections.BaseConnectionDb import BaseConnection
 
-
 class OfficeConnection(BaseConnection):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -126,5 +125,4 @@ class OfficeConnection(BaseConnection):
             print("!!! UNABLE TO GET A SINGLE OFFICE BY ID !!!")
             print(e)
             print("!!! UNABLE TO GET A SINGLE OFFICE BY ID !!!")
-    
     
