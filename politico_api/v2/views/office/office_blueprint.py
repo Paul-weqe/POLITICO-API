@@ -44,7 +44,7 @@ def get_office_results(office_id):
 @admin_required
 @json_required
 def create_office():
-
+    db = request.args.get('db')
     required_fields = {
         "office_name": str, "office_type": str
     }
@@ -60,7 +60,7 @@ def create_office():
             break
 
         elif type(json_data[field]) != required_fields[field]:
-            error = [400, "{} must be a {}".format(request, required_fields[field])]
+            error = [400, "{} must be a {}".format(field, required_fields[field])]
             break
 
         elif Validate.validate_field(json_data[field]) != True:
@@ -73,7 +73,7 @@ def create_office():
         error = [404, error_message]
     
     if error == None:
-        office = Office(office_name=json_data["office_name"], office_type=json_data["office_type"])
+        office = Office(office_name=json_data["office_name"], office_type=json_data["office_type"], db=db)
         office_created = office.create_office()
     
     if error == None and office_created == None:
@@ -93,9 +93,10 @@ def create_office():
 
 @office_blueprint_v2.route("/", strict_slashes=False)
 def get_all_offices():
+
     office_conn = Office()
     all_offices = office_conn.get_all_offices()
-
+    
     print(request.content_type)
     if not all_offices:
         return make_response(jsonify({

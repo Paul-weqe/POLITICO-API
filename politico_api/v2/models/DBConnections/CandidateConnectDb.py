@@ -11,8 +11,6 @@ class CandidateConnection(BaseConnection):
     def create_candidate(self, user_id, party_id, office_id):
         # Creates a new candidate in the system
         # the user_id is needed to be able to reference the candidate to a specific user. 
-
-    def create_candidate(self, user_id, party_id, office_id):
         try:
             self.open_connection()
 
