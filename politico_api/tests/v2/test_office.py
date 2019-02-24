@@ -33,7 +33,7 @@ class TestPost(BaseTest):
         
         self.assertIn(b"office_name is a mandatory field", response.data)
         self.assertEqual(response.status_code, 400)
-    
+
     def test_data_type(self):
         # tests for when the data type of one of the fields is wrong e.g getting a string when an integer was expected
         # here, the office_type which is expected to be a string will be sent as an integer(1)
@@ -44,7 +44,7 @@ class TestPost(BaseTest):
                         query_string={"db":"test"}, data=json.dumps(dict(
                             office_type=1, office_name="MP"
                         )), content_type="application/json")
-
+        
         self.assertIn(b"office_type must be a <class 'str'>", response.data)
         self.assertEqual(response.status_code, 400)
     
@@ -61,7 +61,7 @@ class TestPost(BaseTest):
         
         self.assertIn(b"office_name cannot be empty", response.data)
         self.assertEqual(response.status_code, 400)
-    
+
     def test_beginning_with_blank(self):
         # tests when a string of one of the mandatory fields starts with a blank character
         # in this case, the office_name will be equal to " name" which starts with a blank
@@ -75,7 +75,7 @@ class TestPost(BaseTest):
         
         self.assertIn(b"office_name cannot start or end with a blank character", response.data)
         self.assertEqual(response.status_code, 400)
-    
+
     def test_wrong_content_type(self):
         # tests when the content type is not correct
         # we will leave the content type to be blank when the expected value is "application/json"
@@ -90,9 +90,8 @@ class TestPost(BaseTest):
         self.assertIn(b"the content type used must be 'application/json'", response.data)
         self.assertEqual(response.status_code, 406)
 
-
 class TestGet(BaseTest):
-    
+
     def test_correct_request_before_adding(self):
         response = self.client.get("/api/v2/office")
         self.assertEqual(response.status_code, 200)
@@ -107,7 +106,6 @@ class TestCreateCandidate(BaseTest):
         response = self.client.post("/api/v2/auth/signup", query_string={"db": "test"}, 
                     content_type="application/json", data=json.dumps(user_data))
         
-
         # create a party that the user will vie with
         party_data = self.create_party_data
         token = self.get_token()
@@ -115,7 +113,7 @@ class TestCreateCandidate(BaseTest):
         response = self.client.post("/api/v2/party", query_string={"db": "test"},
                     content_type="application/json", data=json.dumps(party_data),
                     headers={"Authorization": "Bearer {}".format(token)})
-
+        
         # create the office to be run for 
         token = self.get_token()
         office_data = {"office_name": "MP", "office_type": "legislative"}
@@ -135,7 +133,7 @@ class TestCreateCandidate(BaseTest):
                     query_string={"db": "test"})
         
         self.assertEqual(response.status_code, 201)
-    
+
     def test_without_user(self):
 
         party_data = self.create_party_data
@@ -144,7 +142,7 @@ class TestCreateCandidate(BaseTest):
         response = self.client.post("/api/v2/party", query_string={"db": "test"},
                     content_type="application/json", data=json.dumps(party_data),
                     headers={"Authorization": "Bearer {}".format(token)})
-
+        
         # create the office to be run for 
         token = self.get_token()
         office_data = {"office_name": "MP", "office_type": "legislative"}
@@ -170,14 +168,14 @@ class TestCreateCandidate(BaseTest):
 
         response = self.client.post("/api/v2/auth/signup", query_string={"db": "test"}, 
                     content_type="application/json", data=json.dumps(user_data))
-
+        
         # create the office to be run for 
         token = self.get_token()
         office_data = {"office_name": "MP", "office_type": "legislative"}
         response = self.client.post("/api/v2/office", query_string={"db": "test"},
                     content_type="application/json", data=json.dumps(office_data),
                     headers={"Authorization": "Bearer {}".format(token)})
-
+        
         get_offices = self.client.get("/api/v2/office")
         print(get_offices.data)
 
@@ -196,7 +194,7 @@ class TestCreateCandidate(BaseTest):
 
         # create a user that will run for an office
         user_data = self.create_user_data
-
+        
         response = self.client.post("/api/v2/auth/signup", query_string={"db": "test"}, 
                     content_type="application/json", data=json.dumps(user_data))
         

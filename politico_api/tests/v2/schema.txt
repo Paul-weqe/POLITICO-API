@@ -51,7 +51,7 @@ create table petitions (
      );
 
 create table candidates(
-    user_id integer references users(id),
+    user_id integer primary key references users(id),
     office_id integer references offices(id),
     party_id integer references parties(id)
 );
@@ -59,9 +59,9 @@ create table candidates(
 
 
 CREATE TABLE votes (
-    id serial primary key,
-    created_on date NOT NULL DEFAULT CURRENT_DATE,
-    created_by integer references users(id),
-    office integer references offices(id),
-    voted_for integer references users(id)
+  id serial primary key,
+  created_on date NOT NULL DEFAULT CURRENT_DATE,
+  created_by integer references users(id),
+  office integer references offices(id),
+  candidate_id integer references users(id)
 );
