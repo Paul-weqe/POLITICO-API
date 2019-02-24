@@ -33,6 +33,12 @@ class BaseTest(unittest.TestCase):
             "new_password": "Gideon@1234"
         }
 
+        self.create_party_data = {
+            "party_name": "republicans", 
+            "party_hq": "New york",
+            "party_logo": "http://democrats.com"
+        }
+
     def tearDown(self):
         
         self.base = BaseConnection(
