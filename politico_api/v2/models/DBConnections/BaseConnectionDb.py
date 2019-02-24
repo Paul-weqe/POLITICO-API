@@ -56,10 +56,12 @@ class BaseConnection:
     def reset_database(self, schema_file=None):
         try:
             self.open_connection()
+
             if schema_file == None:
                 self.curr.execute(open("schema.txt", "r").read())
             else:
                 self.curr.execute(open(schema_file, "r").read())
+
             self.conn.commit()
             self.close_connection()
             return True

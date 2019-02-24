@@ -85,7 +85,7 @@ class Validate:
         # validates fields and makes sure that the fields are not empty or starting with a space
 
         if field.strip() == "":
-            return "{} Cannot be empty"
+            return "{} cannot be empty"
         
         elif field[0] == " " or field[-1] == " ":
             return "{} cannot start or end with a blank character"

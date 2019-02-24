@@ -15,6 +15,7 @@ users_blueprint_v2 = Blueprint('user_blueprint_v2', __name__, url_prefix="/api/v
 @users_blueprint_v2.route("/signup", methods=['POST'])
 @json_required
 def create_user():
+    db = request.args.get('db')
     required_fields = {
         "first_name": str, "last_name": str, "other_name": str, "email": str, "phone_number": str, "passport_url": str, "password": str,
         "username": str
@@ -29,7 +30,7 @@ def create_user():
             break 
 
         elif required_fields[field] != type(json_data[field]):
-            error = [400, "{} is supposed to be a {}".format(field, required_fields[field])]
+            error = [400, "{} has to be a {}".format(field, required_fields[field])]
             print(type(json_data[field]))
             break
 
@@ -54,6 +55,7 @@ def create_user():
         
     # looks for if the optional fields are present and makes sure the daya types used in them are correct
     if error == None:
+        json_data["db"] = db
         user_obj = User(**json_data)
         new_user = user_obj.create_user()
 
@@ -67,9 +69,7 @@ def create_user():
                 "user info": [{
                     "username": json_data["username"],
                     "email": json_data["email"]
-
                 }] 
-
             }), 201)
     
     if error == None:
@@ -82,7 +82,7 @@ def create_user():
 @users_blueprint_v2.route("/change-password", methods=["PATCH"])
 @json_required
 def change_password():
-
+    db = request.args.get('db')
     required_fields = {
         "email": str, "old_password": str, "new_password": str
     }
@@ -112,7 +112,7 @@ def change_password():
         error = [400, error_message]
         
     if error == None:
-        user = User()
+        user = User(db=db)
         changed_password = user.change_password(json_data["email"], json_data["old_password"], json_data["new_password"])
     
     ## When change password returns true. Meaning the password has been changed successfully
@@ -129,30 +129,6 @@ def change_password():
         "status": error[0], "error": error[1]
     }), error[0])
     
-@users_blueprint_v2.route("/make-admin/<int:user_id>", methods=['PUT'], strict_slashes=False)
-@admin_required
-def make_admin(user_id):
-    
-    error = None 
-    if user_id < 1:
-        error = [400, "user_id cannot be 0 or a negative number"]
-    
-    user = User()
-    if error == None and user.make_user_admin(user_id) == None:
-        error = [404, "could not find the user specified"]
-    
-    if error == None:
-        return make_response(jsonify({
-            "status": 200,
-            "message": "User has been updated to admin"
-        }), 200)
-    
-    return make_response(jsonify({
-        "status": error[0],
-        "error": error[1]
-    }), error[0])
-
-
 @users_blueprint_v2.route("/make-admin/<int:user_id>", methods=['PUT'], strict_slashes=False)
 @admin_required
 def make_admin(user_id):
