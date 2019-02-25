@@ -225,12 +225,14 @@ class TestGetById(BaseTest):
 
         # create the office
         token = self.get_token()
-        office_name = {"office_name": "democrats", "office_type": "legislative"}
-        response = self.client.post("/api/v2/office", data=json.dumps(office_name), 
+        office_data = {"office_name": "president", "office_type": "legislative"}
+        response = self.client.post("/api/v2/office", data=json.dumps(office_data), 
                     headers={"Authorization": "Bearer {}".format(token)}, content_type="application/json", 
                     query_string={"db": "test"})
+        
             
-        response = self.client.get("/api/v2/office/1")
+        response = self.client.get("/api/v2/office/1", query_string={"db": "test"})
+        print(response.data)
         
         self.assertEqual(response.status_code, 200)
     

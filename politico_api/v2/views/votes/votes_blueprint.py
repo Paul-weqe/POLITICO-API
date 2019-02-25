@@ -13,11 +13,12 @@ def cast_vote():
 
     json_data = request.get_json()
     required_fields = {
-        "candidate_id": int
+        "candidate_id": int, "office_id": int
     }
     token = request.headers['Authorization'].split(' ')[1]
     jwt_data = jwt.decode(token, os.getenv('SECRET_KEY'))
     user_id = jwt_data["user_id"]
+    db = request.args.get("db")
     
     error = None
     vote_inserted = None 
@@ -31,11 +32,11 @@ def cast_vote():
     
     
     if error == None:
-        vote = Vote( voter_id=user_id, candidate_id=json_data["candidate_id"])
+        vote = Vote( voter_id=user_id, candidate_id=json_data["candidate_id"], office_id=json_data["office_id"], db=db)
         vote_inserted = vote.create_vote()
     
     # # checks for the candidates presence
-    if vote_inserted == None and error == None:
+    if vote_inserted == "Unable to find the candidate" and error == None:
         error = [404, "candidate could not be found"]
     
     elif vote_inserted == False and error == None:
@@ -51,11 +52,10 @@ def cast_vote():
             "status": 201,
             "data": "successfully casted your vote..."
         }), 201)
-    
-    
 
     return make_response(jsonify({
         "status": error[0],
         "error": error[1]
     }), error[0])
+
 
