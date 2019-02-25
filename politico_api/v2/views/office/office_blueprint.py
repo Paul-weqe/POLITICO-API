@@ -99,12 +99,6 @@ def get_all_offices():
     all_offices = office_conn.get_all_offices()
     
     print(request.content_type)
-    if not all_offices:
-        return make_response(jsonify({
-            "status": 404,
-            "message": "There is currently no offices to display"
-        }), 404)
-    
 
     all_offices_list = []
 
@@ -120,6 +114,7 @@ def get_all_offices():
 
 
 @office_blueprint_v2.route("/<int:office_id>/register", methods=['POST'], strict_slashes=False)
+@json_required
 @admin_required
 def create_candidate(office_id):
     db = request.args.get("db")
@@ -170,6 +165,7 @@ def get_office_by_id(office_id):
     db = request.args.get("db")
     office = Office(db=db)
     office_information = office.get_office_by_id(office_id)
+    
     if office_information == None:
         return make_response(jsonify({
             "status": 404,
@@ -186,7 +182,7 @@ def get_office_by_id(office_id):
 def get_office_by_name(office_name):
     db = request.args.get("db")
     office_info = Office(db=db).get_office_by_name(office_name)
-
+    
     if office_info == None:
         return make_response(jsonify({
             "status": 404,

@@ -246,20 +246,10 @@ class TestMakeAdmin(BaseTest):
     """
 
     def test_with_valid_cridentials(self):
-        # login admin
-        admin_data = { "email": "paul@paul.com", "password": "Omwene11@" }
-        response = self.client.post("/api/v2/auth/login", query_string={"db": "test"}, content_type="application/json",
-                        data=json.dumps(admin_data))
-        
-        self.assertEqual(response.status_code, 200)
-        token = ast.literal_eval(response.data.decode("utf-8"))["token"]
-        
-        # create another user
-        user_data = self.create_user_data
+        token = self.get_token()
         response = self.client.post("/api/v2/auth/signup", query_string={"db": "test"}, content_type="application/json",
-                        data=json.dumps(user_data))
+                        data=json.dumps(self.create_user_data))
         
-        self.assertEqual(response.status_code, 201)
 
         # promote user to an admin
         response = self.client.put("/api/v2/auth/make-admin/2", query_string={"db": "test"}, headers={"Authorization": "Bearer {}".format(token)})

@@ -55,9 +55,10 @@ class User:
 
 class Vote:
 
-    def __init__(self, voter_id=None, candidate_id=None, db=None):
+    def __init__(self, voter_id=None, candidate_id=None, office_id=None, db=None):
         self.voter_id = voter_id
         self.candidate_id = candidate_id
+        self.office_id = office_id
         self.db = db
 
         if self.db == None:
@@ -69,7 +70,7 @@ class Vote:
 
 
     def create_vote(self):
-        return self.vote_conn.create_vote(self.voter_id, self.candidate_id)
+        return self.vote_conn.cast_vote(self.voter_id, self.candidate_id, self.office_id)
 
 class Office:
 

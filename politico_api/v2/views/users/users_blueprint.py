@@ -132,12 +132,12 @@ def change_password():
 @users_blueprint_v2.route("/make-admin/<int:user_id>", methods=['PUT'], strict_slashes=False)
 @admin_required
 def make_admin(user_id):
-    
+    db = request.args.get("db")
     error = None 
     if user_id < 1:
         error = [400, "user_id cannot be 0 or a negative number"]
     
-    user = User()
+    user = User(db=db)
     if error == None and user.make_user_admin(user_id) == None:
         error = [404, "could not find the user specified"]
     
