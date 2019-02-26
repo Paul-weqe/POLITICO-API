@@ -23,11 +23,6 @@ def get_office_results(office_id):
     office_results_list = []
     if error == None:
         for candidate_info in office_results: 
-            # result_info = { "candidate id": result[0],  "candidate name": result[1], "number of votes": result[2], "office_id": int(office_id) }
-            # result_info = {
-            #     "candidate_name": result[0], 
-            # }
-            # office_results_list.append(result_info)
             result_info = {
                 "username": candidate_info[0],
                 "votes": candidate_info[1]

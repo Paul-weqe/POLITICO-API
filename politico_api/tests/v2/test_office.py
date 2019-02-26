@@ -195,9 +195,11 @@ class TestCreateCandidate(BaseTest):
         # create a user that will run for an office
         user_data = self.create_user_data
         
+        # create the user
         response = self.client.post("/api/v2/auth/signup", query_string={"db": "test"}, 
                     content_type="application/json", data=json.dumps(user_data))
         
+        # create an office
         token = self.get_token()
         office_data = {"office_name": "MP", "office_type": "legislative"}
         response = self.client.post("/api/v2/office", query_string={"db": "test"},
@@ -243,3 +245,36 @@ class TestGetById(BaseTest):
         print(response.data)
         self.assertEqual(response.status_code, 404)
         self.assertIn(b"Office with ID 1 could not be found", response.data)
+
+class TestGetResults(BaseTest):
+
+    def test_when_valid(self):
+        # create a user
+        self.client.post("/api/v2/auth/signup", query_string={"db":"test"}, content_type="application/json",
+            data=json.dumps(self.create_user_data))
+
+        # create an office
+        token = self.get_token()
+        self.client.post("/api/v2/office", query_string={"db":"test"}, content_type="application/json", data=json.dumps({
+            "office_name": "president", "office_type":"legislative"
+        }), headers={"Authorization": "Bearer {}".format(token)})
+
+        # create a party
+        self.client.post("/api/v2/party", query_string={"db":"test"}, content_type="application/json", data=json.dumps(self.create_party_data),
+            headers={"Authorization": "Bearer {}".format(token)})
+
+        # create a candidate for an office
+        self.client.post("/api/v2/office/1/register", query_string={"db":"test"}, content_type="application/json", data=json.dumps({
+            "candidate_username":"koima", "party_name": "democrats"
+        }), headers={"Authorization": "Bearer {}".format(token)})
+
+        # vote for a candidate
+        self.client.post("/api/v2/votes", query_string={"db":"test"}, content_type="application/json", data=json.dumps({
+            "candidate_id": 2, "office_id": 1
+        }), headers={"Authorization": "Bearer {}".format(token)})
+
+        # get results after the vote
+        results = self.client.get("/api/v2/office/1/result", query_string={"db": "test"}, headers={"Authorization": "Bearer {}".format(token)})
+        
+        print(results.data)
+        self.assertEqual(results.status_code, 200)
