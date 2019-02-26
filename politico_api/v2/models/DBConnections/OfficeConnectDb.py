@@ -8,34 +8,34 @@ class OfficeConnection(BaseConnection):
     
 
     # this returns the result of the office with ID officeID
-    def get_office_results(self, office_id):
-        try:
-            self.open_connection()
-            sql_find_office_command = """
-            SELECT * FROM offices WHERE id={}
-            """.format(office_id)
+    # def get_office_results(self, office_id):
+    #     try:
+    #         self.open_connection()
+    #         sql_find_office_command = """
+    #         SELECT * FROM offices WHERE id={}
+    #         """.format(office_id)
 
-            self.curr.execute(sql_find_office_command)
-            office = self.curr.fetchone()
-            if office == None:
-                return None
+    #         self.curr.execute(sql_find_office_command)
+    #         office = self.curr.fetchone()
+    #         if office == None:
+    #             return None
 
-            sql_command = """
-            SELECT users.id, users.first_name, count(votes.voted_for) as number_of_votes from users LEFT JOIN votes 
-            ON (votes.voted_for=users.id) WHERE (users.is_politician=true) AND (users.office_interested={}) group by users.id
-            """.format(office_id)
+    #         sql_command = """
+    #         SELECT users.id, users.first_name, count(votes.voted_for) as number_of_votes from users LEFT JOIN votes 
+    #         ON (votes.voted_for=users.id) WHERE (users.is_politician=true) AND (users.office_interested={}) group by users.id
+    #         """.format(office_id)
 
-            self.curr.execute(sql_command)
-            votes_results = self.curr.fetchall()
-            self.close_connection()
+    #         self.curr.execute(sql_command)
+    #         votes_results = self.curr.fetchall()
+    #         self.close_connection()
             
-            return votes_results
+    #         return votes_results
 
-        except Exception as e:
-            print("!!! UNABLE TO FIND OFFICE RESULTS !!!")
-            print(e)
-            print("!!! UNABLE TO FIND OFFICE RESULTS !!!")
-            return False 
+        # except Exception as e:
+        #     print("!!! UNABLE TO FIND OFFICE RESULTS !!!")
+        #     print(e)
+        #     print("!!! UNABLE TO FIND OFFICE RESULTS !!!")
+        #     return False 
     
     # creates a new office with the valid parameters
     def create_office(self, office_name, office_type):
@@ -125,4 +125,30 @@ class OfficeConnection(BaseConnection):
             print("!!! UNABLE TO GET A SINGLE OFFICE BY ID !!!")
             print(e)
             print("!!! UNABLE TO GET A SINGLE OFFICE BY ID !!!")
+    
+    def get_office_results(self, office_id):
+        try:
+            self.open_connection()
+
+            find_office_sql = """
+            SELECT * FROM offices WHERE id={}
+            """.format(office_id)
+            self.curr.execute(find_office_sql)
+            find_offices = self.curr.fetchall()
+            if len(find_offices) < 1:
+                return None 
+            
+            count_votes_sql = """
+            select users.username, count(candidate_id) as number_of_votes from votes INNER JOIN users ON users.id=votes.candidate_id WHERE votes.office_id={} GROUP BY users.username
+            """.format(office_id)
+            self.curr.execute(count_votes_sql)
+            votes_count = self.curr.fetchall()
+
+            self.close_connection()
+            return votes_count
+            
+        except Exception as e:
+            print("!!! UNABLE TO GET OFFICE RESULTS !!!")
+            print(e)
+            print("!!! UNABLE TO GET OFFICE RESULTS !!!")
     

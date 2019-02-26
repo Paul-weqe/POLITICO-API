@@ -6,36 +6,40 @@ from politico_api.v2.views.decorators import admin_required, token_required, jso
 
 office_blueprint_v2 = Blueprint('office_blueprint_v2', __name__, url_prefix="/api/v2/office")
 
-@office_blueprint_v2.route("/<office_id>/result", strict_slashes=False)
+@office_blueprint_v2.route("/<int:office_id>/result", strict_slashes=False)
 @token_required
 def get_office_results(office_id):
     db = request.args.get("db")
     error = None 
     office_results = None
-    if not ApiFunctions.check_is_integer(office_id):
-        error = [400, "office_id must be an integer"]
-    
     
     if error == None:
         office_obj = Office(db=db)
-        office_results = office_obj.count_office_votes(office_id)
+        office_results = office_obj.get_office_results(office_id)
     
     if error == None and office_results == None:
         error = [404, "office with ID {} does not exist".format(office_id)]
     
     office_results_list = []
     if error == None:
-        for result in office_results: 
-            result_info = { "candidate id": result[0],  "candidate name": result[1], "number of votes": result[2], "office_id": int(office_id) }
+        for candidate_info in office_results: 
+            # result_info = { "candidate id": result[0],  "candidate name": result[1], "number of votes": result[2], "office_id": int(office_id) }
+            # result_info = {
+            #     "candidate_name": result[0], 
+            # }
+            # office_results_list.append(result_info)
+            result_info = {
+                "username": candidate_info[0],
+                "votes": candidate_info[1]
+            }
             office_results_list.append(result_info)
-
+            
     if error == None:
         return make_response(jsonify({
             "status": 200,
-            "data": office_results_list
+            "results": office_results_list
         }), 200)
     
-
     return make_response(jsonify({
         "status": error[0],
         "error": error[1]
