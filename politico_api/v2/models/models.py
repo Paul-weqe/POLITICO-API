@@ -101,6 +101,9 @@ class Office:
 
     def get_office_by_name(self, office_name):
         return self.office_conn.get_office_by_name(office_name)
+    
+    def get_office_results(self, office_id):
+        return self.office_conn.get_office_results(office_id)
 
 class Petition:
 
