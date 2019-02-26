@@ -57,5 +57,3 @@ def cast_vote():
         "status": error[0],
         "error": error[1]
     }), error[0])
-
-
