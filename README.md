@@ -7,7 +7,7 @@
 
 <a href="https://codeclimate.com/github/Paul-weqe/POLITICO-API/maintainability"><img src="https://api.codeclimate.com/v1/badges/ad5d7bcf66ab6b32b852/maintainability" /></a>
 
-## <a href="https://app.swaggerhub.com/apis-docs/POL231/POLITIC-API/1.0.0">SWAGGER API DOCUMENTATION</a>
+## <a href="https://documenter.getpostman.com/view/3597204/S11HuKA3">API V2 DOCUMENTATION</a>
 
 ## What is politico?
 
@@ -16,6 +16,7 @@ Politico is a government-like voting system. It allows for candidates to vie und
 This API allows for exposure of the data held by POLITICO. This reference guide shows you how you can be able to access the data inside the POLITICO system online. <a href="https://paul-weqe.github.io/POLITICO/UI/index.html">Our frontend</a>
 
 ## Setup guide
+*NOTE* This setup guide assumes you have python and virtualenv installed in your system.
 
 ### creating the virtual environment
  ```
@@ -24,12 +25,12 @@ This API allows for exposure of the data held by POLITICO. This reference guide 
 
 ### activating the virtual environment
 
-While on linux
+ On linux
 ```
 source venv/bin/activate
 ```
 
-on Windows:
+On Windows:
 ```
 venv\Scripts\activate
 ```
@@ -69,8 +70,8 @@ pytest --cov=.
 
 ## where the API is hosted
 
-
-http://paul-politico-api.herokuapp.com
+**VERSION 1**
+<a href="http://paul-politico-api.herokuapp.com">Hosting</a>
 
 | route | method | function | JSON fields |
 | --- | --- | --- | --- |
@@ -82,3 +83,8 @@ http://paul-politico-api.herokuapp.com
 | /parties/partyID | DELETE | deletes the party with ID partyID | no json field |
 | /parties/partyID | GET | gets a single party with ID partyID | no json field |
 | /parties/ | POST | creates a party | "party_name": string, "party_name": string, "party_hq_address": string, "party_logo_url": str, "party_motto": str, "party_members": int |
+
+
+**VERSION 2**
+<a href"http://politico-v2.herokuapp.com">Hosting</a>
+<a href="https://documenter.getpostman.com/view/3597204/S11HuKA3">Documentation</a>
