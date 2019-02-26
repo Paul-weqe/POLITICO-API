@@ -86,5 +86,6 @@ pytest --cov=.
 
 
 **VERSION 2**
-<a href"http://politico-v2.herokuapp.com">Hosting</a>
+
+<a href="http://politico-v2.herokuapp.com">Hosting</a><br>
 <a href="https://documenter.getpostman.com/view/3597204/S11HuKA3">Documentation</a>
