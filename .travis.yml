@@ -32,3 +32,5 @@ before-script:
   - psql -c "CREATE USER weqe WITH PASSWORD '4ndel4';" -U postgres
   - psql -c "GRANT CONNECT ON DATABASE politico_test TO weqe;" -U postgres 
 
+
+  

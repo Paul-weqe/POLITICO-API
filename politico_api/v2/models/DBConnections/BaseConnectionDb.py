@@ -28,6 +28,11 @@ class BaseConnection:
                 self.curr = self.conn.cursor()
                 print("connection established")
             else:
+                print("$$$")
+                print(self.kwargs['DB_USER'])
+                print(self.kwargs['DB_PASSWORD'])
+                print(self.kwargs['DB_HOST'])
+                print(self.kwargs['DB_NAME'])
                 self.conn = psycopg2.connect(
                     user=self.kwargs["DB_USER"], password=self.kwargs["DB_PASSWORD"], host="localhost", database=self.kwargs["DB_NAME"]
                 )
