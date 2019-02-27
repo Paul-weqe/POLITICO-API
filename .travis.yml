@@ -14,6 +14,9 @@ install:
   - pip install python-coveralls
   - pip install pytest
 
+script:
+  - pytest
+
 after-success:
   - coveralls
   
