@@ -1,3 +1,5 @@
+sudo: required
+
 language: python
 
 dist: xenial
@@ -21,7 +23,11 @@ after-success:
 services:
   - postgresql
 
+addons:
+  postgresql: "9.6"
+
 before-script:
+  - bash install-postgres-10.sh
   - psql -c "create database politico_test;" -U postgres
   - psql -c "CREATE USER weqe WITH PASSWORD '4ndel4';" -U postgres
   - psql -c "GRANT CONNECT ON DATABASE politico_test TO weqe;" -U postgres 
