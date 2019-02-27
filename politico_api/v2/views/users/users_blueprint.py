@@ -129,7 +129,7 @@ def change_password():
         "status": error[0], "error": error[1]
     }), error[0])
     
-@users_blueprint_v2.route("/make-admin/<int:user_id>", methods=['PUT'], strict_slashes=False)
+@users_blueprint_v2.route("/promote-user/<int:user_id>", methods=['PUT'], strict_slashes=False)
 @admin_required
 def make_admin(user_id):
     db = request.args.get("db")
