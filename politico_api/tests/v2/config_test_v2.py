@@ -10,12 +10,12 @@ class BaseTest(unittest.TestCase):
 
     def setUp(self):
         print('set up')
-        # self.app = create_app(TestConfig)
+        self.app = create_app(TestConfig)
         # self.base = BaseConnection(
         #     DB_USER=os.getenv('TEST_DATABASE_USER'), DB_NAME=os.getenv('TEST_DATABASE_NAME'), DB_PASSWORD=os.getenv('TEST_DATABASE_PASSWORD'), 
         #     DB_HOST=os.getenv('TEST_DATABASE_HOST')
         # )
-        self.base.reset_database()
+        # self.base.reset_database()
 
         self.client = self.app.test_client()
         
