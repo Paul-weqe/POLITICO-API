@@ -11,6 +11,11 @@ class BaseTest(unittest.TestCase):
     def setUp(self):
         print('set up')
         self.app = create_app(TestConfig)
+        self.base = BaseConnection(
+            DB_USER=os.getenv('TEST_DATABASE_USER'), DB_NAME=os.getenv('TEST_DATABASE_NAME'), DB_PASSWORD=os.getenv('TEST_DATABASE_PASSWORD'), 
+            DB_HOST=os.getenv('TEST_DATABASE_HOST')
+        )
+        self.base.reset_database()
 
         self.client = self.app.test_client()
         
@@ -19,7 +24,7 @@ class BaseTest(unittest.TestCase):
         }
 
         self.create_user_data = {
-            "first_name": "GIdeon", "last_name": "Koima", "other_name": "Kari", 
+            "first_name": "Gideon", "last_name": "Koima", "other_name": "Kari", 
             "email": "kari@kari.com", 
             "phone_number": "0712345678",
             "passport_url": "http://paul.com",
