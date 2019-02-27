@@ -252,7 +252,7 @@ class TestMakeAdmin(BaseTest):
         
 
         # promote user to an admin
-        response = self.client.put("/api/v2/auth/make-admin/2", query_string={"db": "test"}, headers={"Authorization": "Bearer {}".format(token)})
+        response = self.client.put("/api/v2/auth/promote-user/2", query_string={"db": "test"}, headers={"Authorization": "Bearer {}".format(token)})
         
         print(response.data)
         self.assertEqual(response.status_code, 200)
