@@ -17,7 +17,7 @@ class BaseTest(unittest.TestCase):
         # sets up the client that will be receiving the requests from the tests 
         print('set up')
         self.app = create_app(TestConfig)
-        
+
         self.client = self.app.test_client()
         
         self.query_data = {
@@ -25,7 +25,7 @@ class BaseTest(unittest.TestCase):
         }
 
         self.create_user_data = {
-            "first_name": "Gideon", "last_name": "Koima", "other_name": "Kari", 
+            "first_name": "GIdeon", "last_name": "Koima", "other_name": "Kari", 
             "email": "kari@kari.com", 
             "phone_number": "0712345678",
             "passport_url": "http://paul.com",
