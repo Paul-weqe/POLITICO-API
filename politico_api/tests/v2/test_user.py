@@ -1,14 +1,16 @@
 """
 This file will be used to test the elements contained in users_blueprint
-Each class will be named Test<methodname> e.g if testing for POST, we will be naming the class TestPost
+This will be mainly using the '/api/v2/auth' route in the system
 """
 from politico_api.tests.v2.config_test_v2 import BaseTest
 import json
 import ast
 
 class TestCreateUser(BaseTest):
-    # tests for when creating a user
-    # the fields that are required are named in the config_test_v2.py vairble called self.create_user_data
+    """
+    Tests for when creating a user
+    the fields that are required are named in the config_test_v2.py vairble called self.create_user_data
+    """
 
     
     def test_with_correct_fields(self):
@@ -24,8 +26,10 @@ class TestCreateUser(BaseTest):
         self.assertEqual(response.status_code, 201)
     
     def test_missing_field(self):
-        # tests when one of the mandatory fields is absent
-        # in this case, we will test when there is no email and see the response gotten
+        """
+        tests when one of the mandatory fields is absent
+        in this case, we will test when there is no email sent in the creation of a user
+        """
         user_data = self.create_user_data
         del user_data["email"]
         token = self.get_token()
@@ -38,9 +42,12 @@ class TestCreateUser(BaseTest):
         self.assertEqual(response.status_code, 400)
     
     def test_wrong_datatype(self):
-        # tests when the wrong data type is used to send in the JSON data
-        # for example, when expecting a string and a float is sent
-        # in this case, we will send username as an integer(1) when a string is expected
+        """
+        tests when the wrong data type is used to send in the JSON data
+        for example, when expecting a string and a float is sent
+        in this case, we will send username as an integer(1) when a string is expected
+        """
+
         token = self.get_token()
         user_data = self.create_user_data
         user_data["username"] = 1
@@ -53,8 +60,10 @@ class TestCreateUser(BaseTest):
         self.assertEqual(response.status_code, 400)
     
     def test_email_format(self):
-        # tests for the structure of the email address that is used
-        # emails are expected to be in the format 'email@email.com' otherwise response should show an error
+        """
+        tests for the structure of the email address that is used
+        emails are expected to be in the format 'email@email.com' otherwise response should show an error
+        """
         token = self.get_token()
         user_data = self.create_user_data
         user_data["email"] = "this is an email"
@@ -67,8 +76,10 @@ class TestCreateUser(BaseTest):
         self.assertEqual(response.status_code, 400)
     
     def test_blank_field(self):
-        # none of the mandatory fields should be blank
-        # this tests when the username is blank
+        """
+        none of the mandatory fields should be blank
+        this tests when the username is blank
+        """
         token = self.get_token()
         user_data = self.create_user_data
         user_data["username"] = " "
@@ -81,6 +92,10 @@ class TestCreateUser(BaseTest):
         self.assertEqual(response.status_code, 400)
     
     def test_wrong_phone_number(self):
+        """
+        phone number should have ten integer string e.g 0712345678
+        this will test when a shorter value is used
+        """
         token = self.get_token()
         user_data = self.create_user_data
         user_data["phone_number"] = "07107"
@@ -93,6 +108,11 @@ class TestCreateUser(BaseTest):
         self.assertEqual(response.status_code, 400)
     
     def test_common_password(self):
+        """
+        tests for if the password is a commonly used password
+        the commonly used passwords are stored in the common_passwords.txt file and if the password used in amongst those, it will be declined
+        we use 'password' as the password which is one of the commonly used passwords
+        """
         token = self.get_token()
         user_data = self.create_user_data
         user_data["password"] = "password"
@@ -101,11 +121,14 @@ class TestCreateUser(BaseTest):
                     content_type="application/json", data=json.dumps(user_data),
                     headers={"Authorization": "Bearer {}".format(token)})
         
-        # self.assertIn(b"your password must have at least a special character, a small letter, a capital letter and a number", response.data)
         self.assertIn(b"password should not be a commonly used password", response.data)
         self.assertEqual(response.status_code, 400)
     
     def test_weak_password(self):
+        """
+        For a strong password, we required a small letter,  a capital letter and a number 
+        This will test with only small letters and see the response
+        """
         token = self.get_token()
         user_data = self.create_user_data
         user_data["password"] = "thisismyweakpassword"
@@ -115,10 +138,13 @@ class TestCreateUser(BaseTest):
                     headers={"Authorization": "Bearer {}".format(token)})
         
         self.assertIn(b"your password must have at least a special character, a small letter, a capital letter and a number", response.data)
-        # self.assertIn(b"password should not be a commonly used password", response.data)
         self.assertEqual(response.status_code, 400)
-
+        
     def test_empty_value(self):
+        """
+        None of the required fields in the self.create_user_data should be left blank
+        This method will test for when the email is blank
+        """
         token = self.get_token()
         user_data = self.create_user_data
         user_data["email"] = " "
@@ -127,17 +153,19 @@ class TestCreateUser(BaseTest):
                     content_type="application/json", data=json.dumps(user_data),
                     headers={"Authorization": "Bearer {}".format(token)})
         
-        # self.assertIn(b"your password must have at least a special character, a small letter, a capital letter and a number", response.data)
-        # self.assertIn(b"password should not be a commonly used password", response.data)
         self.assertIn(b"email cannot be empty", response.data)
         self.assertEqual(response.status_code, 400)
     
 class TestChangeUserPassword(BaseTest):
-    # tests for when a user wants to change their password
-    # we will be creating a new user and trying to change their passwords
-    def test_with_correct_credentials(self):
+    """
+    tests for when a user wants to change their password
+    The fields required are 'email', 'old_password' and 'new_password'
+    'old_password' needs to match their current password in the system
+    """
 
-        # first create the user
+    def test_with_correct_credentials(self):
+        "Tests when all the required fields are present in the correct format"
+        "first create the user"
         user_data = self.create_user_data
 
         response = self.client.post("/api/v2/auth/signup", query_string={"db": "test"},
@@ -153,17 +181,24 @@ class TestChangeUserPassword(BaseTest):
         print(response.data)
         self.assertEqual(response.status_code, 200)
     
-    # tests when the user does not keep the correct old password
+    
     def test_when_old_password_is_wrong(self):
-        # first create the user
+        """
+        The 'old_password' needs to be the current password of the user as is saved in the system
+        this tesrs when the 'old_password' does not match the current password in the system
+        """
+
+        # create the user with password "Kari@1234"
         user_data = self.create_user_data
 
         response = self.client.post("/api/v2/auth/signup", query_string={"db": "test"},
                     content_type="application/json", data=json.dumps(user_data))
         
         self.assertEqual(response.status_code, 201)
-
-        # change password of created user
+        
+        
+        # try to change password of created user
+        # the 'old_password' is supposed to be 'Kari@1234' but instead we use '1234'
         change_password_data = self.change_password_data
         change_password_data["old_password"] = "1234"
 
@@ -173,10 +208,11 @@ class TestChangeUserPassword(BaseTest):
 
         self.assertIn(b"the old password you entered is not correct", response.data)
         self.assertEqual(response.status_code, 404)
-    
 
-    # tests when one of the mandatory fields is left blank
     def test_with_empty_email(self):
+        "None of the fields used should be left blank"
+        "Test for what happens when one of the fields is left blank. We will use the 'email' field in this test"
+
         # first create the user
         user_data = self.create_user_data
 
@@ -198,6 +234,7 @@ class TestChangeUserPassword(BaseTest):
 
     
     def test_with_invalid_password(self):
+        "Tests with a password that is not strong enough"
         # first create the user
         user_data = self.create_user_data
 

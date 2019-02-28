@@ -9,8 +9,11 @@ class CandidateConnection(BaseConnection):
         super().__init__(**kwargs)
 
     def create_candidate(self, user_id, party_id, office_id):
-        # Creates a new candidate in the system
-        # the user_id is needed to be able to reference the candidate to a specific user. 
+        """
+        Creates a new candidate in the system
+        the user_id is used to reference the candidate to a specific user. 
+        """
+
         try:
             self.open_connection()
 
@@ -63,7 +66,7 @@ class CandidateConnection(BaseConnection):
     def create_candidate_by_names(self, user_name, party_name, office_id):
         try:
             self.open_connection()
-            ## FIND THE USER ID
+            ## FIND IF THE USER ID EXISTS
             sql_find_user = """
             SELECT id FROM users WHERE username='{}'
             """.format(user_name)
@@ -73,7 +76,7 @@ class CandidateConnection(BaseConnection):
                 return "User with name {} not found".format(user_name)
             user_id = user_found[0]
 
-            ## FIND THE PARTY ID
+            ## FIND IF THE PARTY ID EXISTS
             sql_find_party = """
             SELECT id FROM parties WHERE party_name='{}'
             """.format(party_name)
@@ -83,7 +86,7 @@ class CandidateConnection(BaseConnection):
                 return "Party with name {} not found".format(party_name)
             party_id = party_found[0]
 
-            ## FIND THE OFFICE ID
+            ## FIND IF THE OFFICE ID EXISTS
             sql_find_office = """
             SELECT id from offices WHERE id={}
             """.format(office_id)
