@@ -7,8 +7,14 @@ import os
 import ast
 
 class BaseTest(unittest.TestCase):
+    """
+    This is the parent class that will be inherited by all the client based tests
+    methods included in this class are methods that will be constantly used in most of the methods.
+    """
 
     def setUp(self):
+        # runs before every test begins 
+        # sets up the client that will be receiving the requests from the tests 
         print('set up')
         self.app = create_app(TestConfig)
         
@@ -40,7 +46,8 @@ class BaseTest(unittest.TestCase):
         }
 
     def tearDown(self):
-        
+        # runs after every test assertion
+        # clears the test database 
         self.base = BaseConnection(
             DB_USER=os.getenv('TEST_DATABASE_USER'), DB_NAME=os.getenv('TEST_DATABASE_NAME'), DB_PASSWORD=os.getenv('TEST_DATABASE_PASSWORD'), 
             DB_HOST=os.getenv('TEST_DATABASE_HOST')
