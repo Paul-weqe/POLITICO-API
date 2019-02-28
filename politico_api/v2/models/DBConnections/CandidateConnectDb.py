@@ -16,7 +16,8 @@ class CandidateConnection(BaseConnection):
 
         try:
             self.open_connection()
-
+            
+            # the following are checks to see if the users, party and offices refered to actually exist
             check_if_user_exists_command = """
             SELECT * FROM users WHERE id={}
             """.format(user_id)
@@ -46,7 +47,8 @@ class CandidateConnection(BaseConnection):
             
             elif office_found == None:
                 return "The office does not exist in our system"
-
+            
+            # add the candidate to the candidates' list
             sql_command = """
             INSERT INTO candidates(user_id, party_id, office_id) VALUES 
             ({}, {}, {})

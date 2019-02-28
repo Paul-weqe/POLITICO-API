@@ -5,38 +5,7 @@ from politico_api.v2.models.DBConnections.BaseConnectionDb import BaseConnection
 class OfficeConnection(BaseConnection):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-    
-
-    # this returns the result of the office with ID officeID
-    # def get_office_results(self, office_id):
-    #     try:
-    #         self.open_connection()
-    #         sql_find_office_command = """
-    #         SELECT * FROM offices WHERE id={}
-    #         """.format(office_id)
-
-    #         self.curr.execute(sql_find_office_command)
-    #         office = self.curr.fetchone()
-    #         if office == None:
-    #             return None
-
-    #         sql_command = """
-    #         SELECT users.id, users.first_name, count(votes.voted_for) as number_of_votes from users LEFT JOIN votes 
-    #         ON (votes.voted_for=users.id) WHERE (users.is_politician=true) AND (users.office_interested={}) group by users.id
-    #         """.format(office_id)
-
-    #         self.curr.execute(sql_command)
-    #         votes_results = self.curr.fetchall()
-    #         self.close_connection()
-            
-    #         return votes_results
-
-        # except Exception as e:
-        #     print("!!! UNABLE TO FIND OFFICE RESULTS !!!")
-        #     print(e)
-        #     print("!!! UNABLE TO FIND OFFICE RESULTS !!!")
-        #     return False 
-    
+        
     # creates a new office with the valid parameters
     def create_office(self, office_name, office_type):
         try:
