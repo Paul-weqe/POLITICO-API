@@ -7,6 +7,9 @@ import json
 import ast
 
 class TestCreateParty(BaseTest):
+
+    
+
     """
     Tests for the creation of a party
     The fields needed to create a party have been defined as self.create_party_data in the BaseTest
@@ -77,6 +80,33 @@ class TestCreateParty(BaseTest):
         
         self.assertEqual(response.status_code, 400)
         self.assertIn(b"party_name cannot be empty", response.data)
+
+    # test when an invalid token is used when trying to create a party
+    def test_invalid_token(self):
+        party_data = self.create_party_data
+        token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+        response = self.client.post("/api/v2/party", data=json.dumps(party_data), content_type="application/json",
+                                query_string={"db": "test"}, headers={"Authorization": "Bearer {}".format(token)})
+        
+        
+        self.assertEqual(response.status_code, 403)
+
+    # test when there is no access token present
+    def test_missing_token(self):
+        party_data = self.create_party_data
+        
+        response = self.client.post("/api/v2/party", data=json.dumps(party_data), content_type="application/json",
+                                query_string={"db": "test"}, headers={"Authorization": "Bearer"})
+        
+        self.assertEqual(response.status_code, 403)
+
+    def test_missing_authorization(self):
+        party_data = self.create_party_data
+        
+        response = self.client.post("/api/v2/party", data=json.dumps(party_data), content_type="application/json",
+                                query_string={"db": "test"}, headers={})
+        
+        self.assertEqual(response.status_code, 403)
 
 class TestGetParties(BaseTest):
     """

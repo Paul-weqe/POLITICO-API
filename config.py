@@ -24,4 +24,6 @@ class ProductionConfig(object):
     DATABASE_USER = os.getenv("DATABASE_USER")
     SECRET_KEY = os.getenv("SECRET_KEY")
 
+class WrongTestConfig(TestConfig):
+    TEST_DATABASE_NAME = os.getenv('WRONG_TEST_DATABASE_NAME')
 

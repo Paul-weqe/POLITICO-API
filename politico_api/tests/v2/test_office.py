@@ -1,3 +1,4 @@
+
 """
 Tests for the '/api/v2/office' route
 BaseTest contains the main test elements that will be used
@@ -7,6 +8,7 @@ import json
 
 
 class TestPost(BaseTest):
+
     """
     tests for the POST method of the '/api/v2/office/' route of the API
     this will be from the data types to blank fields being used
@@ -101,6 +103,9 @@ class TestGet(BaseTest):
     def test_correct_request_before_adding(self):
         response = self.client.get("/api/v2/office")
         self.assertEqual(response.status_code, 200)
+    
+    
+
 
 
 class TestCreateCandidate(BaseTest):
