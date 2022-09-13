@@ -1,4 +1,5 @@
 *__pycache__*
 *.coverage
 *.pyest_cache*
-*.env*
+.env
+venv
