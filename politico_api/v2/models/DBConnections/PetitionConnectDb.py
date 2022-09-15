@@ -1,25 +1,21 @@
-import psycopg2
-from politico_api.v2.models.DBConnections.BaseConnectionDb import BaseConnection
-import os
+from politico_api.v2.models.DBConnections.BaseConnectionDb import BaseConn
 
-class PetitionConnection(BaseConnection):
+class PetitionConnection:
     
     def __init__(self, **kwargs):
-        super().__init__(**kwargs)
+        self.kwargs = kwargs
 
 
     def create_petition(self, created_by, office, body):
-        try:
-
-            self.open_connection()
+        with BaseConn(kwargs=self.kwargs) as base_conn:
             
             ### command to make sure one does not create petition for the same office twice
             sql_if_has_filed_command = """
             SELECT * FROM petitions WHERE create_by={} and office={}
             """.format(created_by, office)
-            self.curr.execute(sql_if_has_filed_command)
+            base_conn.curr.execute(sql_if_has_filed_command)
 
-            entries = self.curr.fetchall()
+            entries = base_conn.curr.fetchall()
             if len(entries) > 1: return None
 
             ### creates the petition
@@ -27,19 +23,7 @@ class PetitionConnection(BaseConnection):
             INSERT INTO petitions(create_by, office, body) VALUES ({}, {}, '{}')
             """.format(created_by, office, body)
             
-            self.curr.execute(sql_command)
-            self.conn.commit()
+            base_conn.curr.execute(sql_command)
+            base_conn.conn.commit()
 
-            self.close_connection()
             return True
-
-        except Exception as e:
-            if type(e) == psycopg2.IntegrityError:
-                return "Office could not be found"
-            print("!!! UNABLE TO CONNECT TO THE DATABASE !!!")
-            print(e)
-            print("!!! UNABLE TO CONNECT TO THE DATABASE !!!")
-            return False
-
-
-

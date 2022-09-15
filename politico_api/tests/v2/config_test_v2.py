@@ -1,7 +1,7 @@
 import unittest
 import json
 from politico_api.v2 import create_app
-from config import TestConfig, ProductionConfig
+from config import TestConfig
 from politico_api.v2.models.DBConnections.BaseConnectionDb import BaseConnection
 import os
 import ast

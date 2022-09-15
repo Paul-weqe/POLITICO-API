@@ -16,7 +16,7 @@ def cast_vote():
         "candidate_id": int, "office_id": int
     }
     token = request.headers['Authorization'].split(' ')[1]
-    jwt_data = jwt.decode(token, os.getenv('SECRET_KEY'))
+    jwt_data = jwt.decode(token, os.getenv('SECRET_KEY'), algorithms=['HS256'])
     user_id = jwt_data["user_id"]
     db = request.args.get("db")
     

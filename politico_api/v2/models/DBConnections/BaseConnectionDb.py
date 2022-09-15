@@ -1,5 +1,47 @@
+from dataclasses import dataclass
 import psycopg2
 import os 
+import logging
+
+@dataclass
+class DbConn:
+    conn: object
+    curr: object
+
+class BaseConn(object):
+
+    def __init__(self, **kwargs):
+        self.db_conn = DbConn(conn=None, curr=None)
+        self.kwargs = None
+        if len(kwargs['kwargs']) > 0:
+            self.kwargs = kwargs['kwargs']
+        
+
+    def __enter__(self):
+
+        if self.kwargs == None:
+            conn = psycopg2.connect(
+                user=os.getenv("DATABASE_USER"), password=os.getenv("DATABASE_PASSWORD"), host=os.getenv("DATABASE_HOST"), database=os.getenv("DATABASE_NAME")
+            )
+            curr = conn.cursor()
+            self.db_conn = DbConn(conn=conn, curr=curr)
+            logging.info("database connection established")
+        
+        else:
+            conn = psycopg2.connect(
+                user=self.kwargs["DB_USER"], password=self.kwargs["DB_PASSWORD"], host="localhost", database=self.kwargs["DB_NAME"]
+            )
+            curr = conn.cursor()
+            self.db_conn = DbConn(conn=conn, curr=curr)
+            logging.info("Connection  established test")
+        
+        return self.db_conn
+
+    def __exit__(self, type, value, traceback):
+        if (self.db_conn):
+            self.db_conn.curr.close()
+
+        logging.error(traceback)
 
 
 class BaseConnection:
@@ -26,20 +68,19 @@ class BaseConnection:
                     user=os.getenv("DATABASE_USER"), password=os.getenv("DATABASE_PASSWORD"), host=os.getenv("DATABASE_HOST"), database=os.getenv("DATABASE_NAME")
                 )
                 self.curr = self.conn.cursor()
-                print("connection established")
+                logging.info("connection established")
             else:
                 self.conn = psycopg2.connect(
                     user=self.kwargs["DB_USER"], password=self.kwargs["DB_PASSWORD"], host="localhost", database=self.kwargs["DB_NAME"]
                 )
                 self.curr = self.conn.cursor()
-                print("Connection  established test")
+                logging.info("Connection  established test")
         
 
         except Exception as e:
-            print("!!! UNABLE TO CONNECT TO THE DATABASE !!!")
-            print(e)
-            print("!!! UNABLE TO CONNECT TO THE DATABASE !!!")
-    
+            logging.error(e)
+            logging.error("UNABLE TO CONNECT TO THE DATABASE")
+            
     def close_connection(self):
         "Closes the cursor that was being used to connect to the database"
         try:
@@ -47,9 +88,8 @@ class BaseConnection:
                 self.curr.close()
 
         except Exception as e:
-            print("!!! UNABLE TO CONNECT TO THE DATABASE !!!")
-            print(e)
-            print("!!! UNABLE TO CONNECT TO THE DATABASE !!!")
+            logging.error(e)
+            logging.error("UNABLE TO CONNECT TO THE DATABASE")
 
     ## WARNING: TO BE USED FOR TESTING DATABASE ONLY ##
     def reset_database(self, schema_file=None):

@@ -1,12 +1,9 @@
-import psycopg2
-import os 
-from politico_api.v2.models.DBConnections.UserConnectDb import UserConnection
-from politico_api.v2.models.DBConnections.BaseConnectionDb import BaseConnection
+from politico_api.v2.models.DBConnections.BaseConnectionDb import BaseConn
 
-class CandidateConnection(BaseConnection):
+class CandidateConnection:
 
     def __init__(self, **kwargs):
-        super().__init__(**kwargs)
+        self.kwargs_1 = kwargs
 
     def create_candidate(self, user_id, party_id, office_id):
         """
@@ -14,9 +11,7 @@ class CandidateConnection(BaseConnection):
         the user_id is used to reference the candidate to a specific user. 
         """
 
-        try:
-            self.open_connection()
-            
+        with BaseConn(kwargs = self.kwargs_1) as base_conn:
             # the following are checks to see if the users, party and offices refered to actually exist
             check_if_user_exists_command = """
             SELECT * FROM users WHERE id={}
@@ -30,13 +25,13 @@ class CandidateConnection(BaseConnection):
             SELECT * FROM offices WHERE id={}
             """.format(office_id)
 
-            self.curr.execute(check_if_user_exists_command)
+            base_conn.curr.execute(check_if_user_exists_command)
             user_found = self.curr.fetchone()
 
-            self.curr.execute(check_if_party_exists_command)
+            base_conn.curr.execute(check_if_party_exists_command)
             party_found = self.curr.fetchone()
 
-            self.curr.execute(check_if_office_exists_command)
+            base_conn.curr.execute(check_if_office_exists_command)
             office_found = self.curr.fetchone()
 
             if user_found == None:
@@ -54,26 +49,25 @@ class CandidateConnection(BaseConnection):
             ({}, {}, {})
             """.format(user_id, party_id, office_id)
 
-            self.curr.execute(sql_command)
-            self.conn.commit()
+            base_conn.curr.execute(sql_command)
+            base_conn.conn.commit()
 
-            self.close_connection()
+            base_conn.close_connection()
             return "Candidate successfully created"
 
-        except Exception as e:
-            print("!!! UNABLE TO CREATE A CANDIDATE !!!")
-            print(e)
-            print("!!! UNABLE TO CREATE A CANDIDATE !!!")
+        # except Exception as e:
+        #     print("!!! UNABLE TO CREATE A CANDIDATE !!!")
+        #     print(e)
+        #     print("!!! UNABLE TO CREATE A CANDIDATE !!!")
     
     def create_candidate_by_names(self, user_name, party_name, office_id):
-        try:
-            self.open_connection()
+        with BaseConn(kwargs = self.kwargs_1) as base_conn:
             ## FIND IF THE USER ID EXISTS
             sql_find_user = """
             SELECT id FROM users WHERE username='{}'
             """.format(user_name)
-            self.curr.execute(sql_find_user)
-            user_found = self.curr.fetchone()
+            base_conn.curr.execute(sql_find_user)
+            user_found = base_conn.curr.fetchone()
             if user_found is None:
                 return "User with name {} not found".format(user_name)
             user_id = user_found[0]
@@ -82,8 +76,8 @@ class CandidateConnection(BaseConnection):
             sql_find_party = """
             SELECT id FROM parties WHERE party_name='{}'
             """.format(party_name)
-            self.curr.execute(sql_find_party)
-            party_found = self.curr.fetchone()
+            base_conn.curr.execute(sql_find_party)
+            party_found = base_conn.curr.fetchone()
             if party_found is None:
                 return "Party with name {} not found".format(party_name)
             party_id = party_found[0]
@@ -92,8 +86,8 @@ class CandidateConnection(BaseConnection):
             sql_find_office = """
             SELECT id from offices WHERE id={}
             """.format(office_id)
-            self.curr.execute(sql_find_office)
-            office_found = self.curr.fetchone()
+            base_conn.curr.execute(sql_find_office)
+            office_found = base_conn.curr.fetchone()
             if office_found is None:
                 return "Office with id {} not found".format(office_id)
             office_id = office_found[0]
@@ -102,8 +96,8 @@ class CandidateConnection(BaseConnection):
             sql_has_registered = """
             SELECT * FROM candidates WHERE user_id={} and office_id={}
             """.format(user_id, office_id)
-            self.curr.execute(sql_has_registered)
-            user_already_registered = self.curr.fetchone()
+            base_conn.curr.execute(sql_has_registered)
+            user_already_registered = base_conn.curr.fetchone()
             if user_already_registered != None:
                 return "User has already registered for that office"
 
@@ -111,18 +105,8 @@ class CandidateConnection(BaseConnection):
             sql_command = """
             INSERT INTO candidates(user_id, office_id, party_id) VALUES ({}, {}, {})
             """.format(user_id, office_id, party_id)
-            self.curr.execute(sql_command)
-            self.conn.commit()
-            self.close_connection()
+            base_conn.curr.execute(sql_command)
+            base_conn.conn.commit()
 
             return True
-            
-        except Exception as e:
-            if type(e) == psycopg2.IntegrityError:
-                print(e)
-                return "Candidate already exists"
-            print("!!! UNABLE TO CREATE A CANDIDATE USING NAME !!!")
-            print(e)
-            print("!!! UNABLE TO CREATE A CANDIDATE USING NAME !!!")
-            return False
     

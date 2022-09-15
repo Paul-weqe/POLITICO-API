@@ -19,8 +19,7 @@ def token_required(f):
 
         token = header_data[1]
         try:
-            data = jwt.decode(token, os.getenv('SECRET_KEY'))
-            print(data)
+            data = jwt.decode(token, os.getenv('SECRET_KEY'), algorithms=['HS256'])
         except Exception as e:
             return make_response(jsonify({"message": "token is invalid"}), 403)
             
@@ -44,10 +43,9 @@ def admin_required(f):
             return make_response(jsonify({"message": "Authorization to be structured 'Bearer [token]'"}), 401)
 
         token = header_data[1]
+        
         try:
-            data = jwt.decode(token, os.getenv('SECRET_KEY'))
-            print("##")
-            print(data)
+            data = jwt.decode(token, os.getenv('SECRET_KEY'), algorithms=['HS256'])
             if data['admin'] != True:
                 return make_response(jsonify({"message": "admin token required"}), 401)
         except Exception as e:

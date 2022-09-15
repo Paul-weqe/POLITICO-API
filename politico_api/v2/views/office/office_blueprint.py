@@ -1,6 +1,5 @@
 from flask import Blueprint, jsonify, request, make_response
 from politico_api.v2.models.models import Office, Candidate
-from politico_api.v2.views.api_functions import ApiFunctions
 from politico_api.v2.validators import Validate
 from politico_api.v2.views.decorators import admin_required, token_required, json_required
 
@@ -152,8 +151,6 @@ def create_candidate(office_id):
     if error == None:
         error = [400, "unable to create the user"]
     
-    print("############")
-    print(error)
     return make_response(jsonify({
         "error": error[1],
         "status": error[0]
